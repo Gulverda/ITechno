@@ -48,3 +48,14 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+
+# Data for import
+/newest
+/imagedData
+/imagedata
+/data
+
+# Payload uploads
+/public/media
+/media
