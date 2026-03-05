@@ -1,25 +1,30 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-// დავამატეთ lang ტიპებში
 export const ProductCard = ({ product, lang }: { product: any; lang: string }) => {
   const imageUrl = typeof product.mainImage === 'object' ? product.mainImage?.url : ''
+  const rating = product.rating || 0
 
-  const renderStars = (rating: number = 5) => {
-    return Array.from({ length: 5 }).map((_, i) => (
-      <svg
-        key={i}
-        className={`w-3 h-3 ${i < Math.floor(rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-      >
-        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-      </svg>
-    ))
+  const renderStars = () => {
+    return (
+      <div className="flex gap-0.5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <svg
+            key={i}
+            className={`w-3.5 h-3.5 ${
+              i < Math.floor(rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
+            }`}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+          </svg>
+        ))}
+      </div>
+    )
   }
 
   return (
-    // ვიყენებთ გადმოწოდებულ lang-ს URL-ისთვის
     <Link href={`/products/${product.slug}?lang=${lang}`} className="group">
       <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 p-3 h-full flex flex-col relative">
         <div
@@ -50,20 +55,12 @@ export const ProductCard = ({ product, lang }: { product: any; lang: string }) =
             <p className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">
               {typeof product.category === 'object' ? product.category?.name : 'სხვადასხვა'}
             </p>
-            <div className="flex gap-0.5">{renderStars(product.rating)}</div>
+            {renderStars()}
           </div>
 
           <h2 className="font-bold text-gray-800 text-sm mb-2 line-clamp-2 min-h-[40px] leading-tight group-hover:text-blue-600 transition-colors">
             {product.title}
           </h2>
-
-          {product.specifications && (
-            <div className="mb-3">
-              <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed italic">
-                {product.specifications}
-              </p>
-            </div>
-          )}
 
           <div className="mt-auto flex justify-between items-center border-t border-gray-50 pt-3">
             <div className="flex flex-col">
@@ -72,7 +69,6 @@ export const ProductCard = ({ product, lang }: { product: any; lang: string }) =
                 {product.price} <span className="text-sm font-normal">₾</span>
               </span>
             </div>
-
             <div className="bg-gray-900 text-white p-2.5 rounded-xl shadow-lg group-hover:bg-blue-600 group-hover:scale-110 transition-all duration-300">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

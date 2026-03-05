@@ -31,7 +31,9 @@
     "payload": "3.78.0",
     "react": "19.2.1",
     "react-dom": "19.2.1",
-    "sharp": "0.34.2"
+    "react-use-transition": "^0.1.1",
+    "sharp": "0.34.2",
+    "use-debounce": "^10.1.0"
   },
   "devDependencies": {
     "@playwright/test": "1.58.2",

@@ -72,6 +72,7 @@ export interface Config {
     products: Product;
     categories: Category;
     brands: Brand;
+    reviews: Review;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,6 +85,7 @@ export interface Config {
     products: ProductsSelect<false> | ProductsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     brands: BrandsSelect<false> | BrandsSelect<true>;
+    reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -199,6 +201,11 @@ export interface Product {
 export interface Category {
   id: number;
   name: string;
+  slug: string;
+  /**
+   * თუ ეს ქვეკატეგორიაა, აირჩიეთ მისი მთავარი კატეგორია
+   */
+  parent?: (number | null) | Category;
   updatedAt: string;
   createdAt: string;
 }
@@ -209,6 +216,18 @@ export interface Category {
 export interface Brand {
   id: number;
   name: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews".
+ */
+export interface Review {
+  id: number;
+  product: number | Product;
+  rating: number;
+  ipHash?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -255,6 +274,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'brands';
         value: number | Brand;
+      } | null)
+    | ({
+        relationTo: 'reviews';
+        value: number | Review;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -368,6 +391,8 @@ export interface ProductsSelect<T extends boolean = true> {
  */
 export interface CategoriesSelect<T extends boolean = true> {
   name?: T;
+  slug?: T;
+  parent?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -377,6 +402,17 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface BrandsSelect<T extends boolean = true> {
   name?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews_select".
+ */
+export interface ReviewsSelect<T extends boolean = true> {
+  product?: T;
+  rating?: T;
+  ipHash?: T;
   updatedAt?: T;
   createdAt?: T;
 }

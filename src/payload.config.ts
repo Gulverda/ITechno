@@ -11,6 +11,7 @@ import { Media } from './collections/Media'
 import { Products } from './collections/Products'
 import { Categories } from './collections/Categories'
 import { Brands } from './collections/Brands'
+import { Reviews } from './collections/Reviews'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,7 +24,7 @@ export default buildConfig({
     },
   },
   // აქ დავამატეთ ყველა ახალი კოლექცია
-  collections: [Users, Media, Products, Categories, Brands],
+  collections: [Users, Media, Products, Categories, Brands, Reviews],
 
   // ლოკალიზაციის დამატება (რადგან Products-ში localized: true გვაქვს)
   localization: {

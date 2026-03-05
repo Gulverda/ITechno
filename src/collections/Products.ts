@@ -31,11 +31,11 @@ export const Products: CollectionConfig = {
       name: 'rating', // <-- ახალი ველი (მაქს. 5.0)
       type: 'number',
       admin: {
-        step: 0.1,
+        readOnly: true, // ადმინ პანელიდან ხელით რომ არავინ შეცვალოს
       },
       min: 0,
       max: 5,
-      defaultValue: 5,
+      defaultValue: 0,
     },
     {
       name: 'stock', // <-- ახალი ველი (მარაგი)
