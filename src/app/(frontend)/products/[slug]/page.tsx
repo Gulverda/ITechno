@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
+import ProductGallery from '@/components/ProductGallery'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -31,50 +32,11 @@ export default async function ProductDetails({ params, searchParams }: PageProps
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-        {/* მარცხენა მხარე: სურათი და გალერეა */}
-        <div className="flex flex-col gap-6 sticky top-24">
-          <div className="bg-white border border-gray-100 rounded-3xl p-8">
-            <div className="relative aspect-square w-full overflow-hidden">
-              {mainImageUrl ? (
-                <Image
-                  src={mainImageUrl}
-                  alt={product.title}
-                  fill
-                  priority
-                  className="object-contain hover:scale-105 transition-transform duration-500"
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full bg-gray-50 text-gray-300 italic">
-                  სურათი არ არის
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* 📸 გალერეის სექცია */}
-          {product.images && product.images.length > 0 && (
-            <div className="grid grid-cols-4 gap-4">
-              {product.images.map((item: any, index: number) => {
-                const url = typeof item.image === 'object' ? item.image?.url : null
-                if (!url) return null
-
-                return (
-                  <div
-                    key={index}
-                    className="relative aspect-square rounded-2xl border border-gray-100 overflow-hidden bg-white hover:border-blue-400 cursor-pointer transition-colors p-2"
-                  >
-                    <Image
-                      src={url}
-                      alt={`${product.title} - ${index + 1}`}
-                      fill
-                      className="object-contain p-1"
-                    />
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
+        <ProductGallery
+          mainImage={mainImageUrl || ''}
+          images={product.images || []}
+          title={product.title}
+        />
 
         {/* მარჯვენა მხარე: ინფორმაცია */}
         <div className="flex flex-col">
