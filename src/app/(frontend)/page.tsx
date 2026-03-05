@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { ProductCard } from '@/components/ProductCard'
 import Link from 'next/link'
+import { Search } from '@/components/Search'
 
 interface LocalizedName {
   en: string
@@ -11,10 +12,11 @@ interface LocalizedName {
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; lang?: string }>
+  searchParams: Promise<{ category?: string; lang?: string; q?: string }>
 }) {
   const params = await searchParams
   const lang = params.lang || 'ka'
+  const queryTerm = params.q || ''
   const payload = await getPayload({ config: await config })
 
   const order = [
@@ -61,6 +63,26 @@ export default async function Page({
     query.category = { equals: params.category }
   }
 
+  const andFilters: any[] = []
+
+  if (params.category) {
+    andFilters.push({ category: { equals: params.category } })
+  }
+
+  if (queryTerm) {
+    andFilters.push({
+      or: [
+        { title: { contains: queryTerm } },
+        { description: { contains: queryTerm } },
+        { slug: { contains: queryTerm } },
+      ],
+    })
+  }
+
+  if (andFilters.length > 0) {
+    query.and = andFilters
+  }
+
   const products = await payload.find({
     collection: 'products',
     where: query,
@@ -85,6 +107,7 @@ export default async function Page({
                 ? 'ყველა პროდუქტი'
                 : 'All Products'}
           </h1>
+          <Search lang={lang} />
           <span className="bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full text-sm font-semibold border border-blue-100">
             {lang === 'ka' ? 'სულ:' : 'Total:'} {products.totalDocs}
           </span>
