@@ -4,6 +4,8 @@ export const Products: CollectionConfig = {
   slug: 'products',
   admin: {
     useAsTitle: 'title',
+    defaultColumns: ['title', 'slug', 'price', 'category'],
+    group: 'Shop Content',
   },
   fields: [
     {
@@ -13,12 +15,36 @@ export const Products: CollectionConfig = {
       localized: true,
     },
     {
+      name: 'slug',
+      type: 'text',
+      required: true,
+      unique: true,
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description: 'უნიკალური URL იდენტიფიკატორი',
+      },
+      hooks: {
+        beforeValidate: [
+          ({ value, data }) => {
+            if (!value && data?.title) {
+              return data.title
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)+/g, '')
+            }
+            return value?.toLowerCase().trim()
+          },
+        ],
+      },
+    },
+    {
       name: 'description',
       type: 'textarea',
       localized: true,
     },
     {
-      name: 'specifications', // <-- ახალი ველი
+      name: 'specifications',
       type: 'textarea',
       localized: true,
     },
@@ -26,32 +52,17 @@ export const Products: CollectionConfig = {
       name: 'price',
       type: 'number',
       required: true,
-    },
-    {
-      name: 'rating', // <-- ახალი ველი (მაქს. 5.0)
-      type: 'number',
-      admin: {
-        readOnly: true, // ადმინ პანელიდან ხელით რომ არავინ შეცვალოს
-      },
       min: 0,
-      max: 5,
-      defaultValue: 0,
     },
     {
-      name: 'stock', // <-- ახალი ველი (მარაგი)
+      name: 'stock',
       type: 'select',
       defaultValue: 'in-stock',
-      localized: true, // თუ გინდა "მარაგშია" / "In Stock" გამოჩნდეს
+      localized: true,
       options: [
         { label: 'In Stock', value: 'in-stock' },
         { label: 'Out of Stock', value: 'out-of-stock' },
       ],
-    },
-    {
-      name: 'slug',
-      type: 'text',
-      required: true,
-      unique: true,
     },
     {
       name: 'category',
@@ -73,6 +84,10 @@ export const Products: CollectionConfig = {
     {
       name: 'images',
       type: 'array',
+      labels: {
+        singular: 'Gallery Image',
+        plural: 'Gallery Images',
+      },
       fields: [
         {
           name: 'image',

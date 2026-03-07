@@ -5,6 +5,16 @@ import Link from 'next/link'
 import { Search } from '@/components/Search'
 import { LoadMore } from '@/components/LoadMore'
 
+// ... (ინტერფეისები უცვლელია)
+interface Category {
+  id: string | number
+  name: string | { en: string; ka: string }
+  displayName?: string
+  parent?: string | number | Category | null
+  updatedAt: string
+  createdAt: string
+}
+
 interface LocalizedName {
   en: string
   ka: string
@@ -13,57 +23,124 @@ interface LocalizedName {
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; lang?: string; q?: string; limit?: string }>
+  searchParams: Promise<{
+    category?: string
+    lang?: string
+    q?: string
+    limit?: string
+    brand?: string
+  }>
 }) {
   const params = await searchParams
   const lang = params.lang || 'ka'
   const queryTerm = params.q || ''
   const currentLimit = Number(params.limit) || 16
+  const activeCategoryId = params.category
+  const activeBrandId = params.brand // წამოვიღოთ ბრენდის ID
+
   const payload = await getPayload({ config: await config })
 
-  const order = [
-    'EZVIZ - Smart Home',
-    'AJAX',
-    'Video Surveillance',
-    'Storage Devices',
-    'Fire Alarm Systems',
-    'Security Alarm',
-    'Access Control Systems',
-    'TV/Displays',
-    'Network Equipment',
-  ]
+  // 1. ბრენდის ინფორმაციის წამოღება (სათაურისთვის)
+  let activeBrandName = ''
+  if (activeBrandId) {
+    try {
+      const brandDoc = await payload.findByID({
+        collection: 'brands',
+        id: activeBrandId,
+      })
+      activeBrandName = brandDoc.name as string
+    } catch (e) {
+      console.error('Brand not found')
+    }
+  }
 
-  // კატეგორიების წამოღება
+  // 2. კატეგორიების წამოღება და ლოკალიზაცია (იგივე ლოგიკა)
   const categoriesRes = await payload.find({
     collection: 'categories',
     limit: 100,
     locale: 'all' as any,
   })
 
-  const sortedCategories = categoriesRes.docs
-    .sort((a, b) => {
-      const nameA = (a.name as unknown as LocalizedName)?.en || ''
-      const nameB = (b.name as unknown as LocalizedName)?.en || ''
-      const indexA = order.indexOf(nameA)
-      const indexB = order.indexOf(nameB)
-      const finalIndexA = indexA !== -1 ? indexA : 99
-      const finalIndexB = indexB !== -1 ? indexB : 99
-      return finalIndexA - finalIndexB
-    })
-    .map((cat) => {
-      const localizedName = cat.name as unknown as LocalizedName
-      return {
-        ...cat,
-        displayName: localizedName[lang as keyof LocalizedName] || localizedName.en,
-      }
-    })
+  const allCategories = (categoriesRes.docs as unknown as Category[]).map((cat) => {
+    const localizedName = cat.name as unknown as LocalizedName
+    return {
+      ...cat,
+      displayName: localizedName[lang as keyof LocalizedName] || localizedName.en,
+    }
+  })
 
-  // ფილტრების მომზადება (Category + Search Query)
-  const query: any = {}
+  const activeCategory = allCategories.find((c) => String(c.id) === String(activeCategoryId))
+
+  // --- დამხმარე ფუნქციები (getParentId, renderCategoryTree, getAllChildIds იგივე რჩება) ---
+  const getParentId = (cat: Category) => {
+    if (!cat.parent) return null
+    return typeof cat.parent === 'object' ? cat.parent.id : cat.parent
+  }
+
+  const renderCategoryTree = (parentId: string | number | null, level = 0) => {
+    const children = allCategories.filter((c) => String(getParentId(c)) === String(parentId))
+    if (children.length === 0) return null
+
+    return (
+      <div
+        className={`${level > 0 ? 'ml-4 border-l-2 border-blue-100 pl-3 py-1 my-1' : 'flex flex-col gap-1'}`}
+      >
+        {children.map((cat) => {
+          const isDirectlyActive = String(activeCategoryId) === String(cat.id)
+          const isAncestor = allCategories.some((c) => {
+            if (String(activeCategoryId) !== String(c.id)) return false
+            let current: any = c
+            while (current?.parent) {
+              const pId = typeof current.parent === 'object' ? current.parent.id : current.parent
+              if (String(pId) === String(cat.id)) return true
+              current = allCategories.find((allC) => String(allC.id) === String(pId))
+            }
+            return false
+          })
+
+          const shouldShowChildren = isDirectlyActive || isAncestor
+
+          return (
+            <div key={cat.id} className="flex flex-col gap-1">
+              <Link
+                // ვინარჩუნებთ ბრენდის ფილტრს კატეგორიის შეცვლისას
+                href={`/?category=${cat.id}&lang=${lang}${activeBrandId ? `&brand=${activeBrandId}` : ''}`}
+                className={`px-4 py-2 rounded-lg transition ${
+                  level === 0 ? 'text-sm border border-gray-100 shadow-sm' : 'text-xs'
+                } ${
+                  isDirectlyActive
+                    ? 'bg-blue-600 text-white font-bold shadow-md'
+                    : 'bg-white text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                {level > 0 && '• '} {cat.displayName}
+              </Link>
+              {shouldShowChildren && renderCategoryTree(cat.id, level + 1)}
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
+  const getAllChildIds = (parentId: string | number): (string | number)[] => {
+    const children = allCategories.filter((c) => String(getParentId(c)) === String(parentId))
+    return children.reduce(
+      (acc, child) => [...acc, child.id, ...getAllChildIds(child.id)],
+      [] as (string | number)[],
+    )
+  }
+
+  // --- ფილტრაციის ლოგიკის განახლება ---
   const andFilters: any[] = []
 
-  if (params.category) {
-    andFilters.push({ category: { equals: params.category } })
+  if (activeCategoryId) {
+    const allRelatedIds = [activeCategoryId, ...getAllChildIds(activeCategoryId)]
+    andFilters.push({ category: { in: allRelatedIds } })
+  }
+
+  if (activeBrandId) {
+    andFilters.push({ brand: { equals: activeBrandId } })
   }
 
   if (queryTerm) {
@@ -76,79 +153,64 @@ export default async function Page({
     })
   }
 
-  if (andFilters.length > 0) {
-    query.and = andFilters
-  }
-
-  // პროდუქტების წამოღება პაგინაციით
   const products = await payload.find({
     collection: 'products',
-    where: query,
+    where: andFilters.length > 0 ? { and: andFilters } : {},
     locale: lang as any,
     depth: 1,
-    limit: currentLimit, // იტვირთება მხოლოდ იმდენი, რამდენიც URL-შია
+    limit: currentLimit,
     sort: 'title',
   })
-
-  const activeCategory = params.category
-    ? sortedCategories.find((c) => String(c.id) === String(params.category))
-    : null
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <main className="container mx-auto px-4 mt-8">
-        {/* Header სექცია: სათაური, ძებნა და რაოდენობა */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100 gap-4">
-          <h1 className="text-xl font-bold text-gray-900 shrink-0">
-            {activeCategory
-              ? activeCategory.displayName
-              : lang === 'ka'
-                ? 'ყველა პროდუქტი'
-                : 'All Products'}
-          </h1>
-
+          <div className="flex items-center gap-3 shrink-0">
+            <h1 className="text-xl font-bold text-gray-900">
+              {activeBrandId
+                ? activeBrandName
+                : activeCategory
+                  ? activeCategory.displayName
+                  : lang === 'ka'
+                    ? 'ყველა პროდუქტი'
+                    : 'All Products'}
+            </h1>
+            {activeBrandId && (
+              <Link
+                href={`/?lang=${lang}${activeCategoryId ? `&category=${activeCategoryId}` : ''}`}
+                className="text-[10px] bg-red-50 text-red-600 px-2 py-1 rounded hover:bg-red-100 transition uppercase font-bold"
+              >
+                ✕ {lang === 'ka' ? 'ბრენდის მოხსნა' : 'Remove Brand'}
+              </Link>
+            )}
+          </div>
           <Search lang={lang} />
-
           <span className="bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full text-sm font-semibold border border-blue-100 shrink-0">
             {lang === 'ka' ? 'სულ:' : 'Total:'} {products.totalDocs}
           </span>
         </div>
 
         <div className="flex flex-col md:flex-row gap-8">
-          {/* Sidebar კატეგორიებით */}
           <aside className="w-full md:w-64 flex-shrink-0">
             <h3 className="font-bold text-gray-900 mb-4 px-2">
               {lang === 'ka' ? 'კატეგორიები' : 'Categories'}
             </h3>
-            <div className="flex flex-wrap md:flex-col gap-2">
+            <div className="flex flex-col gap-1">
               <Link
-                href={`/?lang=${lang}`}
-                className={`px-4 py-2 rounded-lg text-sm transition ${
-                  !params.category
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                href={`/?lang=${lang}${activeBrandId ? `&brand=${activeBrandId}` : ''}`}
+                className={`px-4 py-2 rounded-lg text-sm transition mb-2 ${
+                  !activeCategoryId
+                    ? 'bg-blue-600 text-white shadow-md font-bold'
+                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-100'
                 }`}
               >
-                {lang === 'ka' ? 'ყველა პროდუქტი' : 'All Products'}
+                {lang === 'ka' ? 'ყველა' : 'All'}
               </Link>
-
-              {sortedCategories.map((cat) => (
-                <Link
-                  key={cat.id}
-                  href={`/?category=${cat.id}&lang=${lang}`}
-                  className={`px-4 py-2 rounded-lg text-sm transition ${
-                    String(params.category) === String(cat.id)
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-                  }`}
-                >
-                  {cat.displayName}
-                </Link>
-              ))}
+              {renderCategoryTree(null)}
             </div>
           </aside>
 
-          {/* პროდუქტების Grid და Load More */}
           <section className="flex-1">
             {products.docs.length > 0 ? (
               <>
@@ -157,7 +219,6 @@ export default async function Page({
                     <ProductCard key={product.id} product={product} lang={lang} />
                   ))}
                 </div>
-
                 <LoadMore
                   hasNextPage={products.hasNextPage}
                   currentLimit={currentLimit}

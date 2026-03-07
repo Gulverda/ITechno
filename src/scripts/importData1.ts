@@ -103,7 +103,6 @@ const runImport = async () => {
               mainImage: firstMediaId,
               images: galleryIds,
               stock: 'in-stock',
-              rating: 5,
             },
           })
 

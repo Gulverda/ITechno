@@ -3,26 +3,6 @@ import Link from 'next/link'
 
 export const ProductCard = ({ product, lang }: { product: any; lang: string }) => {
   const imageUrl = typeof product.mainImage === 'object' ? product.mainImage?.url : ''
-  const rating = product.rating || 0
-
-  const renderStars = () => {
-    return (
-      <div className="flex gap-0.5">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <svg
-            key={i}
-            className={`w-3.5 h-3.5 ${
-              i < Math.floor(rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
-            }`}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-          >
-            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-          </svg>
-        ))}
-      </div>
-    )
-  }
 
   return (
     <Link href={`/products/${product.slug}?lang=${lang}`} className="group">
@@ -55,7 +35,6 @@ export const ProductCard = ({ product, lang }: { product: any; lang: string }) =
             <p className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">
               {typeof product.category === 'object' ? product.category?.name : 'სხვადასხვა'}
             </p>
-            {renderStars()}
           </div>
 
           <h2 className="font-bold text-gray-800 text-sm mb-2 line-clamp-2 min-h-[40px] leading-tight group-hover:text-blue-600 transition-colors">
