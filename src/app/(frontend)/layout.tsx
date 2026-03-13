@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image' // სურათებისთვის
 import './globals.css'
 import { LangSwitcher } from '@/components/LangSwitcher'
+import { Header } from '@/components/Header'
 
 export const metadata = {
   title: 'I-TECHNO | სმარტ სისტემები',
@@ -26,39 +27,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       {/* ენა შევცვალოთ ka-ზე თუ ქართულია საიტი */}
       <body>
         <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
-          <header className="bg-white border-b sticky top-0 z-50 shadow-sm">
-            <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-              {/* ლოგოს სექცია */}
-              <Link href="/" className="flex items-center gap-2 group">
-                {/* თუ public-ში logo.svg-ს ჩააგდებ, Image-ით შეცვალე ეს ტექსტი */}
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold group-hover:bg-blue-700 transition-colors">
-                  IT
-                </div>
-                <span className="text-xl font-black text-gray-800 tracking-tighter group-hover:text-blue-600 transition-colors">
-                  I-TECHNO
-                </span>
-              </Link>
-
-              <div className="flex gap-8 items-center">
-                <nav className="hidden md:flex gap-6 text-sm font-semibold text-gray-600">
-                  <Link href="/" className="hover:text-blue-600 transition-colors">
-                    მთავარი
-                  </Link>
-                  <Link href="/products" className="hover:text-blue-600 transition-colors">
-                    პროდუქცია
-                  </Link>
-                  <Link
-                    href="/ka/category/smart-home"
-                    className="hover:text-blue-600 transition-colors"
-                  >
-                    Smart Home
-                  </Link>
-                </nav>
-                <div className="h-6 w-px bg-gray-200 hidden md:block" /> {/* გამყოფი ხაზი */}
-                <LangSwitcher />
-              </div>
-            </div>
-          </header>
+          <Header />
 
           {/* flex-grow იზრუნებს იმაზე, რომ ფუტერი ყოველთვის ბოლოში იყოს */}
           <main className="flex-grow">{children}</main>
