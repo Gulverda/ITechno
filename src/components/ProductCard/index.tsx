@@ -3,10 +3,20 @@ import Link from 'next/link'
 
 export const ProductCard = ({ product, lang }: { product: any; lang: string }) => {
   const imageUrl = typeof product.mainImage === 'object' ? product.mainImage?.url : ''
+  const hasDiscount =
+    product.discountPrice && product.discountPrice > 0 && product.discountPrice < product.price
+  const isPriceZero = !product.price || product.price === 0
 
   return (
     <Link href={`/products/${product.slug}?lang=${lang}`} className="group">
       <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 p-3 h-full flex flex-col relative">
+        {/* Sale Badge - მხოლოდ მაშინ თუ ფასი 0 არ არის */}
+        {hasDiscount && !isPriceZero && (
+          <div className="absolute top-4 right-4 z-10 bg-red-600 text-white px-2 py-1 rounded-lg text-[10px] font-black shadow-lg animate-pulse">
+            -{Math.round(((product.price - product.discountPrice) / product.price) * 100)}%
+          </div>
+        )}
+
         <div
           className={`absolute top-4 left-4 z-10 px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
             product.stock === 'in-stock' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
@@ -42,13 +52,36 @@ export const ProductCard = ({ product, lang }: { product: any; lang: string }) =
           </h2>
 
           <div className="mt-auto flex justify-between items-center border-t border-gray-50 pt-3">
-            <div className="flex flex-col">
-              <span className="text-[10px] text-gray-400 font-medium -mb-1">ფასი</span>
-              <span className="text-xl font-black text-gray-900 leading-none">
-                {product.price} <span className="text-sm font-normal">₾</span>
-              </span>
+            <div className="flex flex-col flex-1">
+              {isPriceZero ? (
+                // 0 ფასის შემთხვევაში
+                <span className="text-[11px] font-bold text-blue-600 leading-tight">
+                  {lang === 'ka'
+                    ? 'ფასის დასაზუსტებლად გთხოვთ დაგვიკავშირდეთ'
+                    : 'Contact us for a price'}
+                </span>
+              ) : hasDiscount ? (
+                // ფასდაკლების შემთხვევაში
+                <>
+                  <span className="text-[10px] text-red-500 line-through font-medium">
+                    {product.price} ₾
+                  </span>
+                  <span className="text-xl font-black text-gray-900 leading-none">
+                    {product.discountPrice} <span className="text-sm font-normal">₾</span>
+                  </span>
+                </>
+              ) : (
+                // სტანდარტული ფასი
+                <>
+                  <span className="text-[10px] text-gray-400 font-medium -mb-1">ფასი</span>
+                  <span className="text-xl font-black text-gray-900 leading-none">
+                    {product.price} <span className="text-sm font-normal">₾</span>
+                  </span>
+                </>
+              )}
             </div>
-            <div className="bg-gray-900 text-white p-2.5 rounded-xl shadow-lg group-hover:bg-blue-600 group-hover:scale-110 transition-all duration-300">
+
+            <div className="bg-gray-900 text-white p-2.5 rounded-xl shadow-lg group-hover:bg-blue-600 group-hover:scale-110 transition-all duration-300 shrink-0 ml-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"

@@ -55,6 +55,7 @@ node_modules/
 /imagedData
 /imagedata
 /data
+/categorised
 
 # Payload uploads
 /public/media

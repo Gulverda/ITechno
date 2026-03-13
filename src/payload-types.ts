@@ -174,13 +174,18 @@ export interface Media {
 export interface Product {
   id: number;
   title: string;
-  /**
-   * უნიკალური URL იდენტიფიკატორი
-   */
   slug: string;
   description?: string | null;
   specifications?: string | null;
+  specifications_group?: {
+    resolution?: string | null;
+    capacity?: string | null;
+    size?: string | null;
+    connectionType?: string | null;
+    technology?: string | null;
+  };
   price: number;
+  discountPrice?: number | null;
   stock?: ('in-stock' | 'out-of-stock') | null;
   category: number | Category;
   brand?: (number | null) | Brand;
@@ -352,7 +357,17 @@ export interface ProductsSelect<T extends boolean = true> {
   slug?: T;
   description?: T;
   specifications?: T;
+  specifications_group?:
+    | T
+    | {
+        resolution?: T;
+        capacity?: T;
+        size?: T;
+        connectionType?: T;
+        technology?: T;
+      };
   price?: T;
+  discountPrice?: T;
   stock?: T;
   category?: T;
   brand?: T;
