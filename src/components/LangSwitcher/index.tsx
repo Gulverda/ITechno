@@ -1,34 +1,48 @@
 'use client'
 
-import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
+import Image from 'next/image'
 
 export const LangSwitcher = () => {
   const router = useRouter()
   const pathname = usePathname()
-  const searchParams = useSearchParams()
 
-  const changeLang = (lang: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('lang', lang)
-    router.push(`${pathname}?${params.toString()}`)
+  // pathname არის მაგალითად: "/ka/category/test" ან "/"
+  const segments = pathname.split('/')
+  const currentLang = ['ka', 'en'].includes(segments[1]) ? segments[1] : 'ka'
+
+  const changeLang = (newLang: string) => {
+    if (currentLang === newLang) return
+
+    let newPath = ''
+    if (['ka', 'en'].includes(segments[1])) {
+      // თუ უკვე გვაქვს ენა URL-ში, ჩავანაცვლოთ
+      segments[1] = newLang
+      newPath = segments.join('/')
+    } else {
+      // თუ არ გვაქვს (მთავარზე ვართ), დავამატოთ
+      newPath = `/${newLang}${pathname === '/' ? '' : pathname}`
+    }
+
+    router.push(newPath)
   }
 
-  const currentLang = searchParams.get('lang') || 'ka'
-
   return (
-    <div className="flex bg-gray-100 p-1 rounded-lg">
-      <button
-        onClick={() => changeLang('ka')}
-        className={`px-3 py-1 text-xs font-bold rounded-md transition ${currentLang === 'ka' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'}`}
-      >
-        KA
-      </button>
-      <button
-        onClick={() => changeLang('en')}
-        className={`px-3 py-1 text-xs font-bold rounded-md transition ${currentLang === 'en' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'}`}
-      >
-        EN
-      </button>
-    </div>
+    <button
+      onClick={() => changeLang(currentLang === 'ka' ? 'en' : 'ka')}
+      className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-50 rounded-lg transition-colors group"
+    >
+      <div className="relative w-5 h-4 overflow-hidden rounded-sm shadow-sm border border-gray-100">
+        <Image
+          src={currentLang === 'ka' ? 'https://flagcdn.com/ge.svg' : 'https://flagcdn.com/us.svg'}
+          alt="flag"
+          fill
+          className="object-cover"
+        />
+      </div>
+      <span className="text-xs font-bold text-slate-700 uppercase">
+        {currentLang === 'ka' ? 'GEO' : 'ENG'}
+      </span>
+    </button>
   )
 }

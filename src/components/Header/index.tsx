@@ -38,17 +38,17 @@ export const Header = () => {
             <input
               type="text"
               placeholder="პროდუქტის ძიება..."
-              className="w-full bg-slate-100 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+              className="w-full bg-slate-100 border-none rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-blue-500 transition-all outline-none"
             />
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           </div>
 
           <Link
             href="tel:+995000000"
-            className="hidden xl:flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200 transition-all"
+            className="hidden xl:flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200 transition-all"
           >
-            <Phone className="w-4 h-4" />
             <span>დაგვიკავშირდით</span>
+            <Phone className="w-4 h-4" />
           </Link>
 
           <div className="h-8 w-[1px] bg-slate-200 hidden md:block" />
