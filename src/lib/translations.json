@@ -1,0 +1,57 @@
+{
+  "ka": {
+    "nav": {
+      "home": "მთავარი",
+      "services": "სერვისები",
+      "products": "პროდუქცია",
+      "about": "ჩვენ შესახებ",
+      "contact": "კონტაქტი"
+    },
+    "header": {
+      "contactBtn": "დაგვიკავშირდით"
+    },
+    "shop": {
+      "allProducts": "ყველა პროდუქტი",
+      "total": "სულ",
+      "categories": "კატეგორიები",
+      "all": "ყველა",
+      "noProducts": "პროდუქტები ვერ მოიძებნა",
+      "loadMore": "მეტის ჩატვირთვა"
+    },
+    "filters": {
+      "cctvStandard": "CCTV სტანდარტი",
+      "ajaxConnection": "Ajax კავშირი",
+      "resolution": "რეზოლუცია / მოდელი",
+      "techColor": "ტექნოლოგია / ფერი",
+      "capacity": "მოცულობა / მეხსიერება"
+    }
+  },
+  "en": {
+    "nav": {
+      "home": "Home",
+      "services": "Services",
+      "products": "Products",
+      "about": "About Us",
+      "contact": "Contact"
+    },
+    "header": {
+      "searchPlaceholder": "Search products...",
+      "contactBtn": "Contact Us"
+    },
+    "shop": {
+      "allProducts": "All Products",
+      "total": "Total",
+      "categories": "Categories",
+      "all": "All",
+      "noProducts": "No products found",
+      "loadMore": "Load More"
+    },
+    "filters": {
+      "cctvStandard": "CCTV Standard",
+      "ajaxConnection": "Ajax Connection",
+      "resolution": "Resolution / Model",
+      "techColor": "Technology / Color",
+      "capacity": "Capacity / Storage"
+    }
+  }
+}

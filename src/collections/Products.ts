@@ -4,10 +4,9 @@ export const Products: CollectionConfig = {
   slug: 'products',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'slug', 'price', 'discountPrice', 'category'],
+    defaultColumns: ['title', 'slug', 'price', 'isPopular', 'category'],
     group: 'Shop Content',
   },
-  // --- დინამიური ენდპოინტი ფილტრებისთვის ---
   endpoints: [
     {
       path: '/unique-specs',
@@ -36,13 +35,22 @@ export const Products: CollectionConfig = {
       },
     },
   ],
-  // ------------------------------------------
   fields: [
     {
       name: 'title',
       type: 'text',
       required: true,
       localized: true,
+    },
+    {
+      name: 'isPopular', // ახალი ველი
+      type: 'checkbox',
+      defaultValue: false,
+      label: 'პოპულარული პროდუქტი',
+      admin: {
+        position: 'sidebar',
+        description: 'მონიშნეთ, თუ გსურთ გამოჩნდეს მთავარ სლაიდერში',
+      },
     },
     {
       name: 'slug',

@@ -84,12 +84,12 @@ export const Footer = () => {
             <ul className="space-y-3 text-sm">
               <li>
                 <Link href="/services" className="hover:underline opacity-80 hover:opacity-100">
-                  ჩვენი სერვისები
+                  სერვისები
                 </Link>
               </li>
               <li>
                 <Link href="/about" className="hover:underline opacity-80 hover:opacity-100">
-                  ჩვენს შესახებ
+                  ჩვენ შესახებ
                 </Link>
               </li>
             </ul>

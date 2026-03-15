@@ -174,6 +174,10 @@ export interface Media {
 export interface Product {
   id: number;
   title: string;
+  /**
+   * მონიშნეთ, თუ გსურთ გამოჩნდეს მთავარ სლაიდერში
+   */
+  isPopular?: boolean | null;
   slug: string;
   description?: string | null;
   specifications?: string | null;
@@ -354,6 +358,7 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface ProductsSelect<T extends boolean = true> {
   title?: T;
+  isPopular?: T;
   slug?: T;
   description?: T;
   specifications?: T;

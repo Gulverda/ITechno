@@ -12,6 +12,17 @@ const nextConfig = {
 
     return webpackConfig
   },
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'flagcdn.com' },
+      { hostname: 'www.ezviz.com' },
+      { hostname: 'ajax.systems' },
+      { hostname: 'hdsurveillance.com.au' },
+      { hostname: 'www.westerndigital.com' },
+      { hostname: 'www.westerndigital.com' },
+      { hostname: 'img.icons8.com' },
+    ],
+  },
 }
 
 export default withPayload(nextConfig, { devBundleServerPackages: false })

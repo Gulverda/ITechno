@@ -1,20 +1,25 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { useDebounce } from 'use-debounce' // npm i use-debounce
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
+import { useEffect, useState, useRef } from 'react'
+import { useDebounce } from 'use-debounce'
 
 export const Search = ({ lang }: { lang: string }) => {
   const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
+  const isFirstRender = useRef(true) // პირველი ჩატვირთვის დასაჭერად
 
-  // 1. ლოკალური State ინპუტისთვის
   const [text, setText] = useState(searchParams.get('q') || '')
-
-  // 2. ველოდებით 500ms წერის დასრულებიდან
   const [query] = useDebounce(text, 500)
 
   useEffect(() => {
+    // თუ პირველი რენდერია და ინპუტი ცარიელია, არაფერი ვქნათ
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      if (!query) return
+    }
+
     const params = new URLSearchParams(searchParams.toString())
 
     if (query) {
@@ -23,11 +28,11 @@ export const Search = ({ lang }: { lang: string }) => {
       params.delete('q')
     }
 
-    // ძებნისას ლიმიტი ისევ 20-ზე დავაბრუნოთ, რომ თავიდან დაიწყოს დათვლა
     params.set('limit', '16')
 
-    router.push(`/?${params.toString()}`, { scroll: false })
-  }, [query, router]) // მხოლოდ მაშინ გაეშვება, როცა 'query' შეიცვლება (500ms-ის შემდეგ)
+    // ჩავანაცვლეთ "/" -> pathname-ით
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
+  }, [query, router, pathname, searchParams])
 
   return (
     <div className="relative w-full max-w-md">

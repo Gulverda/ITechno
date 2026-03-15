@@ -23,7 +23,7 @@ export const LoadMore = ({
     params.set('limit', String(currentLimit + 16))
 
     startTransition(() => {
-      router.push(`/?${params.toString()}`, { scroll: false })
+      router.push(`/${lang}/products?${params.toString()}`, { scroll: false })
     })
   }
 
