@@ -5,13 +5,18 @@ interface LangLayoutProps {
   params: Promise<{ lang: string }>
 }
 
+// ეს ეუბნება Next.js-ს, რომ მხოლოდ ეს ორი ენაა ხელმისაწვდომი
+export async function generateStaticParams() {
+  return [{ lang: 'ka' }, { lang: 'en' }]
+}
+
 export default async function LangLayout({ children, params }: LangLayoutProps) {
-  // params-ის ამოღება (Next.js 15-ში Promise-ია)
   const { lang } = await params
 
   return (
-    // აქ არ გვჭირდება <html> ან <body>, რადგან მთავარ layout-ში უკვე გვაქვს
-    // უბრალოდ ვაბრუნებთ შიგთავსს
-    <>{children}</>
+    // მიუხედავად იმისა, რომ <html> მთავარ ლეიაუთშია,
+    // ხშირად Next.js-ში [lang] layout-ში მაინც სვამენ სტრუქტურას
+    // ენის ატრიბუტის სწორად მუშაობისთვის.
+    <section lang={lang}>{children}</section>
   )
 }

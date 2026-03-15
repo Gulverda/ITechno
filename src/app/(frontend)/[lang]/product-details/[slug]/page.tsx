@@ -3,10 +3,57 @@ import config from '@/payload.config'
 import { notFound } from 'next/navigation'
 import ProductGallery from '@/components/ProductGallery'
 import Link from 'next/link'
+import { Metadata } from 'next'
 
 interface PageProps {
   params: Promise<{ slug: string }>
   searchParams: Promise<{ lang?: string }>
+}
+
+export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
+  const { slug } = await params
+  const { lang = 'ka' } = await searchParams
+  const payload = await getPayload({ config: await config })
+  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+
+  const { docs } = await payload.find({
+    collection: 'products',
+    where: { slug: { equals: slug } },
+    locale: lang as any,
+  })
+
+  const product = docs[0]
+
+  if (!product) {
+    return { title: 'Product Not Found | I-Techno' }
+  }
+
+  const title = `${product.title} | I-Techno`
+  const description = product.specifications || product.description?.substring(0, 160) || ''
+  const imageUrl = typeof product.mainImage === 'object' ? product.mainImage?.url : ''
+  const fullImageUrl = imageUrl ? `${baseUrl}${imageUrl}` : `${baseUrl}/og-image.jpg`
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `${baseUrl}/${lang}/products/${slug}`, // SEO-friendly URL
+    },
+    openGraph: {
+      title,
+      description,
+      url: `${baseUrl}/${lang}/products/${slug}`,
+      type: 'website',
+      images: [
+        {
+          url: fullImageUrl,
+          width: 1200,
+          height: 630,
+          alt: product.title,
+        },
+      ],
+    },
+  }
 }
 
 export default async function ProductDetails({ params, searchParams }: PageProps) {
@@ -36,17 +83,23 @@ export default async function ProductDetails({ params, searchParams }: PageProps
     <div className="max-w-7xl mx-auto px-4 py-12">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8">
-        <Link href={`/?lang=${lang}`} className="hover:text-blue-600 transition">
+        <Link href={`/${lang}`} className="hover:text-blue-600 transition font-medium">
           {lang === 'ka' ? 'მთავარი' : 'Home'}
         </Link>
         <span>/</span>
+        <Link href={`/${lang}/products`} className="hover:text-blue-600 transition font-medium">
+          {lang === 'ka' ? 'პროდუქტები' : 'Products'}
+        </Link>
         {category && (
-          <Link
-            href={`/?category=${category.id}&lang=${lang}`}
-            className="hover:text-blue-600 transition"
-          >
-            {category.name as string}
-          </Link>
+          <>
+            <span>/</span>
+            <Link
+              href={`/${lang}/products/${category.slug}`} // ვიყენებთ slug-ს ID-ის ნაცვლად
+              className="hover:text-blue-600 transition font-medium"
+            >
+              {category.name as string}
+            </Link>
+          </>
         )}
       </nav>
 

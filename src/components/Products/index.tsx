@@ -4,50 +4,39 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { ProductCard } from '@/components/ProductCard'
-import { LoadMore } from '@/components/LoadMore'
+import { Pagination } from '@/components/Pagination' // დარწმუნდი რომ იმპორტი სწორია
 import { Search } from '@/components/Search'
 import { ChevronRight } from 'lucide-react'
 
-export const Products = ({
-  products,
-  allCategories,
-  lang,
-  t,
-  specs,
-  currentLimit,
-  activeCategorySlug, // მივიღოთ slug სერვერიდან
-}: any) => {
+export const Products = ({ products, allCategories, lang, t, specs, activeCategorySlug }: any) => {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  // ფუნქცია, რომელიც აწყობს SEO-Friendly URL-ებს
+  // 1. SEO-Friendly URL Builder - კატეგორიებისთვის
   const createCategoryLink = (slug: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
-    params.delete('limit') // ახალ კატეგორიაზე გადასვლისას ლიმიტი წავშალოთ
+    params.delete('limit')
+    params.delete('page') // ახალ კატეგორიაზე გადასვლისას პირველ გვერდზე დავაბრუნოთ
 
-    // ბაზისური მისამართი: /ka/products
     const basePath = `/${lang}/products`
-
-    // თუ კატეგორია არჩეულია: /ka/products/slug, თუ არა: /ka/products
     const urlPath = slug ? `${basePath}/${slug}` : basePath
     const queryString = params.toString()
 
     return queryString ? `${urlPath}?${queryString}` : urlPath
   }
 
-  // სხვა ფილტრებისთვის (Resolution, Connection Type და ა.შ.)
+  // 2. Filter URL Builder - სხვა ფილტრებისთვის
   const createFilterUrl = (key: string, value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
     if (value) params.set(key, value)
     else params.delete(key)
-    params.delete('limit')
+
+    params.delete('page') // ფილტრის შეცვლისას პირველ გვერდზე დაბრუნება
     return `${pathname}?${params.toString()}`
   }
 
-  // ვპოულობთ აქტიურ კატეგორიას Slug-ის მიხედვით სათაურისთვის
   const activeCategory = allCategories.find((c: any) => c.slug === activeCategorySlug)
 
-  // ამოწმებს არის თუ არა კატეგორია აქტიური შტოს ნაწილი
   const isBranchActive = (cat: any): boolean => {
     if (activeCategorySlug === cat.slug) return true
     return allCategories.some((c: any) => {
@@ -85,7 +74,6 @@ export const Products = ({
                 }`}
               >
                 <span>{cat.displayName || cat.name}</span>
-
                 {isActive ? (
                   <ChevronRight className="w-3.5 h-3.5 rotate-90 text-white" />
                 ) : isOpen ? (
@@ -94,7 +82,6 @@ export const Products = ({
                   <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-all" />
                 ) : null}
               </Link>
-
               {isOpen && renderCategoryTree(String(cat.id), level + 1)}
             </div>
           )
@@ -160,7 +147,7 @@ export const Products = ({
               />
               <FilterSection
                 title={t.filters?.resolution || 'Resolution'}
-                items={specs.resolutions}
+                items={specs?.resolutions || []}
                 activeValue={searchParams.get('resolution')}
                 onSelect={(v: string | null) => createFilterUrl('resolution', v)}
                 isGrid
@@ -170,19 +157,17 @@ export const Products = ({
         </aside>
 
         <section className="flex-1">
-          {products.docs.length > 0 ? (
+          {products.docs && products.docs.length > 0 ? (
             <div className="space-y-10">
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {products.docs.map((product: any) => (
                   <ProductCard key={product.id} product={product} lang={lang} />
                 ))}
               </div>
+
+              {/* პაგინაციის სექცია */}
               <div className="flex justify-center border-t border-slate-100 pt-10">
-                <LoadMore
-                  hasNextPage={products.hasNextPage}
-                  currentLimit={currentLimit}
-                  lang={lang}
-                />
+                <Pagination totalPages={products.totalPages} currentPage={products.page} />
               </div>
             </div>
           ) : (

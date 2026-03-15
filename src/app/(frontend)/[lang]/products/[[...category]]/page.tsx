@@ -3,6 +3,7 @@ import config from '@/payload.config'
 import { Products } from '@/components/Products'
 import dict from '@/lib/translations.json'
 import { Category } from '@/payload-types'
+import { Metadata } from 'next'
 
 interface PageProps {
   params: Promise<{
@@ -12,8 +13,50 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: string | undefined }>
 }
 
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { lang, category } = await params
+  const categorySlug = category?.[0]
+  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+
+  // 1. ვაწყობთ სუფთა გზას კანონიკური ლინკისთვის
+  const canonicalPath = categorySlug ? `/${lang}/products/${categorySlug}` : `/${lang}/products`
+
+  if (!categorySlug) {
+    return {
+      title: lang === 'ka' ? 'მაღაზია | I-Techno' : 'Shop | I-Techno',
+      description:
+        lang === 'ka'
+          ? 'აღმოაჩინეთ უახლესი ტექნოლოგიები I-Techno-ზე'
+          : 'Discover latest technologies at I-Techno',
+      alternates: { canonical: `${baseUrl}${canonicalPath}` },
+      openGraph: {
+        title: 'I-Techno Shop',
+        images: [`${baseUrl}/og-image.jpg`], // აქ ჩასვი შენი default OG სურათის ლინკი
+      },
+    }
+  }
+
+  const displayTitle = categorySlug
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+
+  return {
+    title: `${displayTitle} | I-Techno`,
+    description: `${displayTitle} - საუკეთესო ფასად I-Techno-ზე`,
+    alternates: {
+      canonical: `${baseUrl}${canonicalPath}`,
+    },
+    openGraph: {
+      title: `${displayTitle} | I-Techno`,
+      description: `${displayTitle} - საუკეთესო ფასად I-Techno-ზე`,
+      url: `${baseUrl}${canonicalPath}`,
+      type: 'website',
+    },
+  }
+}
+
 export default async function Page({ params, searchParams }: PageProps) {
-  // 1. პარამეტრების მიღება და ენის ვალიდაცია
   const { lang, category: categoryArray } = await params
   const resolvedSearchParams = await searchParams
   const payload = await getPayload({ config: await config })
@@ -21,10 +64,11 @@ export default async function Page({ params, searchParams }: PageProps) {
   const currentLang = (lang === 'en' ? 'en' : 'ka') as 'ka' | 'en'
   const t = (dict as any)[currentLang] || dict.ka
 
-  // კატეგორიის slug-ის ამოღება მასივიდან
   const categorySlug = categoryArray && categoryArray.length > 0 ? categoryArray[0] : null
 
-  // 2. კატეგორიების წამოღება
+  const currentPage = resolvedSearchParams.page ? Number(resolvedSearchParams.page) : 1
+  const validatedPage = !isNaN(currentPage) && currentPage > 0 ? currentPage : 1
+
   const categoriesRes = await payload.find({
     collection: 'categories',
     limit: 500,
@@ -32,7 +76,6 @@ export default async function Page({ params, searchParams }: PageProps) {
   })
   const allCategories = categoriesRes.docs as Category[]
 
-  // 3. აქტიური კატეგორიის და შვილების იდენტიფიცირება
   let activeCategoryId: string | number | null = null
   if (categorySlug) {
     const foundCat = allCategories.find((c) => c.slug === categorySlug)
@@ -57,7 +100,6 @@ export default async function Page({ params, searchParams }: PageProps) {
     andFilters.push({ category: { in: allRelatedIds } })
   }
 
-  // ძებნის ფილტრი
   if (resolvedSearchParams.q) {
     andFilters.push({
       or: [
@@ -67,20 +109,15 @@ export default async function Page({ params, searchParams }: PageProps) {
     })
   }
 
-  // 4. NaN Error Prevention (Limit-ის ვალიდაცია)
-  const rawLimit = Number(resolvedSearchParams.limit)
-  const limitValue = !isNaN(rawLimit) && rawLimit > 0 ? rawLimit : 16
-
-  // 5. პროდუქტების წამოღება
   const productsRes = await payload.find({
     collection: 'products',
     where: andFilters.length > 0 ? { and: andFilters } : {},
     locale: currentLang as any,
-    limit: limitValue,
+    limit: 16, // შევცვალე 16-ზე, რადგან წინა კოდში 16 გვეწერა
+    page: validatedPage,
     sort: '-createdAt',
   })
 
-  // 6. Specs Fetch (დაცვით)
   let specs = { resolutions: [], connectionTypes: [] }
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
@@ -103,9 +140,8 @@ export default async function Page({ params, searchParams }: PageProps) {
       }))}
       lang={currentLang}
       t={t}
-      specs={specs} // ყოველთვის გადაეცემა, მაშინაც თუ Fetch ჩავარდა
+      specs={specs}
       activeCategorySlug={categorySlug}
-      currentLimit={limitValue}
     />
   )
 }

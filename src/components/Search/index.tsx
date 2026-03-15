@@ -27,9 +27,6 @@ export const Search = ({ lang }: { lang: string }) => {
     } else {
       params.delete('q')
     }
-
-    params.set('limit', '16')
-
     // ჩავანაცვლეთ "/" -> pathname-ით
     router.push(`${pathname}?${params.toString()}`, { scroll: false })
   }, [query, router, pathname, searchParams])

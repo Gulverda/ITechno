@@ -15,8 +15,7 @@
       "total": "სულ",
       "categories": "კატეგორიები",
       "all": "ყველა",
-      "noProducts": "პროდუქტები ვერ მოიძებნა",
-      "loadMore": "მეტის ჩატვირთვა"
+      "noProducts": "პროდუქტები ვერ მოიძებნა"
     },
     "filters": {
       "cctvStandard": "CCTV სტანდარტი",
@@ -43,8 +42,7 @@
       "total": "Total",
       "categories": "Categories",
       "all": "All",
-      "noProducts": "No products found",
-      "loadMore": "Load More"
+      "noProducts": "No products found"
     },
     "filters": {
       "cctvStandard": "CCTV Standard",
