@@ -4,19 +4,43 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { ProductCard } from '@/components/ProductCard'
-import { Pagination } from '@/components/Pagination' // დარწმუნდი რომ იმპორტი სწორია
+import { Pagination } from '@/components/Pagination'
 import { Search } from '@/components/Search'
 import { ChevronRight } from 'lucide-react'
+import { Category, Product } from '@/payload-types'
+import { PaginatedDocs } from 'payload'
 
-export const Products = ({ products, allCategories, lang, t, specs, activeCategorySlug }: any) => {
+interface CategoryWithDisplay extends Category {
+  displayName?: string
+}
+
+interface ProductsProps {
+  products: PaginatedDocs<Product>
+  allCategories: CategoryWithDisplay[]
+  lang: 'ka' | 'en'
+  t: Record<string, Record<string, string>>
+  specs: {
+    resolutions: string[]
+    connectionTypes: string[]
+  }
+  activeCategorySlug: string | null
+}
+
+export const Products = ({
+  products,
+  allCategories,
+  lang,
+  t,
+  specs,
+  activeCategorySlug,
+}: ProductsProps) => {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  // 1. SEO-Friendly URL Builder - კატეგორიებისთვის
   const createCategoryLink = (slug: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
     params.delete('limit')
-    params.delete('page') // ახალ კატეგორიაზე გადასვლისას პირველ გვერდზე დავაბრუნოთ
+    params.delete('page')
 
     const basePath = `/${lang}/products`
     const urlPath = slug ? `${basePath}/${slug}` : basePath
@@ -25,29 +49,32 @@ export const Products = ({ products, allCategories, lang, t, specs, activeCatego
     return queryString ? `${urlPath}?${queryString}` : urlPath
   }
 
-  // 2. Filter URL Builder - სხვა ფილტრებისთვის
   const createFilterUrl = (key: string, value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
     if (value) params.set(key, value)
     else params.delete(key)
 
-    params.delete('page') // ფილტრის შეცვლისას პირველ გვერდზე დაბრუნება
+    params.delete('page')
     return `${pathname}?${params.toString()}`
   }
 
-  const activeCategory = allCategories.find((c: any) => c.slug === activeCategorySlug)
+  const activeCategory = allCategories.find((c) => c.slug === activeCategorySlug)
 
-  const isBranchActive = (cat: any): boolean => {
+  const getParentId = (cat: CategoryWithDisplay): string | number | null | undefined => {
+    return typeof cat.parent === 'object' ? cat.parent?.id : cat.parent
+  }
+
+  const isBranchActive = (cat: CategoryWithDisplay): boolean => {
     if (activeCategorySlug === cat.slug) return true
-    return allCategories.some((c: any) => {
-      const pId = typeof c.parent === 'object' ? c.parent?.id : c.parent
+    return allCategories.some((c) => {
+      const pId = getParentId(c)
       return String(pId) === String(cat.id) && isBranchActive(c)
     })
   }
 
-  const renderCategoryTree = (parentId: string | null = null, level = 0) => {
-    const children = allCategories.filter((c: any) => {
-      const pId = typeof c.parent === 'object' ? c.parent?.id : c.parent
+  const renderCategoryTree = (parentId: string | number | null = null, level = 0) => {
+    const children = allCategories.filter((c) => {
+      const pId = getParentId(c)
       return parentId === null ? !pId : String(pId) === String(parentId)
     })
 
@@ -55,18 +82,15 @@ export const Products = ({ products, allCategories, lang, t, specs, activeCatego
 
     return (
       <div className={`${level > 0 ? 'ml-3 border-l border-slate-200 pl-3 mt-1' : 'space-y-1'}`}>
-        {children.map((cat: any) => {
+        {children.map((cat) => {
           const isActive = activeCategorySlug === cat.slug
           const isOpen = isBranchActive(cat)
-          const hasChildren = allCategories.some((c: any) => {
-            const pId = typeof c.parent === 'object' ? c.parent?.id : c.parent
-            return String(pId) === String(cat.id)
-          })
+          const hasChildren = allCategories.some((c) => String(getParentId(c)) === String(cat.id))
 
           return (
             <div key={cat.id}>
               <Link
-                href={createCategoryLink(cat.slug)}
+                href={createCategoryLink(cat.slug || null)}
                 className={`group flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all ${
                   isActive
                     ? 'bg-blue-600 text-white font-bold shadow-sm'
@@ -82,7 +106,7 @@ export const Products = ({ products, allCategories, lang, t, specs, activeCatego
                   <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-all" />
                 ) : null}
               </Link>
-              {isOpen && renderCategoryTree(String(cat.id), level + 1)}
+              {isOpen && renderCategoryTree(cat.id, level + 1)}
             </div>
           )
         })}
@@ -142,14 +166,14 @@ export const Products = ({ products, allCategories, lang, t, specs, activeCatego
                 title={t.filters?.cctvStandard || 'Standard'}
                 items={['ip', 'analog']}
                 activeValue={searchParams.get('connectionType')}
-                onSelect={(v: string | null) => createFilterUrl('connectionType', v)}
+                onSelect={(v) => createFilterUrl('connectionType', v)}
                 isUppercase
               />
               <FilterSection
                 title={t.filters?.resolution || 'Resolution'}
                 items={specs?.resolutions || []}
                 activeValue={searchParams.get('resolution')}
-                onSelect={(v: string | null) => createFilterUrl('resolution', v)}
+                onSelect={(v) => createFilterUrl('resolution', v)}
                 isGrid
               />
             </div>
@@ -160,14 +184,16 @@ export const Products = ({ products, allCategories, lang, t, specs, activeCatego
           {products.docs && products.docs.length > 0 ? (
             <div className="space-y-10">
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {products.docs.map((product: any) => (
+                {products.docs.map((product) => (
                   <ProductCard key={product.id} product={product} lang={lang} />
                 ))}
               </div>
 
-              {/* პაგინაციის სექცია */}
               <div className="flex justify-center border-t border-slate-100 pt-10">
-                <Pagination totalPages={products.totalPages} currentPage={products.page} />
+                <Pagination
+                  totalPages={products.totalPages ?? 1}
+                  currentPage={products.page ?? 1}
+                />
               </div>
             </div>
           ) : (
@@ -183,7 +209,23 @@ export const Products = ({ products, allCategories, lang, t, specs, activeCatego
   )
 }
 
-function FilterSection({ title, items, activeValue, onSelect, isGrid, isUppercase }: any) {
+interface FilterSectionProps {
+  title: string
+  items: string[]
+  activeValue: string | null
+  onSelect: (v: string | null) => string
+  isGrid?: boolean
+  isUppercase?: boolean
+}
+
+function FilterSection({
+  title,
+  items,
+  activeValue,
+  onSelect,
+  isGrid,
+  isUppercase,
+}: FilterSectionProps) {
   if (!items?.length) return null
   return (
     <div>
@@ -191,7 +233,7 @@ function FilterSection({ title, items, activeValue, onSelect, isGrid, isUppercas
         {title}
       </h4>
       <div className={isGrid ? 'grid grid-cols-2 gap-2' : 'flex flex-wrap gap-2'}>
-        {items.map((item: string) => {
+        {items.map((item) => {
           const isActive = activeValue === item
           return (
             <Link

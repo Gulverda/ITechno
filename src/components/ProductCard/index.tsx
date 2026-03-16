@@ -1,45 +1,56 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import dict from '@/lib/translations.json'
+import { Product, Media } from '@/payload-types'
 
-type Product = {
-  id: string | number
-  slug: string
-  title: string
-  price: number
-  discountPrice?: number
-  stock: 'in-stock' | 'out-of-stock'
-  mainImage?:
-    | {
-        url: string
-      }
-    | string
+// თარგმანების სტრუქტურის ტიპიზაცია
+interface TranslationDict {
+  productCard: {
+    inStock: string
+    outStock: string // გასწორდა დასახელება JSON-ის შესაბამისად
+    contactUs: string
+    buttonTitle: string
+  }
 }
 
-const translations = dict as Record<string, any>
+const translations = dict as Record<string, TranslationDict>
 
-export const ProductCard = ({ product, lang }: { product: Product; lang: string }) => {
-  const imageUrl = typeof product.mainImage === 'object' ? product.mainImage?.url : ''
+interface ProductCardProps {
+  product: Product
+  lang: string
+}
 
-  const hasDiscount =
-    product.discountPrice && product.discountPrice > 0 && product.discountPrice < product.price
+export const ProductCard = ({ product, lang }: ProductCardProps) => {
+  // სურათის URL-ის უსაფრთხოდ ამოღება
+  const imageUrl =
+    typeof product.mainImage === 'object' && product.mainImage !== null
+      ? (product.mainImage as Media).url || ''
+      : ''
 
-  const isPriceZero = !product.price || product.price === 0
+  const price = product.price ?? 0
+  const discountPrice = product.discountPrice ?? 0
 
-  const t = translations[lang] || translations['ka']
+  const hasDiscount = discountPrice > 0 && discountPrice < price
+  const isPriceZero = price === 0
+
+  // ენის ვალიდაცია
+  const currentLang = lang === 'ka' || lang === 'en' ? lang : 'ka'
+  const t = translations[currentLang] || translations['ka']
 
   return (
     <Link href={`/${lang}/product-details/${product.slug}`} className="group block h-full">
       <div className="bg-white border border-gray-200 rounded-[20px] overflow-hidden transition-all duration-300 hover:shadow-xl p-4 h-full flex flex-col relative">
         <div className="absolute top-4 left-4 z-10">
           <span className="bg-[#2979BC] text-white text-[10px] px-3 py-1 rounded-md font-bold">
-            {product.stock === 'in-stock' ? t.productCard.inStock : t.productCard.outOfStock}
+            {product.stock === 'in-stock' ? t.productCard.inStock : t.productCard.outStock}
           </span>
         </div>
 
-        {hasDiscount && !isPriceZero && product.discountPrice && (
+        {hasDiscount && !isPriceZero && (
           <div className="absolute top-12 left-4 z-10 bg-[#EE3E33] text-white px-2 py-0.5 rounded-md text-[11px] font-bold">
-            -{Math.round(((product.price - product.discountPrice) / product.price) * 100)}%
+            -{Math.round(((price - discountPrice) / price) * 100)}%
           </div>
         )}
 
@@ -72,23 +83,20 @@ export const ProductCard = ({ product, lang }: { product: Product; lang: string 
                 <span className="text-[13px] font-bold text-[#2979BC]">
                   {t.productCard.contactUs}
                 </span>
-              ) : hasDiscount && product.discountPrice ? (
+              ) : hasDiscount ? (
                 <>
                   <span className="text-[20px] font-bold text-[#2979BC]">
-                    {product.discountPrice.toFixed(2)}₾
+                    {discountPrice.toFixed(2)}₾
                   </span>
                   <span className="text-[13px] text-gray-400 line-through">
-                    {product.price.toFixed(2)}₾
+                    {price.toFixed(2)}₾
                   </span>
                 </>
               ) : (
-                <span className="text-[20px] font-bold text-[#2979BC]">
-                  {product.price.toFixed(2)}₾
-                </span>
+                <span className="text-[20px] font-bold text-[#2979BC]">{price.toFixed(2)}₾</span>
               )}
             </div>
 
-            {/* ღილაკი */}
             <div className="w-full bg-[#2979BC] text-white py-2.5 rounded-xl font-bold text-[13px] transition-colors group-hover:bg-[#1E5D91] text-center">
               <span>{t.productCard.buttonTitle}</span>
             </div>

@@ -1,5 +1,12 @@
 import { CollectionConfig } from 'payload'
 
+interface SpecRow {
+  res: string | null
+  cap: string | null
+  tech: string | null
+  conn: string | null
+}
+
 export const Products: CollectionConfig = {
   slug: 'products',
   admin: {
@@ -14,8 +21,7 @@ export const Products: CollectionConfig = {
       handler: async (req) => {
         const { payload } = req
 
-        // SQL Query რომელიც იღებს ყველა უნიკალურ ტექნიკურ მახასიათებელს
-        // მნიშვნელოვანია: Drizzle-ში group ველები იწერება ქვედა ტირეებით
+        // SQL Query
         const result = await payload.db.drizzle.execute(
           'SELECT DISTINCT ' +
             'specifications_group_resolution as res, ' +
@@ -25,12 +31,18 @@ export const Products: CollectionConfig = {
             'FROM products',
         )
 
-        // ვაბრუნებთ გასუფთავებულ მასივებს ფრონტენდისთვის
+        // ვუკავშირებთ შედეგს ჩვენს ინტერფეისს
+        const rows = result.rows as unknown as SpecRow[]
+
+        // დამხმარე ფუნქცია უნიკალური და სუფთა მასივის მისაღებად
+        const getUnique = (arr: (string | null)[]) =>
+          [...new Set(arr.filter((v): v is string => !!v))].sort()
+
         return Response.json({
-          resolutions: [...new Set(result.rows.map((r: any) => r.res).filter(Boolean))].sort(),
-          capacities: [...new Set(result.rows.map((r: any) => r.cap).filter(Boolean))].sort(),
-          technologies: [...new Set(result.rows.map((r: any) => r.tech).filter(Boolean))].sort(),
-          connectionTypes: [...new Set(result.rows.map((r: any) => r.conn).filter(Boolean))].sort(),
+          resolutions: getUnique(rows.map((r) => r.res)),
+          capacities: getUnique(rows.map((r) => r.cap)),
+          technologies: getUnique(rows.map((r) => r.tech)),
+          connectionTypes: getUnique(rows.map((r) => r.conn)),
         })
       },
     },
@@ -43,7 +55,7 @@ export const Products: CollectionConfig = {
       localized: true,
     },
     {
-      name: 'isPopular', // ახალი ველი
+      name: 'isPopular',
       type: 'checkbox',
       defaultValue: false,
       label: 'პოპულარული პროდუქტი',
@@ -69,7 +81,7 @@ export const Products: CollectionConfig = {
               const titleToConvert =
                 typeof data.title === 'object' ? data.title.en || data.title.ka : data.title
 
-              return titleToConvert
+              return String(titleToConvert)
                 .toLowerCase()
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/(^-|-$)+/g, '')
@@ -147,18 +159,18 @@ export const Products: CollectionConfig = {
     {
       name: 'category',
       type: 'relationship',
-      relationTo: 'categories' as any,
+      relationTo: 'categories',
       required: true,
     },
     {
       name: 'brand',
       type: 'relationship',
-      relationTo: 'brands' as any,
+      relationTo: 'brands',
     },
     {
       name: 'mainImage',
       type: 'relationship',
-      relationTo: 'media' as any,
+      relationTo: 'media',
       required: true,
     },
     {
@@ -168,7 +180,7 @@ export const Products: CollectionConfig = {
         {
           name: 'image',
           type: 'relationship',
-          relationTo: 'media' as any,
+          relationTo: 'media',
           required: true,
         },
       ],

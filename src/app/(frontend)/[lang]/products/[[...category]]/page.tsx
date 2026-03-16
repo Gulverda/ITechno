@@ -3,7 +3,12 @@ import config from '@/payload.config'
 import { Products } from '@/components/Products'
 import dict from '@/lib/translations.json'
 import { Category } from '@/payload-types'
+import { Where } from 'payload'
 import { Metadata } from 'next'
+
+// თარგმანის ტიპები
+type Dictionary = typeof dict.ka
+type SupportedLang = 'ka' | 'en'
 
 interface PageProps {
   params: Promise<{
@@ -13,12 +18,16 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: string | undefined }>
 }
 
+interface UniqueSpecs {
+  resolutions: string[]
+  connectionTypes: string[]
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, category } = await params
   const categorySlug = category?.[0]
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 
-  // 1. ვაწყობთ სუფთა გზას კანონიკური ლინკისთვის
   const canonicalPath = categorySlug ? `/${lang}/products/${categorySlug}` : `/${lang}/products`
 
   if (!categorySlug) {
@@ -31,7 +40,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       alternates: { canonical: `${baseUrl}${canonicalPath}` },
       openGraph: {
         title: 'I-Techno Shop',
-        images: [`${baseUrl}/og-image.jpg`], // აქ ჩასვი შენი default OG სურათის ლინკი
+        images: [`${baseUrl}/og-image.jpg`],
       },
     }
   }
@@ -61,8 +70,8 @@ export default async function Page({ params, searchParams }: PageProps) {
   const resolvedSearchParams = await searchParams
   const payload = await getPayload({ config: await config })
 
-  const currentLang = (lang === 'en' ? 'en' : 'ka') as 'ka' | 'en'
-  const t = (dict as any)[currentLang] || dict.ka
+  const currentLang: SupportedLang = lang === 'en' ? 'en' : 'ka'
+  const t: Dictionary = (dict as Record<SupportedLang, Dictionary>)[currentLang] || dict.ka
 
   const categorySlug = categoryArray && categoryArray.length > 0 ? categoryArray[0] : null
 
@@ -72,8 +81,9 @@ export default async function Page({ params, searchParams }: PageProps) {
   const categoriesRes = await payload.find({
     collection: 'categories',
     limit: 500,
-    locale: currentLang as any,
+    locale: currentLang,
   })
+
   const allCategories = categoriesRes.docs as Category[]
 
   let activeCategoryId: string | number | null = null
@@ -82,12 +92,13 @@ export default async function Page({ params, searchParams }: PageProps) {
     if (foundCat) activeCategoryId = foundCat.id
   }
 
-  const andFilters: any[] = []
+  // ტიპიზირებული ფილტრების მასივი (გასწორებული Where ტიპით)
+  const andFilters: Where[] = []
 
   if (activeCategoryId) {
     const getAllChildIds = (parentId: string | number): (string | number)[] => {
       const children = allCategories.filter((c) => {
-        const pId = typeof c.parent === 'object' ? (c.parent as any)?.id : c.parent
+        const pId = typeof c.parent === 'object' ? (c.parent as Category | null)?.id : c.parent
         return String(pId) === String(parentId)
       })
       return children.reduce<(string | number)[]>(
@@ -111,24 +122,26 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   const productsRes = await payload.find({
     collection: 'products',
-    where: andFilters.length > 0 ? { and: andFilters } : {},
-    locale: currentLang as any,
-    limit: 16, // შევცვალე 16-ზე, რადგან წინა კოდში 16 გვეწერა
+    where: andFilters.length > 0 ? { and: andFilters } : ({} as Where),
+    locale: currentLang,
+    limit: 16,
     page: validatedPage,
     sort: '-createdAt',
   })
 
-  let specs = { resolutions: [], connectionTypes: [] }
+  // Specs-ის საწყისი მნიშვნელობა ტიპით
+  let specs: UniqueSpecs = { resolutions: [], connectionTypes: [] }
+
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
     const specsRes = await fetch(`${baseUrl}/api/products/unique-specs`, {
       next: { revalidate: 3600 },
     })
     if (specsRes.ok) {
-      specs = await specsRes.json()
+      specs = (await specsRes.json()) as UniqueSpecs
     }
   } catch (e) {
-    console.error('Specs fetch failed, using defaults')
+    console.error('Specs fetch failed, using defaults:', e)
   }
 
   return (
@@ -136,7 +149,7 @@ export default async function Page({ params, searchParams }: PageProps) {
       products={productsRes}
       allCategories={allCategories.map((c) => ({
         ...c,
-        displayName: (c.name as any) || 'No Name',
+        displayName: c.name || 'No Name',
       }))}
       lang={currentLang}
       t={t}
