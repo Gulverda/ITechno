@@ -23,6 +23,12 @@
       "resolution": "რეზოლუცია / მოდელი",
       "techColor": "ტექნოლოგია / ფერი",
       "capacity": "მოცულობა / მეხსიერება"
+    },
+    "productCard": {
+      "buttonTitle": "სრულად ნახვა",
+      "contactUs": "დაგვიკავშირდით",
+      "inStock": "მარაგშია",
+      "outStock": "არ არის მარაგში"
     }
   },
   "en": {
@@ -50,6 +56,12 @@
       "resolution": "Resolution / Model",
       "techColor": "Technology / Color",
       "capacity": "Capacity / Storage"
+    },
+    "productCard": {
+      "buttonTitle": "View More",
+      "contactUs": "Contact Us",
+      "inStock": "In stock",
+      "outStock": "Out of stock"
     }
   }
 }

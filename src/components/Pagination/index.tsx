@@ -16,12 +16,6 @@ export const Pagination = ({
 
   if (totalPages <= 1) return null
 
-  const createPageUrl = (pageNumber: number) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('page', pageNumber.toString())
-    return `${pathname}?${params.toString()}`
-  }
-
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams.toString())
     params.delete('limit')
@@ -29,29 +23,65 @@ export const Pagination = ({
     router.push(`${pathname}?${params.toString()}`, { scroll: true })
   }
 
+  const getVisiblePages = () => {
+    const pages: (number | string)[] = []
+
+    if (totalPages <= 5) {
+      // მცირე რაოდენობაზე პირდაპირ ვაჩვენოთ
+      for (let i = 1; i <= totalPages; i++) pages.push(i)
+      return pages
+    }
+
+    // მობილურისთვის განკუთვნილი გამარტივებული მასივი
+    pages.push(1)
+
+    // თუ მე-3 გვერდზე შორს ვართ, დავსვათ შუა ნაწილი
+    if (currentPage > 2) {
+      if (currentPage > 3) pages.push('...')
+      pages.push(currentPage)
+    } else {
+      pages.push(2)
+    }
+
+    // თუ ბოლოდან შორს ვართ, დავსვათ სამწერტილი და ბოლო გვერდი
+    if (currentPage < totalPages - 1) {
+      if (currentPage < totalPages - 2) pages.push('...')
+      pages.push(totalPages)
+    } else if (currentPage !== totalPages && !pages.includes(totalPages)) {
+      pages.push(totalPages)
+    }
+
+    // დუბლიკატების მოცილება (უსაფრთხოებისთვის)
+    return Array.from(new Set(pages)).sort((a, b) => {
+      if (a === '...' || b === '...') return 0
+      return (a as number) - (b as number)
+    })
+  }
+
   return (
-    <div className="flex items-center justify-center gap-2 mt-12">
-      {/* წინა გვერდი */}
+    <div className="flex items-center justify-center gap-1 mt-8 mb-12">
       <button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage <= 1}
-        className="p-2 rounded-lg border border-slate-200 disabled:opacity-30 hover:bg-slate-50 transition-all"
+        className="p-2 rounded-lg border border-slate-200 disabled:opacity-20 hover:bg-slate-50 flex-shrink-0"
       >
-        <ChevronLeft className="w-5 h-5" />
+        <ChevronLeft className="w-4 h-4" />
       </button>
 
-      {/* გვერდების ნომრები */}
       <div className="flex items-center gap-1">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+        {getVisiblePages().map((page, index) => {
           const isActive = page === currentPage
-          // თუ ძალიან ბევრი გვერდია, აქ შეიძლება დაემატოს ლოგიკა "..."-სთვის
+          const isEllipsis = page === '...'
+
           return (
             <button
-              key={page}
-              onClick={() => handlePageChange(page)}
-              className={`w-10 h-10 rounded-lg font-bold text-sm transition-all ${
-                isActive ? 'bg-blue-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'
-              }`}
+              key={index}
+              onClick={() => !isEllipsis && handlePageChange(page as number)}
+              disabled={isEllipsis}
+              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg font-bold text-xs sm:text-sm transition-all flex items-center justify-center
+                ${isActive ? 'bg-blue-600 text-white shadow-md' : 'text-slate-600'}
+                ${isEllipsis ? 'text-slate-400 cursor-default px-1' : 'hover:bg-slate-100'}
+              `}
             >
               {page}
             </button>
@@ -59,13 +89,12 @@ export const Pagination = ({
         })}
       </div>
 
-      {/* შემდეგი გვერდი */}
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage >= totalPages}
-        className="p-2 rounded-lg border border-slate-200 disabled:opacity-30 hover:bg-slate-50 transition-all"
+        className="p-2 rounded-lg border border-slate-200 disabled:opacity-20 hover:bg-slate-50 flex-shrink-0"
       >
-        <ChevronRight className="w-5 h-5" />
+        <ChevronRight className="w-4 h-4" />
       </button>
     </div>
   )

@@ -5,7 +5,6 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const locales = ['ka', 'en']
 
-  // 1. გამოვტოვოთ ფაილები
   if (pathname.startsWith('/_next') || pathname.includes('.') || pathname.startsWith('/admin')) {
     return NextResponse.next()
   }
@@ -14,8 +13,10 @@ export function middleware(request: NextRequest) {
   console.log('Path:', pathname)
 
   if (pathname === '/') {
-    console.log('Status: Root Path - No Redirect')
-    return NextResponse.next()
+    console.log('Status: Root Path - Redirecting to /ka')
+    const url = request.nextUrl.clone()
+    url.pathname = `/ka`
+    return NextResponse.redirect(url)
   }
 
   const hasLocale = locales.some((loc) => pathname.startsWith(`/${loc}/`) || pathname === `/${loc}`)
