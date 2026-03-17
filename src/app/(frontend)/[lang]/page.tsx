@@ -89,7 +89,7 @@ export default async function Page({ params, searchParams }: any) {
   })
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen pb-20">
       <CategoryBar lang={lang} />
       <Hero />
       <BrandsSlider brands={brandsRes.docs} />

@@ -18,7 +18,7 @@ interface PopularProductsProps {
 
 export const PopularProducts = ({ products, lang, title }: PopularProductsProps) => {
   return (
-    <section className="py-12 bg-gray-50/50 rounded-[40px] px-6 my-10">
+    <section className="py-12 px-6 my-10">
       <div className="max-w-[1440px] mx-auto">
         {/* Header სექცია ისე, როგორც სურათზეა */}
         <div className="flex justify-between items-end mb-8 border-b border-gray-100 pb-4">

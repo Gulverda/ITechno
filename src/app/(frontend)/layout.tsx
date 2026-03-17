@@ -25,7 +25,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="ka">
       <body>
-        <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
+        <div className="min-h-screen text-gray-900 flex flex-col">
           <Header />
           <main className="flex-grow">{children}</main>
           <Footer />
