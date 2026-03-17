@@ -18,12 +18,12 @@ interface ProductsProps {
   products: PaginatedDocs<Product>
   allCategories: CategoryWithDisplay[]
   lang: 'ka' | 'en'
-  t: Record<string, Record<string, string>>
-  specs: {
-    resolutions: string[]
-    connectionTypes: string[]
-  }
+  t: Record<string, any>
+  // 1. შევცვალეთ ტიპი დინამიურზე
+  specs: Record<string, string[]>
   activeCategorySlug: string | null
+  // 2. დავამატეთ კატეგორიის ფილტრების სია
+  categoryFilters?: string[]
 }
 
 export const Products = ({
@@ -33,6 +33,7 @@ export const Products = ({
   t,
   specs,
   activeCategorySlug,
+  categoryFilters,
 }: ProductsProps) => {
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -41,35 +42,32 @@ export const Products = ({
     const params = new URLSearchParams(searchParams.toString())
     params.delete('limit')
     params.delete('page')
-
     const basePath = `/${lang}/products`
     const urlPath = slug ? `${basePath}/${slug}` : basePath
     const queryString = params.toString()
-
     return queryString ? `${urlPath}?${queryString}` : urlPath
   }
 
-  const createFilterUrl = (key: string, value: string | null) => {
+  const createFilterUrl = (groupName: string, value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
-    if (value) params.set(key, value)
-    else params.delete(key)
 
-    params.delete('page')
+    if (value === null || searchParams.get(groupName) === value) {
+      params.delete(groupName) // თუ უკვე არჩეულია, წავშალოთ (Deselect)
+    } else {
+      params.set(groupName, value) // თუ ახალია, ჩავწეროთ
+    }
+
+    params.delete('page') // ფილტრისას ყოველთვის პირველ გვერდზე დავაბრუნოთ
     return `${pathname}?${params.toString()}`
   }
 
   const activeCategory = allCategories.find((c) => c.slug === activeCategorySlug)
-
-  const getParentId = (cat: CategoryWithDisplay): string | number | null | undefined => {
-    return typeof cat.parent === 'object' ? cat.parent?.id : cat.parent
-  }
+  const getParentId = (cat: CategoryWithDisplay) =>
+    typeof cat.parent === 'object' ? cat.parent?.id : cat.parent
 
   const isBranchActive = (cat: CategoryWithDisplay): boolean => {
     if (activeCategorySlug === cat.slug) return true
-    return allCategories.some((c) => {
-      const pId = getParentId(c)
-      return String(pId) === String(cat.id) && isBranchActive(c)
-    })
+    return allCategories.some((c) => String(getParentId(c)) === String(cat.id) && isBranchActive(c))
   }
 
   const renderCategoryTree = (parentId: string | number | null = null, level = 0) => {
@@ -77,16 +75,13 @@ export const Products = ({
       const pId = getParentId(c)
       return parentId === null ? !pId : String(pId) === String(parentId)
     })
-
     if (children.length === 0) return null
-
     return (
       <div className={`${level > 0 ? 'ml-3 border-l border-slate-200 pl-3 mt-1' : 'space-y-1'}`}>
         {children.map((cat) => {
           const isActive = activeCategorySlug === cat.slug
           const isOpen = isBranchActive(cat)
           const hasChildren = allCategories.some((c) => String(getParentId(c)) === String(cat.id))
-
           return (
             <div key={cat.id}>
               <Link
@@ -98,12 +93,12 @@ export const Products = ({
                 }`}
               >
                 <span>{cat.displayName || cat.name}</span>
-                {isActive ? (
-                  <ChevronRight className="w-3.5 h-3.5 rotate-90 text-white" />
-                ) : isOpen ? (
-                  <ChevronRight className="w-3.5 h-3.5 rotate-90 text-blue-600" />
+                {isActive || isOpen ? (
+                  <ChevronRight
+                    className={`w-3.5 h-3.5 rotate-90 ${isActive ? 'text-white' : 'text-blue-600'}`}
+                  />
                 ) : hasChildren ? (
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-all" />
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1" />
                 ) : null}
               </Link>
               {isOpen && renderCategoryTree(cat.id, level + 1)}
@@ -143,40 +138,43 @@ export const Products = ({
               <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-6 border-b pb-4">
                 {t.shop?.categories || (lang === 'ka' ? 'კატეგორიები' : 'Categories')}
               </h3>
-
               <Link
                 href={createCategoryLink(null)}
-                className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm mb-2 transition-all ${
-                  !activeCategorySlug
-                    ? 'bg-blue-600 text-white font-bold shadow-sm'
-                    : 'text-slate-600 hover:bg-slate-100'
-                }`}
+                className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm mb-2 transition-all ${!activeCategorySlug ? 'bg-blue-600 text-white font-bold shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}
               >
                 <span>{t.shop?.all || (lang === 'ka' ? 'ყველა' : 'All')}</span>
                 {!activeCategorySlug && (
                   <ChevronRight className="w-3.5 h-3.5 rotate-90 text-white" />
                 )}
               </Link>
-
               <nav>{renderCategoryTree(null)}</nav>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-8">
-              <FilterSection
-                title={t.filters?.cctvStandard || 'Standard'}
-                items={['ip', 'analog']}
-                activeValue={searchParams.get('connectionType')}
-                onSelect={(v) => createFilterUrl('connectionType', v)}
-                isUppercase
-              />
-              <FilterSection
-                title={t.filters?.resolution || 'Resolution'}
-                items={specs?.resolutions || []}
-                activeValue={searchParams.get('resolution')}
-                onSelect={(v) => createFilterUrl('resolution', v)}
-                isGrid
-              />
-            </div>
+            {/* 3. დინამიური ფილტრების სექცია */}
+            {(() => {
+              // 1. ჯერ ვფილტრავთ specs-ს იმის მიხედვით, თუ რომელი ეკუთვნის ამ კატეგორიას
+              const visibleFilters = Object.entries(specs).filter(([groupName]) => {
+                if (!activeCategorySlug) return false
+                return categoryFilters?.some((filterName) => filterName === groupName)
+              })
+
+              // 2. თუ საჩვენებელი ფილტრები არ გვაქვს, საერთოდ არაფერს ვაბრუნებთ (არც div-ს)
+              if (visibleFilters.length === 0) return null
+
+              return (
+                <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-8">
+                  {visibleFilters.map(([groupName, values]) => (
+                    <FilterSection
+                      key={groupName}
+                      title={groupName}
+                      items={values}
+                      activeValue={searchParams.get(groupName)}
+                      onSelect={(v) => createFilterUrl(groupName, v)}
+                    />
+                  ))}
+                </div>
+              )
+            })()}
           </div>
         </aside>
 
@@ -188,7 +186,6 @@ export const Products = ({
                   <ProductCard key={product.id} product={product} lang={lang} />
                 ))}
               </div>
-
               <div className="flex justify-center border-t border-slate-100 pt-10">
                 <Pagination
                   totalPages={products.totalPages ?? 1}

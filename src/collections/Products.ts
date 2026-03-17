@@ -1,12 +1,5 @@
 import { CollectionConfig } from 'payload'
 
-interface SpecRow {
-  res: string | null
-  cap: string | null
-  tech: string | null
-  conn: string | null
-}
-
 export const Products: CollectionConfig = {
   slug: 'products',
   admin: {
@@ -21,29 +14,50 @@ export const Products: CollectionConfig = {
       handler: async (req) => {
         const { payload } = req
 
-        // SQL Query
-        const result = await payload.db.drizzle.execute(
-          'SELECT DISTINCT ' +
-            'specifications_group_resolution as res, ' +
-            'specifications_group_capacity as cap, ' +
-            'specifications_group_technology as tech, ' +
-            'specifications_group_connection_type as conn ' +
-            'FROM products',
-        )
+        if (!req.url) {
+          return Response.json({ error: 'URL is missing' }, { status: 400 })
+        }
 
-        // ვუკავშირებთ შედეგს ჩვენს ინტერფეისს
-        const rows = result.rows as unknown as SpecRow[]
+        const { searchParams } = new URL(req.url)
+        const lang = searchParams.get('lang') || 'ka'
 
-        // დამხმარე ფუნქცია უნიკალური და სუფთა მასივის მისაღებად
-        const getUnique = (arr: (string | null)[]) =>
-          [...new Set(arr.filter((v): v is string => !!v))].sort()
-
-        return Response.json({
-          resolutions: getUnique(rows.map((r) => r.res)),
-          capacities: getUnique(rows.map((r) => r.cap)),
-          technologies: getUnique(rows.map((r) => r.tech)),
-          connectionTypes: getUnique(rows.map((r) => r.conn)),
+        const result = await payload.find({
+          collection: 'products',
+          depth: 2,
+          limit: 1000,
+          pagination: false,
+          // აქ "as any" იმიტომ გვინდა, რომ TS-მა არ იჩხუბოს მკაცრ ტიპებზე
+          locale: lang as any,
         })
+
+        const dynamicFilters: Record<string, string[]> = {}
+
+        result.docs.forEach((prod: any) => {
+          prod.filter_values?.forEach((item: any) => {
+            const groupObj = item.filter_group
+
+            // მთავარი ცვლილება აქ არის:
+            // როცა locale: lang გვაქვს, groupObj.name უკვე არის სტრინგი სწორ ენაზე
+            // არ გამოიყენო groupObj.name?.ka !!!
+            const groupName = typeof groupObj === 'object' ? groupObj.name : null
+
+            const valText = typeof item.value_rel === 'object' ? item.value_rel.value : null
+
+            if (groupName && valText) {
+              if (!dynamicFilters[groupName]) dynamicFilters[groupName] = []
+              if (!dynamicFilters[groupName].includes(valText)) {
+                dynamicFilters[groupName].push(valText)
+              }
+            }
+          })
+        })
+
+        // სორტირება
+        Object.keys(dynamicFilters).forEach((key) => {
+          dynamicFilters[key].sort()
+        })
+
+        return Response.json(dynamicFilters)
       },
     },
   ],
@@ -101,38 +115,50 @@ export const Products: CollectionConfig = {
       type: 'textarea',
       localized: true,
     },
+    // --- აქ იწყება დინამიური ფილტრების ნაწილი ---
     {
-      name: 'specifications_group',
-      type: 'group',
-      label: 'ტექნიკური მახასიათებლები',
+      name: 'filter_values',
+      type: 'array',
+      label: 'ფილტრაციის პარამეტრები',
       admin: {
         position: 'sidebar',
       },
       fields: [
         {
-          name: 'resolution',
-          type: 'text',
-          localized: false,
+          name: 'filter_group',
+          type: 'relationship',
+          relationTo: 'filters',
+          required: true,
+          label: 'ფილტრის ჯგუფი',
         },
         {
-          name: 'capacity',
-          type: 'text',
-          localized: false,
-        },
-        {
-          name: 'size',
-          type: 'text',
-          localized: false,
-        },
-        {
-          name: 'connectionType',
-          type: 'text',
-          localized: false,
-        },
-        {
-          name: 'technology',
-          type: 'text',
-          localized: false,
+          name: 'value_rel',
+          type: 'relationship',
+          relationTo: 'filter-options',
+          required: true,
+          label: 'აირჩიეთ მნიშვნელობა',
+          // ფუნქციას პირდაპირ ვეუბნებით, რომ დააბრუნებს Where-ს
+          filterOptions: ({ siblingData }: any): any => {
+            const currentGroup = siblingData?.filter_group
+
+            if (currentGroup) {
+              const groupId = typeof currentGroup === 'object' ? currentGroup.id : currentGroup
+
+              return {
+                // ვიყენებთ დინამიურ Key-ს, რომ TS-მა არ იჩხუბოს ინდექსებზე
+                group: {
+                  equals: groupId,
+                },
+              }
+            }
+
+            // თუ ჯგუფი არაა, ვაბრუნებთ ფილტრს, რომელიც არაფერს იპოვის (false-ის ნაცვლად)
+            return {
+              id: {
+                exists: false,
+              },
+            }
+          },
         },
       ],
     },
