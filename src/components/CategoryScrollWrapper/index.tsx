@@ -17,7 +17,6 @@ export const CategoryScrollWrapper = ({ children }: { children: React.ReactNode 
 
   return (
     <div className="relative group">
-      {/* Left Arrow */}
       <button
         onClick={() => scroll('left')}
         className="absolute left-[-20px] top-1/2 -translate-y-1/2 z-20 bg-white shadow-xl border border-gray-100 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-50 hidden md:block"

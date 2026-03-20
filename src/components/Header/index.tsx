@@ -51,7 +51,7 @@ export const Header = () => {
         <div className="flex items-center gap-4 justify-end max-w-xl">
           <Link
             href="tel:+995000000"
-            className="hidden xl:flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all"
+            className="hidden xl:flex items-center gap-2 border border-blue-600 text-blue-600 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 hover:text-white transition-all"
           >
             <span>{t.header.contactBtn}</span>
             <Phone className="w-4 h-4" />

@@ -54,6 +54,19 @@
       "contactUs": "დაგვიკავშირდით",
       "viewMore": "სრულად",
       "address": "ვაჟა-ფშაველას გამზ. #20"
+    },
+    "footer": {
+      "description": "ჩვენი მთავარი პრიორიტეტია სანდო და სტაბილური უსაფრთხოების სისტემების დანერგვა, რომლებიც მომხმარებელს გრძელვადიან დაცვასა და სიმშვიდეს უზრუნველყოფს.",
+      "products": "პროდუქცია",
+      "company": "კომპანია",
+      "contact": "დაგვიკავშირდი",
+      "address": "ვაჟა-ფშაველას გამზ. #20",
+      "rights": "ყველა უფლება დაცულია",
+      "terms": "წესები და პირობები",
+      "videoSurveillance": "ვიდეო სამეთვალყურეო",
+      "storage": "შენახვის მოწყობილობები",
+      "fireAlarm": "სახანძრო სიგნალიზაცია",
+      "securityAlarm": "დაცვის სიგნალიზაცია"
     }
   },
   "en": {
@@ -112,6 +125,19 @@
       "contactUs": "Contact Us",
       "viewMore": "View More",
       "address": "20 Vaza-Pshavela Ave."
+    },
+    "footer": {
+      "description": "Our main priority is the implementation of reliable and stable security systems that provide long-term protection and peace of mind for the customer.",
+      "products": "Products",
+      "company": "Company",
+      "contact": "Contact Us",
+      "address": "20 Vaza-Pshavela Ave.",
+      "rights": "All rights reserved",
+      "terms": "Terms and Conditions",
+      "videoSurveillance": "Video Surveillance",
+      "storage": "Storage Devices",
+      "fireAlarm": "Fire Alarms",
+      "securityAlarm": "Security Alarms"
     }
   }
 }

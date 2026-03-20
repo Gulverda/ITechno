@@ -20,6 +20,7 @@ export default async function Page({ params, searchParams }: any) {
       isPopular: { equals: true },
     },
     limit: 10,
+    locale: lang,
   })
 
   const brandsRes = await payload.find({
@@ -83,7 +84,7 @@ export default async function Page({ params, searchParams }: any) {
       <BrandsSlider brands={brandsRes.docs} />
       <PopularProducts
         products={popularProducts.docs}
-        lang={params.lang}
+        lang={lang}
         title={params.lang === 'ka' ? 'პოპულარული პროდუქტები' : 'Popular Products'}
       />
       <PromoBanner />
