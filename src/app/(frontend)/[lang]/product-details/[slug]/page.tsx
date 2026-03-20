@@ -2,8 +2,10 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { notFound } from 'next/navigation'
 import ProductGallery from '@/components/ProductGallery'
+import { ProductCard } from '@/components/ProductCard'
 import Link from 'next/link'
 import { Metadata } from 'next'
+import { Phone, MessageCircle, ChevronRight, ArrowRight } from 'lucide-react'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -12,213 +14,213 @@ interface PageProps {
 
 export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
   const { slug } = await params
-  const { lang = 'ka' } = await searchParams
+  const sParams = await searchParams
+  const lang = (sParams?.lang as 'ka' | 'en') || 'ka'
+
   const payload = await getPayload({ config: await config })
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 
   const { docs } = await payload.find({
     collection: 'products',
     where: { slug: { equals: slug } },
-    locale: lang as any,
+    locale: lang,
   })
 
   const product = docs[0]
-
-  if (!product) {
-    return { title: 'Product Not Found | I-Techno' }
-  }
+  if (!product) return { title: 'Product Not Found | I-Techno' }
 
   const title = `${product.title} | I-Techno`
-  const description = product.specifications || product.description?.substring(0, 160) || ''
-  const imageUrl = typeof product.mainImage === 'object' ? product.mainImage?.url : ''
+  const description =
+    product.specifications ||
+    (typeof product.description === 'string' ? product.description.substring(0, 160) : '')
+  const imageUrl = typeof product.mainImage === 'object' ? (product.mainImage as any)?.url : ''
   const fullImageUrl = imageUrl ? `${baseUrl}${imageUrl}` : `${baseUrl}/og-image.jpg`
 
   return {
     title,
     description,
-    alternates: {
-      canonical: `${baseUrl}/${lang}/products/${slug}`, // SEO-friendly URL
-    },
+    alternates: { canonical: `${baseUrl}/${lang}/products/${slug}` },
     openGraph: {
       title,
       description,
       url: `${baseUrl}/${lang}/products/${slug}`,
       type: 'website',
-      images: [
-        {
-          url: fullImageUrl,
-          width: 1200,
-          height: 630,
-          alt: product.title,
-        },
-      ],
+      images: [{ url: fullImageUrl, width: 1200, height: 630, alt: product.title }],
     },
   }
 }
 
 export default async function ProductDetails({ params, searchParams }: PageProps) {
   const { slug } = await params
-  const { lang = 'ka' } = await searchParams
+  const sParams = await searchParams
+  const lang = (sParams?.lang as 'ka' | 'en') || 'ka'
+
   const payload = await getPayload({ config: await config })
 
+  // 1. მიმდინარე პროდუქტის წამოღება
   const { docs } = await payload.find({
     collection: 'products',
     where: { slug: { equals: slug } },
-    locale: lang as any,
+    locale: lang,
     depth: 2,
   })
 
   const product = docs[0]
   if (!product) return notFound()
 
-  // ფასის ლოგიკა
+  // 2. მსგავსი პროდუქტების წამოღება (იგივე კატეგორიიდან, თავისი თავის გარდა)
+  const categoryId =
+    typeof product.category === 'object' ? (product.category as any).id : product.category
+  const relatedRes = await payload.find({
+    collection: 'products',
+    limit: 4,
+    where: {
+      and: [{ category: { equals: categoryId } }, { slug: { not_equals: slug } }],
+    },
+    locale: lang,
+    depth: 1,
+  })
+
   const isPriceZero = !product.price || product.price === 0
   const hasDiscount =
     product.discountPrice && product.discountPrice > 0 && product.discountPrice < product.price
-
-  const mainImageUrl = typeof product.mainImage === 'object' ? product.mainImage?.url : ''
-  const category = typeof product.category === 'object' ? product.category : null
+  const mainImageUrl = typeof product.mainImage === 'object' ? (product.mainImage as any)?.url : ''
+  const category = typeof product.category === 'object' ? (product.category as any) : null
+  const displayPrice = hasDiscount ? (product.discountPrice ?? 0) : (product.price ?? 0)
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
-      {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8">
-        <Link href={`/${lang}`} className="hover:text-blue-600 transition font-medium">
-          {lang === 'ka' ? 'მთავარი' : 'Home'}
-        </Link>
-        <span>/</span>
-        <Link href={`/${lang}/products`} className="hover:text-blue-600 transition font-medium">
-          {lang === 'ka' ? 'პროდუქტები' : 'Products'}
-        </Link>
-        {category && (
-          <>
-            <span>/</span>
-            <Link
-              href={`/${lang}/products/${category.slug}`} // ვიყენებთ slug-ს ID-ის ნაცვლად
-              className="hover:text-blue-600 transition font-medium"
-            >
-              {category.name as string}
-            </Link>
-          </>
-        )}
-      </nav>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-        <ProductGallery
-          mainImage={mainImageUrl || ''}
-          images={product.images || []}
-          title={product.title}
-        />
-
-        <div className="flex flex-col">
-          <div className="flex items-center gap-4 mb-4">
-            {category && (
-              <div className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                {category.name as string}
-              </div>
-            )}
-            <span
-              className={`text-sm font-medium ${product.stock === 'in-stock' ? 'text-green-500' : 'text-red-500'}`}
-            >
-              {product.stock === 'in-stock'
-                ? lang === 'ka'
-                  ? '● მარაგშია'
-                  : '● In Stock'
-                : lang === 'ka'
-                  ? '● მარაგში არ არის'
-                  : '● Out of Stock'}
-            </span>
+    <div className="bg-white min-h-screen text-slate-900 antialiased overflow-x-hidden">
+      <main className="max-w-7xl mx-auto px-6 py-12 lg:py-20">
+        {/* Main Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-32 items-start">
+          {/* Left Side: Gallery */}
+          <div className="w-full">
+            <ProductGallery
+              mainImage={mainImageUrl || ''}
+              images={product.images || []}
+              title={product.title}
+            />
           </div>
 
-          <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 leading-tight">
-            {product.title}
-          </h1>
+          {/* Right Side: Product Info */}
+          <div className="flex flex-col space-y-10 lg:pt-4">
+            {/* Minimal Breadcrumbs */}
+            <nav className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+              <Link href={`/${lang}/products`} className="hover:text-black transition-colors">
+                Shop
+              </Link>
+              {category && (
+                <>
+                  <ChevronRight size={10} />
+                  <span className="text-black">{category.name}</span>
+                </>
+              )}
+            </nav>
 
-          {/* ფასის სექცია */}
-          <div className="mb-8">
-            {isPriceZero ? (
-              <div className="bg-blue-50 border border-blue-100 p-5 rounded-2xl inline-block">
-                <span className="text-xl md:text-2xl font-bold text-blue-700">
-                  {lang === 'ka'
-                    ? 'ფასის დასაზუსტებლად გთხოვთ დაგვიკავშირდეთ'
-                    : 'Contact us for a price'}
-                </span>
+            <div className="space-y-4">
+              <h1 className="text-4xl lg:text-6xl font-medium tracking-tight leading-[1.1]">
+                {product.title}
+              </h1>
+
+              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-emerald-600">
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${product.stock === 'in-stock' ? 'bg-emerald-500' : 'bg-red-500'}`}
+                />
+                {product.stock === 'in-stock'
+                  ? lang === 'ka'
+                    ? 'მარაგშია'
+                    : 'In Stock'
+                  : lang === 'ka'
+                    ? 'არ არის'
+                    : 'Out of Stock'}
               </div>
-            ) : hasDiscount ? (
-              <div className="flex flex-col">
-                <span className="text-lg text-red-500 line-through mb-1">{product.price} ₾</span>
-                <div className="text-5xl font-black text-gray-900 flex items-baseline gap-1">
-                  {product.discountPrice}{' '}
-                  <span className="text-2xl font-normal text-gray-500">₾</span>
+            </div>
+
+            {/* Price Display */}
+            <div className="py-4">
+              {isPriceZero ? (
+                <p className="text-2xl font-light text-slate-400 italic">
+                  {lang === 'ka' ? 'ფასი შეთანხმებით' : 'Price on request'}
+                </p>
+              ) : (
+                <div className="flex items-baseline gap-5">
+                  <span className="text-6xl lg:text-7xl font-extralight tracking-tighter">
+                    {displayPrice.toLocaleString()}₾
+                  </span>
+                  {hasDiscount && (
+                    <span className="text-2xl text-slate-200 line-through font-extralight">
+                      {product.price.toLocaleString()}₾
+                    </span>
+                  )}
                 </div>
-              </div>
-            ) : (
-              <div className="text-5xl font-black text-gray-900 flex items-baseline gap-1">
-                {product.price} <span className="text-2xl font-normal text-gray-500">₾</span>
+              )}
+            </div>
+
+            {/* Tech Specs Summary */}
+            {product.specifications && (
+              <div className="border-l-2 border-slate-100 pl-8 py-2">
+                <p className="text-sm leading-relaxed text-slate-500 font-light max-w-md italic">
+                  {product.specifications}
+                </p>
               </div>
             )}
-          </div>
 
-          <div className="bg-white border-l-4 border-l-blue-600 p-5 mb-8 rounded-r-2xl shadow-sm border border-gray-100">
-            <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">
-              {lang === 'ka' ? 'მოკლე მახასიათებლები:' : 'Quick Specs:'}
-            </h3>
-            <p className="text-gray-600 text-sm leading-relaxed italic">
-              {product.specifications ||
-                (lang === 'ka' ? 'მონაცემები არ არის' : 'No specs available')}
-            </p>
-          </div>
+            {/* Contact Actions */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6">
+              <a
+                href="tel:+995555123456"
+                className="flex items-center justify-center gap-3 bg-black text-white py-5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition-all active:scale-[0.98]"
+              >
+                <Phone size={14} /> {lang === 'ka' ? 'დაგვირეკეთ' : 'Call Us'}
+              </a>
+              <a
+                href="https://wa.me/995555123456"
+                target="_blank"
+                className="flex items-center justify-center gap-3 border border-slate-200 py-5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-[0.98]"
+              >
+                <MessageCircle size={16} className="text-green-500" /> WhatsApp
+              </a>
+            </div>
 
-          {/* ღილაკები */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-12">
-            {isPriceZero ? (
-              <>
-                <a
-                  href="tel:+995555123456"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all shadow-xl text-center flex items-center justify-center gap-2"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                  {lang === 'ka' ? 'დაგვირეკეთ' : 'Call Us'}
-                </a>
-                <a
-                  href="https://wa.me/995555123456"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-2xl transition-all shadow-xl text-center flex items-center justify-center gap-2"
-                >
-                  WhatsApp
-                </a>
-              </>
-            ) : (
-              <button className="flex-1 bg-gray-900 hover:bg-blue-600 text-white font-bold py-4 rounded-2xl transition-all shadow-xl active:scale-95">
-                {lang === 'ka' ? 'კალათაში დამატება' : 'Add to Cart'}
-              </button>
-            )}
-          </div>
-
-          <div className="border-t border-gray-100 pt-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              {lang === 'ka' ? 'პროდუქტის აღწერა' : 'Product Description'}
-            </h2>
-            <div className="text-gray-600 leading-relaxed whitespace-pre-line bg-gray-50/50 p-4 rounded-2xl border border-gray-50">
-              {product.description ||
-                (lang === 'ka' ? 'აღწერა არ არის მოცემული' : 'No description provided')}
+            {/* Detailed Description */}
+            <div className="pt-12 space-y-6">
+              <h3 className="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-300">
+                {lang === 'ka' ? 'პროდუქტის აღწერა' : 'Description'}
+              </h3>
+              <div className="text-slate-600 text-[16px] leading-relaxed font-light whitespace-pre-line max-w-2xl">
+                {product.description}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+
+        {/* Suggested Section */}
+        {relatedRes.docs.length > 0 && (
+          <section className="border-t border-slate-50 pt-24">
+            <div className="flex items-end justify-between mb-16">
+              <div className="space-y-3">
+                <h2 className="text-3xl lg:text-4xl font-medium tracking-tight">
+                  {lang === 'ka' ? 'მსგავსი მოდელები' : 'Similar Models'}
+                </h2>
+                <div className="h-1 w-12 bg-blue-500 rounded-full" />
+              </div>
+              <Link
+                href={`/${lang}/products`}
+                className="group flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest border-b border-black pb-1 hover:text-blue-600 hover:border-blue-600 transition-all"
+              >
+                {lang === 'ka' ? 'ყველას ნახვა' : 'View All'}
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+              {relatedRes.docs.map((item: any) => (
+                <ProductCard key={item.id} product={item} lang={lang} />
+              ))}
+            </div>
+          </section>
+        )}
+      </main>
     </div>
   )
 }

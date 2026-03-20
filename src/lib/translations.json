@@ -29,6 +29,31 @@
       "contactUs": "დაგვიკავშირდით",
       "inStock": "მარაგშია",
       "outStock": "არ არის მარაგში"
+    },
+    "hero": {
+      "slide1": {
+        "title": "ვიდეოსამეთვალყურეო სისტემები",
+        "description": "თანამედროვე ვიდეოსამეთვალყურეო სისტემები საცხოვრებელი, კომერციული და სამრეწველო ობიექტებისთვის. მაღალი ხარისხის კამერები და პროფესიონალური ინსტალაცია უზრუნველყოფს 24/7 კონტროლსა და უსაფრთხოებას."
+      },
+      "slide2": {
+        "title": "ჭკვიანი სახლის გადაწყვეტილებები",
+        "description": "აკონტროლეთ თქვენი სახლი დისტანციურად. სმარტ განათება, გათბობა და უსაფრთხოება ერთ აპლიკაციაში."
+      },
+      "buttons": {
+        "allProducts": "სრული პროდუქცია",
+        "ourServices": "ჩვენი სერვისები"
+      }
+    },
+    "about": {
+      "title": "ჩვენ შესახებ",
+      "reliability": "სანდოობა",
+      "description": "ჩვენი მთავარი პრიორიტეტია სანდო და სტაბილური უსაფრთხოების სისტემების დანერგვა, რომლებიც მომხმარებელს გრძელვადიან დაცვასა და სიმშვიდეს უზრუნველყოფს. თითოეული პროექტი იგეგმება დეტალურად — ობიექტის სპეციფიკის, რისკების და ტექნიკური მოთხოვნების სრული ანალიზის საფუძველზე.",
+      "experience": "8+ წელი ბაზარზე",
+      "experienceYear": "8+ წელი",
+      "experienceMarket": "ბაზარზე",
+      "contactUs": "დაგვიკავშირდით",
+      "viewMore": "სრულად",
+      "address": "ვაჟა-ფშაველას გამზ. #20"
     }
   },
   "en": {
@@ -62,6 +87,31 @@
       "contactUs": "Contact Us",
       "inStock": "In stock",
       "outStock": "Out of stock"
+    },
+    "hero": {
+      "slide1": {
+        "title": "Video Surveillance Systems",
+        "description": "Modern video surveillance systems for residential, commercial, and industrial facilities. High-quality cameras and professional installation provide 24/7 control and security."
+      },
+      "slide2": {
+        "title": "Smart Home Solutions",
+        "description": "Control your home remotely. Smart lighting, heating, and security all in one app."
+      },
+      "buttons": {
+        "allProducts": "All Products",
+        "ourServices": "Our Services"
+      }
+    },
+    "about": {
+      "title": "About Us",
+      "reliability": "Reliability",
+      "description": "Our main priority is the implementation of reliable and stable security systems that provide customers with long-term protection and peace of mind. Each project is planned in detail — based on a complete analysis of the facility's specifics, risks, and technical requirements.",
+      "experience": "8+ Years on the Market",
+      "experienceYear": "8+ Years",
+      "experienceMarket": "on Market",
+      "contactUs": "Contact Us",
+      "viewMore": "View More",
+      "address": "20 Vaza-Pshavela Ave."
     }
   }
 }

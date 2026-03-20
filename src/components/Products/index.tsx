@@ -88,7 +88,7 @@ export const Products = ({
                 href={createCategoryLink(cat.slug || null)}
                 className={`group flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all ${
                   isActive
-                    ? 'bg-blue-600 text-white font-bold shadow-sm'
+                    ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-blue-600'
                 }`}
               >
@@ -114,7 +114,7 @@ export const Products = ({
       <div className="mb-8">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
           <div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-3xl font-semibold text-slate-900 tracking-tight">
               <span className="text-blue-600">#</span>{' '}
               {activeCategory
                 ? activeCategory.displayName || activeCategory.name
@@ -123,7 +123,8 @@ export const Products = ({
                   : 'Shop'}
             </h1>
             <p className="text-slate-400 text-sm mt-1">
-              {lang === 'ka' ? 'ნაპოვნია' : 'Found'} {products.totalDocs}{' '}
+              {lang === 'ka' ? 'ნაპოვნია' : 'Found'}{' '}
+              <span className="text-[#F28F22] font-bold text-sm">{products.totalDocs}</span>{' '}
               {lang === 'ka' ? 'პროდუქტი' : 'products'}
             </p>
           </div>
@@ -135,7 +136,7 @@ export const Products = ({
         <aside className="w-full lg:w-72 flex-shrink-0">
           <div className="sticky top-28 space-y-6">
             <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-              <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-6 border-b pb-4">
+              <h3 className="text-lg font-semibold uppercase tracking-widest text-[#f28f24] mb-6 border-b pb-4">
                 {t.shop?.categories || (lang === 'ka' ? 'კატეგორიები' : 'Categories')}
               </h3>
               <Link
@@ -181,7 +182,7 @@ export const Products = ({
         <section className="flex-1">
           {products.docs && products.docs.length > 0 ? (
             <div className="space-y-10">
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
                 {products.docs.map((product) => (
                   <ProductCard key={product.id} product={product} lang={lang} />
                 ))}
@@ -226,9 +227,7 @@ function FilterSection({
   if (!items?.length) return null
   return (
     <div>
-      <h4 className="font-bold text-[10px] uppercase text-gray-400 mb-3 tracking-widest">
-        {title}
-      </h4>
+      <h4 className="font-bold text-xs uppercase text-[#f28f24] mb-3 tracking-widest">{title}</h4>
       <div className={isGrid ? 'grid grid-cols-2 gap-2' : 'flex flex-wrap gap-2'}>
         {items.map((item) => {
           const isActive = activeValue === item

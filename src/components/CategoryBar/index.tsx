@@ -1,5 +1,3 @@
-// @/components/CategoryBar/index.tsx (ან შესაბამისი ფაილი)
-
 import React from 'react'
 import Link from 'next/link'
 import Image, { StaticImageData } from 'next/image'
@@ -93,7 +91,7 @@ export const CategoryBar = async ({ lang = 'ka' }: { lang?: string }) => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
               <div className="absolute inset-0 flex flex-col items-center justify-end pb-4 text-white p-2 text-center">
-                <span className="text-[10px] md:text-[11px] font-black leading-tight uppercase tracking-tight">
+                <span className="text-[10px] md:text-[11px] font-semibold leading-tight uppercase tracking-tight">
                   {cat.name}
                 </span>
               </div>

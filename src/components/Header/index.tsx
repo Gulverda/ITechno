@@ -41,7 +41,7 @@ export const Header = () => {
             <Link
               key={link.href}
               href={getLocalizedHref(link.href)}
-              className="hover:text-blue-600 transition-colors"
+              className="hover:text-blue-600 transition-colors font-semibold"
             >
               {link.name}
             </Link>

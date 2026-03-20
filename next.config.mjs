@@ -21,6 +21,9 @@ const nextConfig = {
       { hostname: 'www.westerndigital.com' },
       { hostname: 'www.westerndigital.com' },
       { hostname: 'img.icons8.com' },
+      { hostname: 'images.unsplash.com' },
+      { hostname: 'i.pravatar.cc' },
+      { hostname: 'www.hikvision.com' },
     ],
   },
 }

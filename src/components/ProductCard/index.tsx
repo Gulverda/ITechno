@@ -43,13 +43,13 @@ export const ProductCard = ({ product, lang }: ProductCardProps) => {
     <Link href={`/${lang}/product-details/${product.slug}`} className="group block h-full">
       <div className="bg-white border border-gray-200 rounded-[20px] overflow-hidden transition-all duration-300 hover:shadow-xl p-4 h-full flex flex-col relative">
         <div className="absolute top-4 left-4 z-10">
-          <span className="bg-[#2979BC] text-white text-[10px] px-3 py-1 rounded-md font-bold">
+          <span className="bg-[#2979BC] text-white text-xs px-3 py-1 rounded-md font-bold">
             {product.stock === 'in-stock' ? t.productCard.inStock : t.productCard.outStock}
           </span>
         </div>
 
         {hasDiscount && !isPriceZero && (
-          <div className="absolute top-12 left-4 z-10 bg-[#EE3E33] text-white px-2 py-0.5 rounded-md text-[11px] font-bold">
+          <div className="absolute top-12 left-4 z-10 bg-[#EE3E33] text-white px-2 py-0.5 rounded-md text-xs font-bold">
             -{Math.round(((price - discountPrice) / price) * 100)}%
           </div>
         )}
@@ -69,11 +69,11 @@ export const ProductCard = ({ product, lang }: ProductCardProps) => {
         </div>
 
         <div className="flex flex-col flex-1">
-          <p className="text-[10px] text-gray-400 font-mono mb-1 uppercase">
+          <p className="text-xs text-[#F28F24] font-mono mb-1 uppercase">
             CODE: {product.id?.toString().slice(-5)}
           </p>
 
-          <h2 className="font-semibold text-gray-700 text-[13px] mb-4 line-clamp-2 leading-snug min-h-[34px]">
+          <h2 className="font-semibold text-gray-700 text-base line-clamp-2 leading-snug min-h-[34px]">
             {product.title}
           </h2>
 

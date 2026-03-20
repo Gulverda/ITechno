@@ -6,7 +6,6 @@ import { Navigation, Autoplay } from 'swiper/modules'
 import { ProductCard } from '../ProductCard'
 import { Product } from '@/payload-types'
 
-// Swiper-ის სტილები
 import 'swiper/css'
 import 'swiper/css/navigation'
 
@@ -17,17 +16,17 @@ interface PopularProductsProps {
 }
 
 export const PopularProducts = ({ products, lang, title }: PopularProductsProps) => {
+  const currentLang = (lang === 'en' ? 'en' : 'ka') as 'ka' | 'en'
+
   return (
     <section className="py-12 px-6 my-10">
       <div className="max-w-[1440px] mx-auto">
-        {/* Header სექცია ისე, როგორც სურათზეა */}
         <div className="flex justify-between items-end mb-8 border-b border-gray-100 pb-4">
           <div className="space-y-1">
-            <h2 className="text-2xl font-black text-gray-900 italic tracking-tight">{title}</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">{title}</h2>
             <div className="h-1 w-20 bg-blue-600 rounded-full"></div>
           </div>
 
-          {/* Custom Navigation ღილაკები */}
           <div className="flex gap-2">
             <button className="swiper-prev-btn p-3 rounded-full bg-white border border-gray-100 shadow-sm hover:bg-blue-600 hover:text-white transition-all text-gray-400">
               <ChevronLeftIcon />
@@ -56,7 +55,8 @@ export const PopularProducts = ({ products, lang, title }: PopularProductsProps)
         >
           {products.map((product) => (
             <SwiperSlide key={product.id} className="pb-4">
-              <ProductCard product={product} lang={lang} />
+              {/* აქაც გადავაწოდოთ currentLang */}
+              <ProductCard product={product} lang={currentLang} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -65,7 +65,6 @@ export const PopularProducts = ({ products, lang, title }: PopularProductsProps)
   )
 }
 
-// პატარა Icon კომპონენტები
 const ChevronLeftIcon = () => (
   <svg
     width="20"

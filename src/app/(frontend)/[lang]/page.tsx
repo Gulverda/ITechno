@@ -2,32 +2,31 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { CategoryBar } from '@/components/CategoryBar'
 import { Hero } from '@/components/Hero'
-import dict from '@/lib/translations.json'
 import Link from 'next/link'
 import { PopularProducts } from '@/components/PopularProducts'
 import { BrandsSlider } from '@/components/BrandSlider'
+import { PromoBanner } from '@/components/PromoBanner'
+import AboutGrid from '@/components/AboutGrid'
 
 export default async function Page({ params, searchParams }: any) {
   const resolvedParams = await params
   const resolvedSearchParams = await searchParams
   const lang = (resolvedParams.lang === 'en' ? 'en' : 'ka') as 'ka' | 'en'
-  const t = dict[lang]
 
   const payload = await getPayload({ config: await config })
   const popularProducts = await payload.find({
     collection: 'products',
     where: {
-      isPopular: { equals: true }, // თუ გაქვს ასეთი ველი
+      isPopular: { equals: true },
     },
     limit: 10,
   })
 
   const brandsRes = await payload.find({
     collection: 'brands',
-    limit: 20, // Ticker-ისთვის ბევრი ლოგო ჯობია
+    limit: 20,
   })
 
-  // 1. მონაცემების წამოღება (Specs, Categories, Products) - როგორც ადრე იყო
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
   let specs = { resolutions: [], capacities: [], technologies: [], connectionTypes: [] }
   try {
@@ -47,7 +46,6 @@ export default async function Page({ params, searchParams }: any) {
     displayName: cat.name[lang] || cat.name.en || cat.name.ka,
   }))
 
-  // 2. დამხმარე ფუნქციები (Tree & URL)
   const createFilterUrl = (key: string, value: string | null) => {
     const p = new URLSearchParams()
     const keys = ['category', 'q', 'connectionType', 'technology', 'resolution', 'capacity']
@@ -78,26 +76,18 @@ export default async function Page({ params, searchParams }: any) {
     )
   }
 
-  // 3. პროდუქტების ფილტრაცია და მოთხოვნა
-  const products = await payload.find({
-    collection: 'products',
-    where: {
-      /* შენი ფილტრების ლოგიკა */
-    },
-    locale: lang as any,
-    limit: Number(resolvedSearchParams.limit) || 16,
-  })
-
   return (
     <div className="min-h-screen pb-20">
       <CategoryBar lang={lang} />
-      <Hero />
+      <Hero lang={lang} />
       <BrandsSlider brands={brandsRes.docs} />
       <PopularProducts
         products={popularProducts.docs}
         lang={params.lang}
         title={params.lang === 'ka' ? 'პოპულარული პროდუქტები' : 'Popular Products'}
       />
+      <PromoBanner />
+      <AboutGrid lang={lang} />
     </div>
   )
 }
