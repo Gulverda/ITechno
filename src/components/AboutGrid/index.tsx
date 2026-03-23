@@ -10,7 +10,7 @@ const AboutGrid = ({ lang = 'ka' }: { lang: 'ka' | 'en' }) => {
   const t = dict[lang as keyof typeof dict].about
 
   return (
-    <div className="max-w-[1440px] mx-auto p-6 pt-16 bg-white flex items-center justify-center font-firaGo600 overflow-hidden">
+    <div className="max-w-[1440px] mx-auto pt-16 bg-white flex items-center justify-center font-firaGo600 overflow-hidden">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full auto-rows-auto">
         <div className="bg-[#0081D7] rounded-[30px] p-8 flex flex-col justify-center md:min-h-[250px]">
           <h1 className="text-white text-3xl sm:text-5xl font-lgv leading-tight uppercase tracking-wide flex gap-2 md:flex-col md:gap-0">

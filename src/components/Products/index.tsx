@@ -110,7 +110,7 @@ export const Products = ({
   }
 
   return (
-    <main className="container mx-auto px-4 pt-6 pb-20">
+    <main className="container max-w-[1440px] mx-auto pt-6 pb-20">
       <div className="mb-8">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
           <div>

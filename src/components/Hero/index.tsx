@@ -39,7 +39,7 @@ export const Hero = ({ lang = 'ka' }: HeroProps) => {
   }, [slides.length])
 
   return (
-    <section className="max-w-[1440px] container mx-auto px-4 mb-12">
+    <section className="max-w-[1440px] container mx-auto mb-12">
       <div className="relative h-[400px] md:h-[480px] rounded-[2.5rem] overflow-hidden bg-slate-900 shadow-2xl">
         {slides.map((slide, index) => (
           <div

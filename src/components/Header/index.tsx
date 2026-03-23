@@ -29,7 +29,7 @@ export const Header = () => {
 
   return (
     <header className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
+      <div className="container max-w-[1440px] mx-auto h-20 flex items-center justify-between gap-4">
         <Link href={`/${currentLang}`} className="flex-shrink-0 flex items-center gap-2">
           <div className="relative w-28 h-28 lg:w-32 lg:h-32">
             <Image src={Logo} alt="I-TECHNO Logo" fill className="object-contain" priority />

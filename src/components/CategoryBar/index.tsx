@@ -69,7 +69,7 @@ export const CategoryBar = async ({ lang = 'ka' }: { lang?: string }) => {
     .filter((cat): cat is Category => !!cat)
 
   return (
-    <div className="max-w-[1440px] container mx-auto px-8 py-8">
+    <div className="max-w-[1440px] container mx-auto py-8">
       <CategoryScrollWrapper>
         <Link
           href={`/${lang}/products`}

@@ -55,6 +55,26 @@
       "viewMore": "სრულად",
       "address": "ვაჟა-ფშაველას გამზ. #20"
     },
+    "contact": {
+      "title": "დაგვიკავშირდით ან მოგვწერეთ",
+      "subtitle": "მიიღე უმაღლესი ხარისხის სერვისი",
+      "infoTitle": "დაგვიკავშირდი დღესვე!",
+      "firstName": "სახელი",
+      "lastName": "გვარი",
+      "email": "ელ-ფოსტა",
+      "phone": "ტელ-ნომერი",
+      "message": "შეტყობინება",
+      "placeholderName": "მაგ: გიორგი",
+      "placeholderSurname": "მაგ: ბოლქვაძე",
+      "placeholderMessage": "მოგვიყევით რით შეგვიძლია დაგეხმაროთ...",
+      "sendBtn": "შეტყობინების გაგზავნა",
+      "labels": {
+        "phone": "ტელ-ნომერი",
+        "email": "ელ-ფოსტა",
+        "social": "სოციალური ქსელები",
+        "address": "მისამართი"
+      }
+    },
     "footer": {
       "description": "ჩვენი მთავარი პრიორიტეტია სანდო და სტაბილური უსაფრთხოების სისტემების დანერგვა, რომლებიც მომხმარებელს გრძელვადიან დაცვასა და სიმშვიდეს უზრუნველყოფს.",
       "products": "პროდუქცია",
@@ -125,6 +145,26 @@
       "contactUs": "Contact Us",
       "viewMore": "View More",
       "address": "20 Vaza-Pshavela Ave."
+    },
+    "contact": {
+      "title": "Get in Touch",
+      "subtitle": "Experience High-Quality Service",
+      "infoTitle": "Contact Us Today!",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "message": "Message",
+      "placeholderName": "e.g. John",
+      "placeholderSurname": "e.g. Doe",
+      "placeholderMessage": "How can we help you?",
+      "sendBtn": "Send Message",
+      "labels": {
+        "phone": "Phone",
+        "email": "Email",
+        "social": "Social Media",
+        "address": "Address"
+      }
     },
     "footer": {
       "description": "Our main priority is the implementation of reliable and stable security systems that provide long-term protection and peace of mind for the customer.",

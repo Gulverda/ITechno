@@ -4,35 +4,11 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import { Plus, Minus, Check, Zap, Target, ArrowRight } from 'lucide-react'
 
-const reasons = [
-  {
-    num: '01',
-    title: 'უახლესი პროდუქცია',
-    desc: 'გაეცანით უახლეს უსაფრთხოების სისტემებს და ტექნოლოგიებს პირდაპირ მწარმოებლებისგან.',
-  },
-  {
-    num: '02',
-    title: 'პრაქტიკული სწავლება',
-    desc: 'მიიღეთ მონაწილეობა ინტერაქტიულ ვორქშოფებსა და ტექნიკურ დემონსტრაციებში.',
-  },
-  {
-    num: '03',
-    title: 'ექსკლუზიური ქსელი',
-    desc: 'დაუკავშირდით სეკტორის ლიდერებს, ინვესტორებს და პარტნიორ კომპანიებს.',
-  },
-  {
-    num: '04',
-    title: 'ინოვაციების შოუქეისი',
-    desc: 'აღმოაჩინეთ მომავლის გადაწყვეტილებები — სტარტაპებიდან ტექ-გიგანტებამდე.',
-  },
-]
-
 export default function AboutPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
     <div className="bg-white min-h-screen text-[#1A1A1A] font-akolkhn antialiased">
-      {/* --- SECTION 1: MINIMAL HERO --- */}
       <section className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
@@ -49,7 +25,6 @@ export default function AboutPage() {
             </button>
           </div>
 
-          {/* სურათების კოლაჟი (როგორც შენს მაგალითშია) */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-4">
               <div className="relative h-48 rounded-[32px] overflow-hidden">
@@ -130,7 +105,6 @@ export default function AboutPage() {
 
       <section className="py-32 px-6 max-w-7xl mx-auto overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
-          {/* --- LEFT SIDE: STORY & BRAND --- */}
           <div className="lg:col-span-5 space-y-12">
             <div className="relative">
               <span className="text-[13px] font-black uppercase tracking-[0.5em] text-blue-600/50 mb-4 block">
@@ -165,7 +139,6 @@ export default function AboutPage() {
               ))}
             </div>
 
-            {/* Featured Image with Glass Card */}
             <div className="relative group pt-4">
               <div className="relative aspect-[16/10] rounded-[48px] overflow-hidden shadow-2xl">
                 <Image
@@ -177,7 +150,6 @@ export default function AboutPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/80 via-transparent to-transparent" />
               </div>
 
-              {/* Floating Glass Label */}
               <div className="absolute -bottom-6 -right-6 md:right-10 bg-white/80 backdrop-blur-xl p-8 rounded-[32px] border border-white shadow-2xl max-w-[240px] hidden md:block">
                 <div className="w-10 h-1 bg-[#FF6B00] mb-4 rounded-full" />
                 <p className="text-[12px] font-black uppercase tracking-widest text-slate-400 mb-1">
@@ -190,7 +162,6 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* --- RIGHT SIDE: ACCORDION SERVICES --- */}
           <div className="lg:col-span-7 lg:pl-12 pt-12 lg:pt-0">
             <div className="mb-12">
               <h3 className="text-[13px] font-black uppercase tracking-[0.4em] text-[#FF6B00] mb-4">
@@ -269,7 +240,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* --- SECTION 4: DARK FOOTER CARD --- */}
       <section className="px-6 pb-24">
         <div className="max-w-7xl mx-auto bg-[#0A0A0A] rounded-[48px] p-12 md:p-24 text-center space-y-8 relative overflow-hidden">
           <h2 className="text-white text-[32px] md:text-[48px] font-lgv uppercase tracking-widest relative z-10">
@@ -283,7 +253,6 @@ export default function AboutPage() {
               კონტაქტი
             </button>
           </div>
-          {/* Decorative background circle */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-blue-600/10 rounded-full blur-[120px]" />
         </div>
       </section>
