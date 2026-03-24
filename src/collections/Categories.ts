@@ -6,6 +6,7 @@ export const Categories: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'slug', 'parent', 'updatedAt'],
+    group: 'Shop Content',
   },
   access: {
     read: () => true,
@@ -30,8 +31,9 @@ export const Categories: CollectionConfig = {
           ({ data, operation }) => {
             if (!data) return undefined
             if (operation === 'create' || (operation === 'update' && !data.slug)) {
-              if (data?.name?.en) {
-                return slugify(data.name.en, { lower: true, strict: true })
+              const nameToConvert = data?.name?.en || data?.name?.ka || data?.name
+              if (nameToConvert) {
+                return slugify(nameToConvert, { lower: true, strict: true })
               }
             }
             return data?.slug
@@ -52,6 +54,17 @@ export const Categories: CollectionConfig = {
       name: 'description',
       type: 'textarea',
       localized: true,
+    },
+    {
+      name: 'assignedFilters',
+      type: 'relationship',
+      relationTo: 'filters',
+      hasMany: true,
+      label: 'მიბმული ფილტრები',
+      admin: {
+        description:
+          'აირჩიეთ ფილტრის ჯგუფები (მაგ: რეზოლუცია), რომლებიც ამ კატეგორიაში უნდა გამოჩნდეს',
+      },
     },
   ],
 }

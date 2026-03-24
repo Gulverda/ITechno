@@ -1,0 +1,183 @@
+{
+  "ka": {
+    "nav": {
+      "home": "მთავარი",
+      "services": "სერვისები",
+      "products": "პროდუქცია",
+      "about": "ჩვენ შესახებ",
+      "contact": "კონტაქტი"
+    },
+    "header": {
+      "contactBtn": "დაგვიკავშირდით"
+    },
+    "shop": {
+      "allProducts": "ყველა პროდუქტი",
+      "total": "სულ",
+      "categories": "კატეგორიები",
+      "all": "ყველა",
+      "noProducts": "პროდუქტები ვერ მოიძებნა"
+    },
+    "filters": {
+      "cctvStandard": "CCTV სტანდარტი",
+      "ajaxConnection": "Ajax კავშირი",
+      "resolution": "რეზოლუცია / მოდელი",
+      "techColor": "ტექნოლოგია / ფერი",
+      "capacity": "მოცულობა / მეხსიერება"
+    },
+    "productCard": {
+      "buttonTitle": "სრულად ნახვა",
+      "contactUs": "დაგვიკავშირდით",
+      "inStock": "მარაგშია",
+      "outStock": "არ არის მარაგში"
+    },
+    "hero": {
+      "slide1": {
+        "title": "ვიდეოსამეთვალყურეო სისტემები",
+        "description": "თანამედროვე ვიდეოსამეთვალყურეო სისტემები საცხოვრებელი, კომერციული და სამრეწველო ობიექტებისთვის. მაღალი ხარისხის კამერები და პროფესიონალური ინსტალაცია უზრუნველყოფს 24/7 კონტროლსა და უსაფრთხოებას."
+      },
+      "slide2": {
+        "title": "ჭკვიანი სახლის გადაწყვეტილებები",
+        "description": "აკონტროლეთ თქვენი სახლი დისტანციურად. სმარტ განათება, გათბობა და უსაფრთხოება ერთ აპლიკაციაში."
+      },
+      "buttons": {
+        "allProducts": "სრული პროდუქცია",
+        "ourServices": "ჩვენი სერვისები"
+      }
+    },
+    "about": {
+      "title": "ჩვენ შესახებ",
+      "reliability": "სანდოობა",
+      "description": "ჩვენი მთავარი პრიორიტეტია სანდო და სტაბილური უსაფრთხოების სისტემების დანერგვა, რომლებიც მომხმარებელს გრძელვადიან დაცვასა და სიმშვიდეს უზრუნველყოფს. თითოეული პროექტი იგეგმება დეტალურად — ობიექტის სპეციფიკის, რისკების და ტექნიკური მოთხოვნების სრული ანალიზის საფუძველზე.",
+      "experience": "8+ წელი ბაზარზე",
+      "experienceYear": "8+ წელი",
+      "experienceMarket": "ბაზარზე",
+      "contactUs": "დაგვიკავშირდით",
+      "viewMore": "სრულად",
+      "address": "ვაჟა-ფშაველას გამზ. #20"
+    },
+    "contact": {
+      "title": "დაგვიკავშირდით ან მოგვწერეთ",
+      "subtitle": "მიიღე უმაღლესი ხარისხის სერვისი",
+      "infoTitle": "დაგვიკავშირდი დღესვე!",
+      "firstName": "სახელი",
+      "lastName": "გვარი",
+      "email": "ელ-ფოსტა",
+      "phone": "ტელ-ნომერი",
+      "message": "შეტყობინება",
+      "placeholderName": "მაგ: გიორგი",
+      "placeholderSurname": "მაგ: ბოლქვაძე",
+      "placeholderMessage": "მოგვიყევით რით შეგვიძლია დაგეხმაროთ...",
+      "sendBtn": "შეტყობინების გაგზავნა",
+      "labels": {
+        "phone": "ტელ-ნომერი",
+        "email": "ელ-ფოსტა",
+        "social": "სოციალური ქსელები",
+        "address": "მისამართი"
+      }
+    },
+    "footer": {
+      "description": "ჩვენი მთავარი პრიორიტეტია სანდო და სტაბილური უსაფრთხოების სისტემების დანერგვა, რომლებიც მომხმარებელს გრძელვადიან დაცვასა და სიმშვიდეს უზრუნველყოფს.",
+      "products": "პროდუქცია",
+      "company": "კომპანია",
+      "contact": "დაგვიკავშირდი",
+      "address": "ვაჟა-ფშაველას გამზ. #20",
+      "rights": "ყველა უფლება დაცულია",
+      "terms": "წესები და პირობები",
+      "videoSurveillance": "ვიდეო სამეთვალყურეო",
+      "storage": "შენახვის მოწყობილობები",
+      "fireAlarm": "სახანძრო სიგნალიზაცია",
+      "securityAlarm": "დაცვის სიგნალიზაცია"
+    }
+  },
+  "en": {
+    "nav": {
+      "home": "Home",
+      "services": "Services",
+      "products": "Products",
+      "about": "About Us",
+      "contact": "Contact"
+    },
+    "header": {
+      "searchPlaceholder": "Search products...",
+      "contactBtn": "Contact Us"
+    },
+    "shop": {
+      "allProducts": "All Products",
+      "total": "Total",
+      "categories": "Categories",
+      "all": "All",
+      "noProducts": "No products found"
+    },
+    "filters": {
+      "cctvStandard": "CCTV Standard",
+      "ajaxConnection": "Ajax Connection",
+      "resolution": "Resolution / Model",
+      "techColor": "Technology / Color",
+      "capacity": "Capacity / Storage"
+    },
+    "productCard": {
+      "buttonTitle": "View More",
+      "contactUs": "Contact Us",
+      "inStock": "In stock",
+      "outStock": "Out of stock"
+    },
+    "hero": {
+      "slide1": {
+        "title": "Video Surveillance Systems",
+        "description": "Modern video surveillance systems for residential, commercial, and industrial facilities. High-quality cameras and professional installation provide 24/7 control and security."
+      },
+      "slide2": {
+        "title": "Smart Home Solutions",
+        "description": "Control your home remotely. Smart lighting, heating, and security all in one app."
+      },
+      "buttons": {
+        "allProducts": "All Products",
+        "ourServices": "Our Services"
+      }
+    },
+    "about": {
+      "title": "About Us",
+      "reliability": "Reliability",
+      "description": "Our main priority is the implementation of reliable and stable security systems that provide customers with long-term protection and peace of mind. Each project is planned in detail — based on a complete analysis of the facility's specifics, risks, and technical requirements.",
+      "experience": "8+ Years on the Market",
+      "experienceYear": "8+ Years",
+      "experienceMarket": "on Market",
+      "contactUs": "Contact Us",
+      "viewMore": "View More",
+      "address": "20 Vaza-Pshavela Ave."
+    },
+    "contact": {
+      "title": "Get in Touch",
+      "subtitle": "Experience High-Quality Service",
+      "infoTitle": "Contact Us Today!",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "message": "Message",
+      "placeholderName": "e.g. John",
+      "placeholderSurname": "e.g. Doe",
+      "placeholderMessage": "How can we help you?",
+      "sendBtn": "Send Message",
+      "labels": {
+        "phone": "Phone",
+        "email": "Email",
+        "social": "Social Media",
+        "address": "Address"
+      }
+    },
+    "footer": {
+      "description": "Our main priority is the implementation of reliable and stable security systems that provide long-term protection and peace of mind for the customer.",
+      "products": "Products",
+      "company": "Company",
+      "contact": "Contact Us",
+      "address": "20 Vaza-Pshavela Ave.",
+      "rights": "All rights reserved",
+      "terms": "Terms and Conditions",
+      "videoSurveillance": "Video Surveillance",
+      "storage": "Storage Devices",
+      "fireAlarm": "Fire Alarms",
+      "securityAlarm": "Security Alarms"
+    }
+  }
+}

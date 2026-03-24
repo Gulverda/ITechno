@@ -22,12 +22,12 @@ export default async function BrandsPage({ params }: { params: Promise<{ lang: s
             key={brand.id}
             // თუ მთავარი გვერდი (frontend) საქაღალდეშია პირდაპირ:
             href={`/?lang=${lang}&brand=${brand.id}`}
-            className="flex flex-col items-center justify-center p-8 bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-blue-500 hover:shadow-xl transition-all duration-300 group"
+            className="flex flex-col items-center justify-center p-8 bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-[#1976BA] hover:shadow-xl transition-all duration-300 group"
           >
-            <div className="w-16 h-16 bg-blue-50 rounded-full mb-4 flex items-center justify-center text-2xl font-black text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+            <div className="w-16 h-16 bg-blue-50 rounded-full mb-4 flex items-center justify-center text-2xl font-semibold text-[#1976BA] group-hover:bg-[#1976BA] group-hover:text-white transition-colors">
               {brand.name ? brand.name[0].toUpperCase() : '?'}
             </div>
-            <span className="font-bold text-gray-800 group-hover:text-blue-600 text-center text-sm">
+            <span className="font-bold text-gray-800 group-hover:text-[#1976BA] text-center text-sm">
               {brand.name}
             </span>
           </Link>

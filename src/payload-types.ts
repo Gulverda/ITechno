@@ -69,6 +69,8 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    filters: Filter;
+    'filter-options': FilterOption;
     products: Product;
     categories: Category;
     brands: Brand;
@@ -81,6 +83,8 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    filters: FiltersSelect<false> | FiltersSelect<true>;
+    'filter-options': FilterOptionsSelect<false> | FilterOptionsSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     brands: BrandsSelect<false> | BrandsSelect<true>;
@@ -169,18 +173,48 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "filters".
+ */
+export interface Filter {
+  id: number;
+  name: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "filter-options".
+ */
+export interface FilterOption {
+  id: number;
+  value: string;
+  group: number | Filter;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "products".
  */
 export interface Product {
   id: number;
   title: string;
   /**
-   * უნიკალური URL იდენტიფიკატორი
+   * მონიშნეთ, თუ გსურთ გამოჩნდეს მთავარ სლაიდერში
    */
+  isPopular?: boolean | null;
   slug: string;
   description?: string | null;
   specifications?: string | null;
+  filter_values?:
+    | {
+        filter_group: number | Filter;
+        value_rel: number | FilterOption;
+        id?: string | null;
+      }[]
+    | null;
   price: number;
+  discountPrice?: number | null;
   stock?: ('in-stock' | 'out-of-stock') | null;
   category: number | Category;
   brand?: (number | null) | Brand;
@@ -204,6 +238,10 @@ export interface Category {
   slug?: string | null;
   parent?: (number | null) | Category;
   description?: string | null;
+  /**
+   * აირჩიეთ ფილტრის ჯგუფები (მაგ: რეზოლუცია), რომლებიც ამ კატეგორიაში უნდა გამოჩნდეს
+   */
+  assignedFilters?: (number | Filter)[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -248,6 +286,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'filters';
+        value: number | Filter;
+      } | null)
+    | ({
+        relationTo: 'filter-options';
+        value: number | FilterOption;
       } | null)
     | ({
         relationTo: 'products';
@@ -345,14 +391,42 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "filters_select".
+ */
+export interface FiltersSelect<T extends boolean = true> {
+  name?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "filter-options_select".
+ */
+export interface FilterOptionsSelect<T extends boolean = true> {
+  value?: T;
+  group?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "products_select".
  */
 export interface ProductsSelect<T extends boolean = true> {
   title?: T;
+  isPopular?: T;
   slug?: T;
   description?: T;
   specifications?: T;
+  filter_values?:
+    | T
+    | {
+        filter_group?: T;
+        value_rel?: T;
+        id?: T;
+      };
   price?: T;
+  discountPrice?: T;
   stock?: T;
   category?: T;
   brand?: T;
@@ -375,6 +449,7 @@ export interface CategoriesSelect<T extends boolean = true> {
   slug?: T;
   parent?: T;
   description?: T;
+  assignedFilters?: T;
   updatedAt?: T;
   createdAt?: T;
 }

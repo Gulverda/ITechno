@@ -1,69 +1,104 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
+import dict from '@/lib/translations.json'
+import { Product, Media } from '@/payload-types'
 
-export const ProductCard = ({ product, lang }: { product: any; lang: string }) => {
-  const imageUrl = typeof product.mainImage === 'object' ? product.mainImage?.url : ''
+// თარგმანების სტრუქტურის ტიპიზაცია
+interface TranslationDict {
+  productCard: {
+    inStock: string
+    outStock: string // გასწორდა დასახელება JSON-ის შესაბამისად
+    contactUs: string
+    buttonTitle: string
+  }
+}
+
+const translations = dict as Record<string, TranslationDict>
+
+interface ProductCardProps {
+  product: Product
+  lang: string
+}
+
+export const ProductCard = ({ product, lang }: ProductCardProps) => {
+  // სურათის URL-ის უსაფრთხოდ ამოღება
+  const imageUrl =
+    typeof product.mainImage === 'object' && product.mainImage !== null
+      ? (product.mainImage as Media).url || ''
+      : ''
+
+  const price = product.price ?? 0
+  const discountPrice = product.discountPrice ?? 0
+
+  const hasDiscount = discountPrice > 0 && discountPrice < price
+  const isPriceZero = price === 0
+
+  // ენის ვალიდაცია
+  const currentLang = lang === 'ka' || lang === 'en' ? lang : 'ka'
+  const t = translations[currentLang] || translations['ka']
 
   return (
-    <Link href={`/products/${product.slug}?lang=${lang}`} className="group">
-      <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 p-3 h-full flex flex-col relative">
-        <div
-          className={`absolute top-4 left-4 z-10 px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
-            product.stock === 'in-stock' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
-          }`}
-        >
-          {product.stock === 'in-stock' ? '● მარაგშია' : '● არ არის მარაგში'}
+    <Link href={`/${lang}/product-details/${product.slug}`} className="group block h-full">
+      <div className="bg-white border border-gray-200 rounded-[20px] overflow-hidden transition-all duration-300 hover:shadow-xl p-4 h-full flex flex-col relative">
+        <div className="absolute top-4 left-4 z-10">
+          <span className="bg-[#1976BA] text-white text-xs px-3 py-1 rounded-md font-bold">
+            {product.stock === 'in-stock' ? t.productCard.inStock : t.productCard.outStock}
+          </span>
         </div>
 
-        <div className="relative h-48 w-full mb-4 bg-gray-50 rounded-xl overflow-hidden">
+        {hasDiscount && !isPriceZero && (
+          <div className="absolute top-12 left-4 z-10 bg-[#EE3E33] text-white px-2 py-0.5 rounded-md text-xs font-bold">
+            -{Math.round(((price - discountPrice) / price) * 100)}%
+          </div>
+        )}
+
+        <div className="relative h-48 w-full mb-4 mt-6 flex items-center justify-center">
           {imageUrl ? (
             <Image
               src={imageUrl}
               alt={product.title}
               fill
-              className="object-contain p-4 group-hover:scale-110 transition-transform duration-500"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-300 italic text-xs">
-              სურათი არ არის
-            </div>
+            <div className="text-gray-300 text-[10px] italic">სურათი არ არის</div>
           )}
         </div>
 
-        <div className="flex flex-col flex-1 px-1">
-          <div className="flex justify-between items-center mb-1">
-            <p className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">
-              {typeof product.category === 'object' ? product.category?.name : 'სხვადასხვა'}
-            </p>
-          </div>
+        <div className="flex flex-col flex-1">
+          <p className="text-xs text-[#F28F24] font-mono mb-1 uppercase">
+            CODE: {product.id?.toString().slice(-5)}
+          </p>
 
-          <h2 className="font-bold text-gray-800 text-sm mb-2 line-clamp-2 min-h-[40px] leading-tight group-hover:text-blue-600 transition-colors">
+          <h2 className="font-semibold text-gray-700 text-base line-clamp-2 leading-snug min-h-[34px]">
             {product.title}
           </h2>
 
-          <div className="mt-auto flex justify-between items-center border-t border-gray-50 pt-3">
-            <div className="flex flex-col">
-              <span className="text-[10px] text-gray-400 font-medium -mb-1">ფასი</span>
-              <span className="text-xl font-black text-gray-900 leading-none">
-                {product.price} <span className="text-sm font-normal">₾</span>
-              </span>
+          <div className="mt-auto">
+            <div className="flex items-baseline gap-2 mb-4">
+              {isPriceZero ? (
+                <span className="text-[13px] font-bold text-[#1976BA]">
+                  {t.productCard.contactUs}
+                </span>
+              ) : hasDiscount ? (
+                <>
+                  <span className="text-[20px] font-bold text-[#1976BA]">
+                    {discountPrice.toFixed(2)}₾
+                  </span>
+                  <span className="text-[13px] text-gray-400 line-through">
+                    {price.toFixed(2)}₾
+                  </span>
+                </>
+              ) : (
+                <span className="text-[20px] font-bold text-[#1976BA]">{price.toFixed(2)}₾</span>
+              )}
             </div>
-            <div className="bg-gray-900 text-white p-2.5 rounded-xl shadow-lg group-hover:bg-blue-600 group-hover:scale-110 transition-all duration-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="8" cy="21" r="1" />
-                <circle cx="19" cy="21" r="1" />
-                <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
-              </svg>
+
+            <div className="w-full bg-[#1976BA] text-white py-2.5 rounded-xl font-bold text-[13px] transition-colors group-hover:bg-[#1E5D91] text-center">
+              <span>{t.productCard.buttonTitle}</span>
             </div>
           </div>
         </div>

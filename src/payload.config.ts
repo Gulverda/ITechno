@@ -11,6 +11,8 @@ import { Media } from './collections/Media'
 import { Products } from './collections/Products'
 import { Categories } from './collections/Categories'
 import { Brands } from './collections/Brands'
+import { Filters } from './collections/FilterGroups'
+import { FilterOptions } from './collections/FilterOptions'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,7 +25,7 @@ export default buildConfig({
     },
   },
 
-  collections: [Users, Media, Products, Categories, Brands],
+  collections: [Users, Media, Filters, FilterOptions, Products, Categories, Brands],
 
   // onInit: async (payload) => {
   //   const PARENT_ID = 28 // <--- აქ ჩაწერე Fire Alarm Systems-ის რეალური ID
