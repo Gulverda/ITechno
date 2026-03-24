@@ -26,9 +26,9 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       className={`${firaGo400.variable} ${firaGo600.variable} ${lgvAnastasia.variable}`}
     >
       <body>
-        <div className="min-h-screen text-gray-900 flex flex-col px-4">
+        <div className="min-h-screen text-gray-900 flex flex-col">
           <Header />
-          <main className="flex-grow">{children}</main>
+          <main className="flex-grow px-4">{children}</main>
           <Footer />
         </div>
       </body>
