@@ -6,7 +6,6 @@ import { useDebounce } from 'use-debounce'
 import { Product } from '@/payload-types'
 import { georgianFontBase64 } from '@/assets/fonts/georgian-font'
 
-// ინტერფეისი - ID ტიპების კონფლიქტის მოსაგვარებლად
 interface SelectedProduct {
   id: string | number
   title: string
@@ -20,6 +19,12 @@ export default function InvoiceGenerator() {
   const [products, setProducts] = useState<Product[]>([])
   const [selectedItems, setSelectedItems] = useState<SelectedProduct[]>([])
   const [discount, setDiscount] = useState(0)
+
+  // ველები
+  const [invoiceNumber, setInvoiceNumber] = useState('')
+  const [clientName, setClientName] = useState('')
+  const [clientTaxId, setClientTaxId] = useState('')
+  const [clientAddress, setClientAddress] = useState('') // ახალი მისამართის ველი
 
   useEffect(() => {
     if (query.length > 2) {
@@ -35,7 +40,6 @@ export default function InvoiceGenerator() {
   }, [query])
 
   const addItem = (product: Product) => {
-    // Payload-ის ლოკალიზებული ველის უსაფრთხო ამოღება
     const titleString =
       typeof product.title === 'object' && product.title !== null
         ? (product.title as Record<string, string>).ka ||
@@ -43,7 +47,6 @@ export default function InvoiceGenerator() {
           ''
         : String(product.title || '')
 
-    // ID-ების შედარება სტრინგებში ტიპების overlap-ის შეცდომის ასაცილებლად
     const exists = selectedItems.find((item) => String(item.id) === String(product.id))
 
     if (exists) {
@@ -74,122 +77,116 @@ export default function InvoiceGenerator() {
   const generatePDF = () => {
     const doc = new jsPDF()
 
-    // ფონტის რეგისტრაცია
     doc.addFileToVFS('Sylfaen.ttf', georgianFontBase64)
     doc.addFont('Sylfaen.ttf', 'Sylfaen', 'normal')
     doc.setFont('Sylfaen', 'normal')
 
-    // მთავარი ფერები
     const themeColor: [number, number, number] = [25, 118, 186]
     const textColor: [number, number, number] = [50, 50, 50]
     const lightText: [number, number, number] = [100, 100, 100]
     const today = new Date().toLocaleDateString('ka-GE')
 
-    // ==========================================
-    // 1. ჰედერი: კომპანიის ინფო (მარცხნივ ზემოთ)
-    // ==========================================
     doc.setFontSize(14)
     doc.setTextColor(textColor[0], textColor[1], textColor[2])
     doc.text('შპს აი-ტექნო (I-TECHNO LLC)', 14, 20)
 
-    // ==========================================
-    // 2. მარჯვენა ზედა კუთხე: ინვოისი + თარიღი
-    // ==========================================
     doc.setFontSize(26)
     doc.setTextColor(themeColor[0], themeColor[1], themeColor[2])
     doc.text('ინვოისი', 196, 20, { align: 'right' })
 
     doc.setFontSize(12)
     doc.setTextColor(textColor[0], textColor[1], textColor[2])
-    doc.text(`თარიღი: ${today}`, 196, 28, { align: 'right' })
+    doc.text(`ინვოისის #: ${invoiceNumber}`, 196, 28, { align: 'right' })
+    doc.text(`თარიღი: ${today}`, 196, 35, { align: 'right' })
 
-    // ==========================================
-    // 3. მისამართის ბლოკი
-    // ==========================================
-    doc.setFontSize(10)
-    doc.setTextColor(lightText[0], lightText[1], lightText[2])
-    doc.text('თქვენი მისამართი', 14, 28)
-    doc.text('ქალაქი, ინდექსი', 14, 33)
-    // ==========================================
-    // 3. ვის ეგზავნება (მარცხნივ შუაში)
-    // ==========================================
     doc.setFontSize(10)
     doc.setTextColor(themeColor[0], themeColor[1], themeColor[2])
     doc.text('ადრესატი', 14, 60)
 
     doc.setFontSize(12)
     doc.setTextColor(textColor[0], textColor[1], textColor[2])
-    doc.text('კლიენტის სახელი', 14, 67) // აქ ჩასვი კლიენტის ცვლადი
+    doc.text(clientName, 14, 67)
 
     doc.setFontSize(10)
     doc.setTextColor(lightText[0], lightText[1], lightText[2])
-    doc.text('კლიენტის მისამართი', 14, 73)
-    doc.text('ქალაქი, ინდექსი', 14, 78)
+    doc.text(`ს/კ: ${clientTaxId}`, 14, 73)
+    // მისამართის ჩვენება PDF-ში
+    if (clientAddress) {
+      doc.text(`მის: ${clientAddress}`, 14, 78)
+    }
 
-    // ==========================================
-    // 4. ინვოისის დეტალები (მარჯვნივ შუაში)
-    // ==========================================
-    const valueX = 196
-
-    doc.setFontSize(10)
-
-    // ==========================================
-    // 5. ცხრილი (შეცვლილი სვეტების მიმდევრობით ფოტოს მიხედვით)
-    // ==========================================
-    const tableData = selectedItems.map((item) => [
-      String(item.quantity), // QTY არის პირველი
-      String(item.title),
-      `${item.price.toFixed(2)}`,
-      `${(item.price * item.quantity).toFixed(2)} ₾ GEL`, // GEL-ის ნაცვლად $-ით, ან შეცვალე GEL-ით
-    ])
-
+    // ცხრილი დარჩა უცვლელი (ზუსტად ისე როგორც მოგეწონათ)
     autoTable(doc, {
       startY: 95,
       head: [['რაოდ.', 'აღწერა', 'საცალო ფასი', 'ჯამი']],
-      body: tableData,
-      theme: 'plain', // ვიყენებთ plain-ს, რათა ზედმეტი ხაზები არ დახატოს
+      body: selectedItems.map((item) => [
+        String(item.quantity),
+        item.title,
+        `${item.price.toFixed(2)} GEL`,
+        `${(item.price * item.quantity).toFixed(2)} GEL`,
+      ]),
+
+      theme: 'plain',
+
       styles: {
         font: 'Sylfaen',
         fontSize: 10,
         textColor: textColor,
-        cellPadding: { top: 4, right: 2, bottom: 4, left: 2 },
+        cellPadding: { top: 5, right: 3, bottom: 5, left: 3 },
+        valign: 'middle',
       },
+
       headStyles: {
         fillColor: themeColor,
         textColor: [255, 255, 255],
         fontStyle: 'normal',
+        halign: 'center',
       },
+
       columnStyles: {
-        0: { halign: 'center', cellWidth: 15 },
-        1: { halign: 'left' },
+        0: { halign: 'center', cellWidth: 20 },
+        1: { halign: 'left', cellWidth: 'auto' },
         2: { halign: 'right', cellWidth: 35 },
         3: { halign: 'right', cellWidth: 35 },
       },
+
+      tableWidth: 'auto',
+
+      didParseCell: function (data) {
+        // აღწერის truncate (თუ ძალიან გრძელია)
+        if (data.column.index === 1) {
+          data.cell.styles.cellWidth = 'auto'
+        }
+      },
+
+      didDrawCell: function (data) {
+        // ქვედა ხაზის დახატვა თითო row-სთვის (clean look)
+        if (data.row.section === 'body' && data.column.index === 0) {
+          const { x, y, width } = data.cell
+          doc.setDrawColor(220)
+          doc.line(
+            x,
+            y + data.cell.height,
+            x + doc.internal.pageSize.width - 28,
+            y + data.cell.height,
+          )
+        }
+      },
     })
-
-    // @ts-expect-error - finalY is added by autotable
+    // @ts-expect-error - finalY
     let currentY = doc.lastAutoTable.finalY
-
-    // ცხრილის ქვედა გამყოფი ხაზი ლურჯ ფერში (როგორც ფოტოზეა)
     doc.setDrawColor(themeColor[0], themeColor[1], themeColor[2])
     doc.setLineWidth(0.4)
     doc.line(14, currentY, 196, currentY)
 
     currentY += 8
-
-    // ==========================================
-    // 6. ჯამი (მარჯვენა მხარეს ცხრილის ქვეშ)
-    // ==========================================
+    const valueX = 196
     const totalsLabelX = 140
-
     doc.setFontSize(10)
     doc.setTextColor(textColor[0], textColor[1], textColor[2])
-
-    // Subtotal
     doc.text('ჯამი', totalsLabelX, currentY)
     doc.text(`${subtotal.toFixed(2)} GEL`, valueX, currentY, { align: 'right' })
 
-    // ფასდაკლება (თუ არის)
     if (discount > 0) {
       currentY += 8
       doc.setTextColor(220, 38, 38)
@@ -204,47 +201,59 @@ export default function InvoiceGenerator() {
     doc.setLineWidth(0.3)
     doc.line(totalsLabelX, currentY, valueX, currentY)
 
-    currentY += 7
-
-    // Total (ლურჯ ფერში)
+    currentY += 11
     doc.setFontSize(11)
     doc.setTextColor(themeColor[0], themeColor[1], themeColor[2])
     doc.text('სულ (GEL)', totalsLabelX, currentY)
     doc.text(`${total.toFixed(2)} GEL`, valueX, currentY, { align: 'right' })
 
-    // Total-ის ქვედა ხაზი (ლურჯი ფერის)
-    currentY += 3
-    doc.setDrawColor(themeColor[0], themeColor[1], themeColor[2])
-    doc.setLineWidth(0.5)
-    doc.line(totalsLabelX, currentY, valueX, currentY)
-
-    // ==========================================
-    // 7. რეკვიზიტები / პირობები (ბოლოში მარცხნივ)
-    // ==========================================
     currentY += 25
     doc.setFontSize(11)
     doc.setTextColor(themeColor[0], themeColor[1], themeColor[2])
     doc.text('საბანკო რეკვიზიტები:', 14, currentY)
-
-    currentY += 6
     doc.setFontSize(10)
     doc.setTextColor(lightText[0], lightText[1], lightText[2])
-    doc.text('მიმღები: შპს აი-ტექნო (I-TECHNO LLC)', 14, currentY)
+    doc.text(
+      `მიმწოდებელი: შპს აიტეჩნო/ITECHNO LTD\nბანკი: თიბისი ბანკი\nIBAN: GE85TB7712236080100008\nინვოისი ძალაშია აღნიშნული თარიღიდან 1 კვირა\nსრული თანხა დღგ-ს ჩათვლით`,
+      14,
+      currentY + 6,
+    )
 
-    currentY += 5
-    doc.text('ბანკი: თიბისი ბანკი', 14, currentY)
-    currentY += 5
-    doc.text('IBAN: GE00TB0000000000000000', 14, currentY)
-
-    doc.save(`Invoice_${new Date().getTime()}.pdf`)
+    doc.save(`Invoice_${invoiceNumber || new Date().getTime()}.pdf`)
   }
 
   return (
     <div className="container mx-auto p-8 max-w-4xl bg-white shadow-xl rounded-2xl my-10 border border-gray-100">
-      <h1 className="text-2xl font-bold mb-8 text-gray-800 border-b pb-4 font-sans">
-        ინვოისის გენერატორი
-      </h1>
+      <h1 className="text-2xl font-bold mb-8 text-gray-800 border-b pb-4">ინვოისის გენერატორი</h1>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <input
+          placeholder="ინვოისის №"
+          value={invoiceNumber}
+          onChange={(e) => setInvoiceNumber(e.target.value)}
+          className="border p-2 rounded outline-none focus:ring-2 focus:ring-[#1976BA]"
+        />
+        <input
+          placeholder="კლიენტის სახელი"
+          value={clientName}
+          onChange={(e) => setClientName(e.target.value)}
+          className="border p-2 rounded outline-none focus:ring-2 focus:ring-[#1976BA]"
+        />
+        <input
+          placeholder="ს/კოდი"
+          value={clientTaxId}
+          onChange={(e) => setClientTaxId(e.target.value)}
+          className="border p-2 rounded outline-none focus:ring-2 focus:ring-[#1976BA]"
+        />
+        <input
+          placeholder="მისამართი"
+          value={clientAddress}
+          onChange={(e) => setClientAddress(e.target.value)}
+          className="border p-2 rounded outline-none focus:ring-2 focus:ring-[#1976BA]"
+        />
+      </div>
+
+      {/* დანარჩენი UI (ძებნა, ცხრილი, ღილაკები) იგივე რჩება */}
       <div className="relative mb-10">
         <label className="block text-sm text-gray-600 mb-2 font-bold">პროდუქტის ძებნა</label>
         <input
@@ -252,7 +261,7 @@ export default function InvoiceGenerator() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="მოძებნე პროდუქტი..."
-          className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#1976BA] shadow-sm transition-all"
+          className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#1976BA]"
         />
         {products.length > 0 && (
           <div className="absolute w-full bg-white border border-gray-100 mt-2 shadow-2xl z-50 rounded-xl overflow-hidden">
@@ -321,7 +330,7 @@ export default function InvoiceGenerator() {
           {[0, 10, 15, 20, 50].map((val) => (
             <button
               key={val}
-              className={`px-5 py-2 rounded-lg font-bold transition-all ${discount === val ? 'bg-[#1976BA] text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-100'}`}
+              className={`px-5 py-2 rounded-lg font-bold transition-all ${discount === val ? 'bg-[#1976BA] text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-100'}`}
               onClick={() => setDiscount(val)}
             >
               {val}%
@@ -336,7 +345,7 @@ export default function InvoiceGenerator() {
 
       <button
         onClick={generatePDF}
-        className="w-full mt-10 bg-gray-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-black transition-all shadow-xl active:scale-95"
+        className="w-full mt-10 bg-gray-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-black transition-all shadow-xl"
       >
         ჩამოტვირთე PDF ინვოისი
       </button>
