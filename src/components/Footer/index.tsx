@@ -59,7 +59,7 @@ export const Footer = () => {
     { name: t.footer.securityAlarm, slug: 'security-alarm' },
   ]
   return (
-    <footer className="bg-[#1e73be] text-white pt-16 pb-8">
+    <footer className="bg-[#1976BA] text-white pt-16 pb-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div className="space-y-6">

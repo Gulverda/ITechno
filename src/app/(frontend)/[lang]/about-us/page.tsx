@@ -14,13 +14,13 @@ export default function AboutPage() {
           <div className="space-y-8">
             <h1 className="text-[48px] md:text-[64px] font-lgv leading-[1.1] uppercase tracking-tight">
               Building Trust, <br />
-              <span className="text-blue-600">Securing Future</span>
+              <span className="text-[#1976BA]">Securing Future</span>
             </h1>
             <p className="text-[18px] text-slate-500 font-light leading-relaxed max-w-lg">
               შპს აიტეჩნო 2017 წლიდან ქმნის უსაფრთხო გარემოს. ჩვენი საქმიანობა ეფუძნება
               პროფესიონალიზმს და უახლეს ტექნოლოგიურ მიღწევებს.
             </p>
-            <button className="bg-[#0A0A0A] text-white px-10 py-4 rounded-full text-[14px] font-bold uppercase tracking-widest hover:bg-blue-600 transition-all">
+            <button className="bg-[#0A0A0A] text-white px-10 py-4 rounded-full text-[14px] font-bold uppercase tracking-widest hover:bg-[#1976BA] transition-all">
               გაიგე მეტი
             </button>
           </div>
@@ -89,9 +89,9 @@ export default function AboutPage() {
           ].map((item, i) => (
             <div
               key={i}
-              className="bg-slate-50 p-10 rounded-[40px] border border-slate-100 hover:border-blue-600 transition-all group flex gap-6 items-start"
+              className="bg-slate-50 p-10 rounded-[40px] border border-slate-100 hover:border-[#1976BA] transition-all group flex gap-6 items-start"
             >
-              <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors shrink-0">
+              <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-[#1976BA] group-hover:bg-[#1976BA] group-hover:text-white transition-colors shrink-0">
                 <item.icon size={24} />
               </div>
               <div className="flex flex-col gap-2">
@@ -107,12 +107,12 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
           <div className="lg:col-span-5 space-y-12">
             <div className="relative">
-              <span className="text-[13px] font-black uppercase tracking-[0.5em] text-blue-600/50 mb-4 block">
+              <span className="text-[13px] font-black uppercase tracking-[0.5em] text-[#1976BA]/50 mb-4 block">
                 Our Legacy
               </span>
               <h2 className="text-[48px] md:text-[56px] font-lgv uppercase leading-[0.9] tracking-tighter">
                 უსაფრთხოების <br />
-                <span className="text-blue-600">ახალი ერა</span>
+                <span className="text-[#1976BA]">ახალი ერა</span>
               </h2>
             </div>
 
@@ -124,10 +124,10 @@ export default function AboutPage() {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="group flex items-center justify-between p-6 rounded-3xl bg-slate-50 border border-transparent hover:border-blue-100 hover:bg-white hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-500"
+                  className="group flex items-center justify-between p-6 rounded-3xl bg-slate-50 border border-transparent hover:border-blue-100 hover:bg-white hover:shadow-xl hover:shadow-[#1976BA]/5 transition-all duration-500"
                 >
                   <div className="flex items-center gap-5">
-                    <div className="w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-sm">
+                    <div className="w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-[#1976BA] group-hover:bg-[#1976BA] group-hover:text-white transition-all duration-500 shadow-sm">
                       <Check size={20} strokeWidth={3} />
                     </div>
                     <span className="text-slate-700 text-[17px] font-medium">{item.text}</span>
@@ -205,7 +205,7 @@ export default function AboutPage() {
                   >
                     <div className="flex items-center gap-8">
                       <span
-                        className={`text-[14px] font-black transition-colors ${openIndex === i ? 'text-blue-600' : 'text-slate-300 group-hover:text-slate-400'}`}
+                        className={`text-[14px] font-black transition-colors ${openIndex === i ? 'text-[#1976BA]' : 'text-slate-300 group-hover:text-slate-400'}`}
                       >
                         {s.icon}
                       </span>
@@ -216,7 +216,7 @@ export default function AboutPage() {
                       </span>
                     </div>
                     <div
-                      className={`w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center transition-all duration-500 ${openIndex === i ? 'bg-blue-600 border-blue-600 text-white rotate-45 scale-110 shadow-lg shadow-blue-200' : 'text-slate-400 group-hover:border-slate-400'}`}
+                      className={`w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center transition-all duration-500 ${openIndex === i ? 'bg-[#1976BA] border-[#1976BA] text-white rotate-45 scale-110 shadow-lg shadow-blue-200' : 'text-slate-400 group-hover:border-slate-400'}`}
                     >
                       <Plus size={20} />
                     </div>
@@ -228,7 +228,7 @@ export default function AboutPage() {
                       <p className="text-slate-500 text-[18px] font-light leading-relaxed max-w-xl">
                         {s.d}
                       </p>
-                      <div className="mt-6 flex items-center gap-2 text-blue-600 font-bold text-[14px] uppercase tracking-widest cursor-pointer hover:gap-4 transition-all">
+                      <div className="mt-6 flex items-center gap-2 text-[#1976BA] font-bold text-[14px] uppercase tracking-widest cursor-pointer hover:gap-4 transition-all">
                         დეტალურად <ArrowRight size={16} />
                       </div>
                     </div>
@@ -243,7 +243,7 @@ export default function AboutPage() {
       <section className="px-6 pb-24">
         <div className="max-w-7xl mx-auto bg-[#0A0A0A] rounded-[48px] p-12 md:p-24 text-center space-y-8 relative overflow-hidden">
           <h2 className="text-white text-[32px] md:text-[48px] font-lgv uppercase tracking-widest relative z-10">
-            მზად ხართ <br /> <span className="text-blue-500">დაცვისთვის?</span>
+            მზად ხართ <br /> <span className="text-[#1976BA]">დაცვისთვის?</span>
           </h2>
           <p className="text-white/50 text-[18px] font-light max-w-xl mx-auto relative z-10">
             დაგვიკავშირდით დღესვე და მიიღეთ ინდივიდუალური გადაწყვეტილება თქვენი უსაფრთხოებისთვის.
@@ -253,7 +253,7 @@ export default function AboutPage() {
               კონტაქტი
             </button>
           </div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-blue-600/10 rounded-full blur-[120px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[#1976BA]/10 rounded-full blur-[120px]" />
         </div>
       </section>
     </div>

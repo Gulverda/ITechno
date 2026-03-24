@@ -79,7 +79,7 @@ export const Pagination = ({
               onClick={() => !isEllipsis && handlePageChange(page as number)}
               disabled={isEllipsis}
               className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg font-bold text-xs sm:text-sm transition-all flex items-center justify-center
-                ${isActive ? 'bg-blue-600 text-white shadow-md' : 'text-slate-600'}
+                ${isActive ? 'bg-[#1976BA] text-white shadow-md' : 'text-slate-600'}
                 ${isEllipsis ? 'text-slate-400 cursor-default px-1' : 'hover:bg-slate-100'}
               `}
             >

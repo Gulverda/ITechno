@@ -37,21 +37,30 @@ export const Header = () => {
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8 text-[15px] font-medium text-slate-600">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={getLocalizedHref(link.href)}
-              className="hover:text-blue-600 transition-colors font-semibold"
-            >
-              {link.name}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const localizedPath = getLocalizedHref(link.href)
+            const isActive = pathname === localizedPath
+
+            return (
+              <Link
+                key={link.href}
+                href={localizedPath}
+                className={`transition-colors font-semibold ${
+                  isActive
+                    ? 'text-[#1976BA] border-b-2 border-[#1976BA]'
+                    : 'hover:text-[#1976BA] text-slate-600'
+                }`}
+              >
+                {link.name}
+              </Link>
+            )
+          })}
         </nav>
 
         <div className="flex items-center gap-4 justify-end max-w-xl">
           <Link
             href="tel:+995000000"
-            className="hidden xl:flex items-center gap-2 border border-blue-600 text-blue-600 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 hover:text-white transition-all"
+            className="hidden xl:flex items-center gap-2 border border-[#1976BA] text-[#1976BA] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#1976BA] hover:text-white transition-all"
           >
             <span>{t.header.contactBtn}</span>
             <Phone className="w-4 h-4" />

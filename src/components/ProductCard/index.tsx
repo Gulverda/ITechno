@@ -43,7 +43,7 @@ export const ProductCard = ({ product, lang }: ProductCardProps) => {
     <Link href={`/${lang}/product-details/${product.slug}`} className="group block h-full">
       <div className="bg-white border border-gray-200 rounded-[20px] overflow-hidden transition-all duration-300 hover:shadow-xl p-4 h-full flex flex-col relative">
         <div className="absolute top-4 left-4 z-10">
-          <span className="bg-[#2979BC] text-white text-xs px-3 py-1 rounded-md font-bold">
+          <span className="bg-[#1976BA] text-white text-xs px-3 py-1 rounded-md font-bold">
             {product.stock === 'in-stock' ? t.productCard.inStock : t.productCard.outStock}
           </span>
         </div>
@@ -80,12 +80,12 @@ export const ProductCard = ({ product, lang }: ProductCardProps) => {
           <div className="mt-auto">
             <div className="flex items-baseline gap-2 mb-4">
               {isPriceZero ? (
-                <span className="text-[13px] font-bold text-[#2979BC]">
+                <span className="text-[13px] font-bold text-[#1976BA]">
                   {t.productCard.contactUs}
                 </span>
               ) : hasDiscount ? (
                 <>
-                  <span className="text-[20px] font-bold text-[#2979BC]">
+                  <span className="text-[20px] font-bold text-[#1976BA]">
                     {discountPrice.toFixed(2)}₾
                   </span>
                   <span className="text-[13px] text-gray-400 line-through">
@@ -93,11 +93,11 @@ export const ProductCard = ({ product, lang }: ProductCardProps) => {
                   </span>
                 </>
               ) : (
-                <span className="text-[20px] font-bold text-[#2979BC]">{price.toFixed(2)}₾</span>
+                <span className="text-[20px] font-bold text-[#1976BA]">{price.toFixed(2)}₾</span>
               )}
             </div>
 
-            <div className="w-full bg-[#2979BC] text-white py-2.5 rounded-xl font-bold text-[13px] transition-colors group-hover:bg-[#1E5D91] text-center">
+            <div className="w-full bg-[#1976BA] text-white py-2.5 rounded-xl font-bold text-[13px] transition-colors group-hover:bg-[#1E5D91] text-center">
               <span>{t.productCard.buttonTitle}</span>
             </div>
           </div>

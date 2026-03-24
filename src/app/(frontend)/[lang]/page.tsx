@@ -66,7 +66,7 @@ export default async function Page({ params, searchParams }: any) {
           <div key={cat.id}>
             <Link
               href={createFilterUrl('category', String(cat.id))}
-              className={`block p-2 text-sm ${resolvedSearchParams.category === String(cat.id) ? 'text-blue-600 font-bold' : ''}`}
+              className={`block p-2 text-sm ${resolvedSearchParams.category === String(cat.id) ? 'text-[#1976BA] font-bold' : ''}`}
             >
               {cat.displayName}
             </Link>

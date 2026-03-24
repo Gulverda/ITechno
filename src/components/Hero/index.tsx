@@ -67,13 +67,13 @@ export const Hero = ({ lang = 'ka' }: HeroProps) => {
               <div className="flex flex-wrap gap-4">
                 <Link
                   href={slide.link}
-                  className="bg-[#1e73be] hover:bg-blue-700 px-6 text-white text-xs sm:text-sm h-[50px] flex items-center justify-center rounded-lg font-bold transition-all shadow-xl hover:shadow-blue-500/20 active:scale-95"
+                  className="bg-[#1976BA] hover:bg-blue-700 px-6 text-white text-xs sm:text-sm h-[50px] flex items-center justify-center rounded-lg font-bold transition-all shadow-xl hover:shadow-[#1976BA]/20 active:scale-95"
                 >
                   {t.buttons.allProducts}
                 </Link>
                 <Link
                   href={`/${lang}/services`}
-                  className="bg-white backdrop-blur-md px-6 text-[#1e73be] hover:bg-white/80 text-xs sm:text-sm h-[50px] flex items-center justify-center border border-white/30 rounded-lg font-bold transition-all active:scale-95"
+                  className="bg-white backdrop-blur-md px-6 text-[#1976BA] hover:bg-white/80 text-xs sm:text-sm h-[50px] flex items-center justify-center border border-white/30 rounded-lg font-bold transition-all active:scale-95"
                 >
                   {t.buttons.ourServices}
                 </Link>

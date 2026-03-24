@@ -9,7 +9,7 @@ const ContactForm = ({ lang = 'ka' }: { lang: 'ka' | 'en' }) => {
     <form className="space-y-6 p-2 md:p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col gap-2">
-          <label className="text-[#E67E22] font-firaGo600">{t.firstName}</label>
+          <label className="text-[#f28f24] font-firaGo600">{t.firstName}</label>
           <input
             type="text"
             placeholder={t.placeholderName}
@@ -17,7 +17,7 @@ const ContactForm = ({ lang = 'ka' }: { lang: 'ka' | 'en' }) => {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-[#E67E22] font-firaGo600">{t.lastName}</label>
+          <label className="text-[#f28f24] font-firaGo600">{t.lastName}</label>
           <input
             type="text"
             placeholder={t.placeholderSurname}
@@ -27,7 +27,7 @@ const ContactForm = ({ lang = 'ka' }: { lang: 'ka' | 'en' }) => {
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-[#E67E22] font-firaGo600">{t.email}</label>
+        <label className="text-[#f28f24] font-firaGo600">{t.email}</label>
         <input
           type="email"
           placeholder="name@example.com"
@@ -36,7 +36,7 @@ const ContactForm = ({ lang = 'ka' }: { lang: 'ka' | 'en' }) => {
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-[#E67E22] font-firaGo600">{t.phone}</label>
+        <label className="text-[#f28f24] font-firaGo600">{t.phone}</label>
         <input
           type="text"
           placeholder="+995 --- -- -- --"
@@ -45,7 +45,7 @@ const ContactForm = ({ lang = 'ka' }: { lang: 'ka' | 'en' }) => {
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-[#E67E22] font-firaGo600">{t.message}</label>
+        <label className="text-[#f28f24] font-firaGo600">{t.message}</label>
         <textarea
           rows={4}
           placeholder={t.placeholderMessage}

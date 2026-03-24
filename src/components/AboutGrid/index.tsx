@@ -29,7 +29,7 @@ const AboutGrid = ({ lang = 'ka' }: { lang: 'ka' | 'en' }) => {
             />
           </div>
 
-          <h2 className="text-[#00529B] text-3xl sm:text-5xl font-lgv lg:mb-8 uppercase">
+          <h2 className="text-[#1976BA] text-3xl sm:text-5xl font-lgv lg:mb-8 uppercase">
             {t.reliability}
           </h2>
           <p className="text-gray-800 leading-relaxed text-lg mt-6 font-firaGo400">
@@ -38,7 +38,7 @@ const AboutGrid = ({ lang = 'ka' }: { lang: 'ka' | 'en' }) => {
         </div>
 
         <div className="bg-[#F0F2F5] rounded-[30px] p-8 flex items-center justify-start md:justify-center text-center md:min-h-[250px]">
-          <h2 className="text-[#00529B] text-2xl sm:text-5xl font-lgv uppercase leading-tight flex gap-3 md:flex-col md:gap-0">
+          <h2 className="text-[#1976BA] text-2xl sm:text-5xl font-lgv uppercase leading-tight flex gap-3 md:flex-col md:gap-0">
             <span>{t.experienceYear}</span>
             <span>{t.experienceMarket}</span>
           </h2>
@@ -58,7 +58,7 @@ const AboutGrid = ({ lang = 'ka' }: { lang: 'ka' | 'en' }) => {
         </div>
 
         <div className="bg-[#F0F2F5] rounded-[30px] p-8 flex flex-col justify-center min-h-[250px]">
-          <h3 className="text-[#00529B] text-3xl md:text-4xl font-lgv mb-6 uppercase">
+          <h3 className="text-[#1976BA] text-3xl md:text-4xl font-lgv mb-6 uppercase">
             {t.contactUs}
           </h3>
           <div className="space-y-3 text-lg font-firaGo600 text-gray-800">

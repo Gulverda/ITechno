@@ -73,7 +73,7 @@ export const CategoryBar = async ({ lang = 'ka' }: { lang?: string }) => {
       <CategoryScrollWrapper>
         <Link
           href={`/${lang}/products`}
-          className="group flex-shrink-0 w-36 h-24 md:w-40 md:h-28 bg-[#2979BC] rounded-2xl flex flex-col items-center justify-center text-white gap-2 hover:bg-blue-700 transition-all shadow-md overflow-hidden"
+          className="group flex-shrink-0 w-36 h-24 md:w-40 md:h-28 bg-[#1976BA] rounded-2xl flex flex-col items-center justify-center text-white gap-2 hover:bg-blue-700 transition-all shadow-md overflow-hidden"
         >
           <div className="relative w-7 h-7 transition-transform duration-500 group-hover:scale-125">
             <Image src={MenuIcon} alt="menu" fill className="invert brightness-0" />

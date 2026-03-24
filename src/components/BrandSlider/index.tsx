@@ -53,7 +53,7 @@ export const BrandsSlider = ({ brands }: any) => {
                     maskSize: 'contain',
                     maskPosition: 'center',
                   }}
-                  className="w-32 h-10 bg-gray-400 transition-colors duration-300 group-hover:bg-[#2979BC]"
+                  className="w-32 h-10 bg-gray-400 transition-colors duration-300 group-hover:bg-[#1976BA]"
                 />
               </div>
             </SwiperSlide>

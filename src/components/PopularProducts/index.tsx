@@ -24,14 +24,14 @@ export const PopularProducts = ({ products, lang, title }: PopularProductsProps)
         <div className="flex justify-between items-end mb-8 border-b border-gray-100 pb-4">
           <div className="space-y-1">
             <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">{title}</h2>
-            <div className="h-1 w-20 bg-blue-600 rounded-full"></div>
+            <div className="h-1 w-20 bg-[#1976BA] rounded-full"></div>
           </div>
 
           <div className="flex gap-2">
-            <button className="swiper-prev-btn p-3 rounded-full bg-white border border-gray-100 shadow-sm hover:bg-blue-600 hover:text-white transition-all text-gray-400">
+            <button className="swiper-prev-btn p-3 rounded-full bg-white border border-gray-100 shadow-sm hover:bg-[#1976BA] hover:text-white transition-all text-gray-400">
               <ChevronLeftIcon />
             </button>
-            <button className="swiper-next-btn p-3 rounded-full bg-white border border-gray-100 shadow-sm hover:bg-blue-600 hover:text-white transition-all text-gray-400">
+            <button className="swiper-next-btn p-3 rounded-full bg-white border border-gray-100 shadow-sm hover:bg-[#1976BA] hover:text-white transition-all text-gray-400">
               <ChevronRightIcon />
             </button>
           </div>

@@ -32,7 +32,7 @@ export const Search = ({ lang }: { lang: string }) => {
 
   return (
     <div className="relative w-full max-w-[400px] group">
-      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors">
+      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#1976BA] transition-colors">
         <SearchIcon size={18} />
       </div>
 
@@ -43,7 +43,7 @@ export const Search = ({ lang }: { lang: string }) => {
         className="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl 
                    shadow-sm outline-none transition-all duration-200
                    placeholder:text-gray-400 text-sm
-                   focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 
+                   focus:border-[#1976BA] focus:ring-4 focus:ring-[#1976BA]/10 
                    hover:border-gray-300"
       />
 
