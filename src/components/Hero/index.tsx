@@ -20,14 +20,14 @@ export const Hero = ({ lang = 'ka' }: HeroProps) => {
       title: t.slide1.title,
       description: t.slide1.description,
       image: HeroImage,
-      link: `/${lang}/category/video-surveillance`,
+      link: `/${lang}/products`,
     },
     {
       id: 2,
       title: t.slide2.title,
       description: t.slide2.description,
       image: HeroImage,
-      link: `/${lang}/category/smart-home`,
+      link: `/${lang}/category/services`,
     },
   ]
 
