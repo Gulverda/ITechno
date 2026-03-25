@@ -75,6 +75,68 @@
         "address": "მისამართი"
       }
     },
+    "aboutUs": {
+      "hero": {
+        "titleBlue": "უსაფრთხოების",
+        "titleBlack": "გარანტია თქვენთვის",
+        "story": "შპს აიტეჩნო დაარსდა 2017 წელს და უკვე 8 წელია წარმატებით ოპერირებს ქართულ ბაზარზე უსაფრთხოების სისტემების მიმართულებით. კომპანიის საქმიანობა ეფუძნება პროფესიონალიზმს, ტექნიკურ სიზუსტეს და მაღალ პასუხისმგებლობას თითოეული შესრულებული პროექტის მიმართ."
+      },
+      "priority": {
+        "title": "ჩვენი მთავარი პრიორიტეტია სანდო და სტაბილური უსაფრთხოების სისტემების დანერგვა",
+        "sub": "სისტემები, რომლებიც მომხმარებელს გრძელვადიან დაცვასა და სიმშვიდეს უზრუნველყოფს.",
+        "analysis": "თითოეული პროექტი იგეგმება დეტალურად — ობიექტის სპეციფიკის, რისკების და ტექნიკური მოთხოვნების სრული ანალიზის საფუძველზე."
+      },
+      "brands": {
+        "title": "კომპანია მუშაობს საერთაშორისო ბრენდების თანამედროვე ტექნოლოგიებთან, მათ შორის"
+      },
+      "directions": {
+        "title": "ძირითადი მიმართულებები",
+        "items": [
+          { "title": "ვიდეოსამეთვალყურეო სისტემები" },
+          { "title": "სმარტ სისტემების ინტეგრირება" },
+          { "title": "სახანძრო სიგნალიზაცია" },
+          { "title": "დაშვების კონტროლი" },
+          { "title": "დომოფონების მონტაჟი" },
+          { "title": "კომპიუტერული ქსელები" }
+        ]
+      },
+      "support": {
+        "badge": "მომსახურება და გარანტია",
+        "title": "სრული მხარდაჭერა ერთ სივრცეში",
+        "text1": "კომპანია უზრუნველყოფს როგორც პროდუქციის მიწოდებას, ასევე სრულ ტექნიკურ მომსახურებას — კონსულტაციიდან სისტემის ექსპლუატაციაში გაშვებამდე და შემდგომ მხარდაჭერამდე.",
+        "text2": "ყველა ძირითად პროდუქტზე ვრცელდება ოფიციალური გარანტია, ასევე გარანტიას ვაძლევთ შესრულებულ სამუშაოს. ჩვენი გუნდი უზრუნველყოფს სწრაფ რეაგირებას და ტექნიკურ მხარდაჭერას."
+      },
+      "whyUs": {
+        "badge": "რატომ აიტეჩნო?",
+        "title": "უსაფრთხოება, რომელსაც შეგიძლიათ ენდოთ",
+        "items": [
+          {
+            "title": "სანდოობა და გამოცდილება",
+            "text": "8 წლიანი პრაქტიკა ქართულ ბაზარზე და მრავალი წარმატებული პროექტი."
+          },
+          {
+            "title": "პროფესიონალური მიდგომა",
+            "text": "თითოეული სისტემა იგეგმება ინდივიდუალურად, სტანდარტების სრული დაცვით."
+          },
+          {
+            "title": "ხარისხიანი პროდუქცია",
+            "text": "ვმუშაობთ მხოლოდ სანდო საერთაშორისო ბრენდებთან."
+          },
+          {
+            "title": "გარანტია და პასუხისმგებლობა",
+            "text": "ოფიციალური გარანტია პროდუქციაზე და შესრულებულ სამუშაოზე."
+          },
+          {
+            "title": "მომსახურებაზე ორიენტაცია",
+            "text": "ჩვენი ამოცანაა სისტემის სტაბილური და უწყვეტი მუშაობის უზრუნველყოფა."
+          },
+          {
+            "title": "გრძელვადიანი პარტნიორობა",
+            "text": "ნდობაზე, გამჭვირვალობაზე და შედეგზე დაფუძნებული ურთიერთობა."
+          }
+        ]
+      }
+    },
     "footer": {
       "description": "ჩვენი მთავარი პრიორიტეტია სანდო და სტაბილური უსაფრთხოების სისტემების დანერგვა, რომლებიც მომხმარებელს გრძელვადიან დაცვასა და სიმშვიდეს უზრუნველყოფს.",
       "products": "პროდუქცია",
@@ -164,6 +226,68 @@
         "email": "Email",
         "social": "Social Media",
         "address": "Address"
+      }
+    },
+    "aboutUs": {
+      "hero": {
+        "titleBlue": "Security",
+        "titleBlack": "Guarantee for You",
+        "story": "iTechno LLC was founded in 2017 and has been successfully operating in the Georgian market for 8 years in security systems. Our activity is based on professionalism, technical precision, and high responsibility."
+      },
+      "priority": {
+        "title": "Our main priority is implementing reliable and stable security systems",
+        "sub": "Systems that provide customers with long-term protection and peace of mind.",
+        "analysis": "Each project is planned in detail — based on a complete analysis of the facility's specifics, risks, and technical requirements."
+      },
+      "brands": {
+        "title": "The company works with modern technologies from international brands, including"
+      },
+      "directions": {
+        "title": "Main Directions",
+        "items": [
+          { "title": "Video Surveillance Systems" },
+          { "title": "Smart System Integration" },
+          { "title": "Fire Alarm Systems" },
+          { "title": "Access Control" },
+          { "title": "Intercom Installation" },
+          { "title": "Computer Networks" }
+        ]
+      },
+      "support": {
+        "badge": "Service and Warranty",
+        "title": "Full Support in One Place",
+        "text1": "The company provides both product delivery and full technical service — from consultation to system commissioning and subsequent support.",
+        "text2": "All main products are covered by an official warranty, and we also guarantee the work performed. Our team ensures quick response and support."
+      },
+      "whyUs": {
+        "badge": "Why iTechno?",
+        "title": "Security You Can Trust",
+        "items": [
+          {
+            "title": "Reliability & Experience",
+            "text": "8 years of practice in the Georgian market and many successful projects."
+          },
+          {
+            "title": "Professional Approach",
+            "text": "Each system is planned individually, in full compliance with standards."
+          },
+          {
+            "title": "Quality Products",
+            "text": "We work only with reliable international brands."
+          },
+          {
+            "title": "Warranty & Responsibility",
+            "text": "Official warranty on products and performed work."
+          },
+          {
+            "title": "Service Oriented",
+            "text": "Our task is to ensure stable and continuous operation of the system."
+          },
+          {
+            "title": "Long-term Partnership",
+            "text": "A relationship based on trust, transparency, and results."
+          }
+        ]
       }
     },
     "footer": {

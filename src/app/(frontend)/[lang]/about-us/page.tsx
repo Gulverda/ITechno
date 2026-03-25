@@ -1,25 +1,27 @@
 'use client'
 
-import React from 'react'
+import React, { use } from 'react'
 import Image from 'next/image'
 import { Shield, Network, Cpu, Flame, DoorOpen, CheckCircle } from 'lucide-react'
+import dict from '@/lib/translations.json'
 
-export default function AboutPage() {
+export default function aboutPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = use(params)
+  const t = (dict as any)[lang] || dict.ka
+
   return (
     <div className="bg-white text-[#0F172A]">
       {/* HERO */}
-      <section className="max-w-7xl mx-auto pt-12 pb-24 grid lg:grid-cols-2 gap-20 items-center">
+      <section className="max-w-7xl mx-auto pt-12 sm:pb-24 grid lg:grid-cols-2 gap-20 items-center">
         <div>
           <h1 className="text-[52px] text-[#1976BA] md:text-[72px] font-lgv leading-[1.05] uppercase tracking-tight">
-            უსაფრთხოების
+            {t.aboutUs.hero.titleBlue}
             <br />
-            <span className="text-[#000000]">გარანტია თქვენთვის</span>
+            <span className="text-[#000000]">{t.aboutUs.hero.titleBlack}</span>
           </h1>
 
           <p className="mt-8 text-[18px] text-slate-500 leading-relaxed max-w-xl font-firaGo400">
-            შპს აიტეჩნო დაარსდა 2017 წელს და უკვე 8 წელია წარმატებით ოპერირებს ქართულ ბაზარზე
-            უსაფრთხოების სისტემების მიმართულებით. კომპანიის საქმიანობა ეფუძნება პროფესიონალიზმს,
-            ტექნიკურ სიზუსტეს და მაღალ პასუხისმგებლობას თითოეული შესრულებული პროექტის მიმართ.
+            {t.aboutUs.hero.story}
           </p>
         </div>
 
@@ -33,28 +35,23 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ABOUT TEXT */}
+      {/* aboutUs TEXT */}
       <section className="bg-white py-20 px-6 border-y border-slate-200">
-        <div className="grid lg:grid-cols-12 gap-y-16 lg:gap-x-0  max-w-7xl mx-auto">
-          {/* Left Column: Bold Statement */}
+        <div className="grid lg:grid-cols-12 gap-y-16 lg:gap-x-0 max-w-7xl mx-auto">
           <div className="lg:col-span-7 pr-0 lg:pr-20">
             <h3 className="text-[36px] md:text-[54px] font-bold leading-[1.05] tracking-tight text-[#0F172A]">
-              ჩვენი მთავარი პრიორიტეტია სანდო და სტაბილური უსაფრთხოების სისტემების დანერგვა
+              {t.aboutUs.priority.title}
             </h3>
           </div>
 
-          {/* Right Column: Context & Detail */}
           <div className="lg:col-span-5 flex flex-col justify-between pt-4">
             <p className="text-[18px] md:text-[21px] leading-relaxed mb-4 text-slate-600 font-light">
-              სისტემები, რომლებიც მომხმარებელს{' '}
-              <span className="text-[#0F172A] font-medium">გრძელვადიან დაცვასა და სიმშვიდეს</span>{' '}
-              უზრუნველყოფს.
+              {t.aboutUs.priority.sub}
             </p>
 
             <div className="mt-16 lg:mt-0 p-10 bg-[#F8FAFC] rounded-2xl">
               <p className="text-[16px] md:text-[18px] leading-relaxed text-[#0F172A]">
-                თითოეული პროექტი იგეგმება დეტალურად — ობიექტის სპეციფიკის, რისკების და ტექნიკური
-                მოთხოვნების სრული ანალიზის საფუძველზე.
+                {t.aboutUs.priority.analysis}
               </p>
               <div className="mt-6 flex gap-1">
                 <div className="h-1 w-8 bg-[#1976BA]" />
@@ -64,12 +61,12 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* --- BRANDS SECTION (REPLACED) --- */}
+      {/* BRANDS SECTION */}
       <section className="py-14 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-[28px] md:text-[40px] font-bold text-[#0F172A] leading-tight max-w-3xl mx-auto">
-              კომპანია მუშაობს საერთაშორისო ბრენდების თანამედროვე ტექნოლოგიებთან, მათ შორის
+              {t.aboutUs.brands.title}
             </h2>
           </div>
 
@@ -124,40 +121,34 @@ export default function AboutPage() {
       {/* SERVICES GRID */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <h2 className="text-center text-[42px] font-lgv uppercase tracking-widest mb-20">
-          ძირითადი მიმართულებები
+          {t.aboutUs.directions.title}
         </h2>
 
         <div className="grid md:grid-cols-3 gap-10">
           {[
             {
               icon: Shield,
-              title: 'ვიდეოსამეთვალყურეო სისტემების პროექტირება და ინსტალაცია',
-              img: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=1200&auto=format&fit=crop',
+              img: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=1200',
             },
             {
               icon: Cpu,
-              title: 'სმარტ სისტემების ინტეგრირება',
-              img: 'https://images.unsplash.com/photo-1558002038-1055e2e28ed1?q=80&w=1200&auto=format&fit=crop',
+              img: 'https://images.unsplash.com/photo-1558002038-1055e2e28ed1?q=80&w=1200',
             },
             {
               icon: Flame,
-              title: 'სახანძრო სიგნალიზაციის მოწყობა',
-              img: 'https://images.unsplash.com/photo-1603727039546-4c5a5d7f3e89?q=80&w=1200&auto=format&fit=crop',
+              img: 'https://images.unsplash.com/photo-1603727039546-4c5a5d7f3e89?q=80&w=1200',
             },
             {
               icon: DoorOpen,
-              title: 'დაშვების კონტროლის სისტემების დანერგვა',
-              img: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=1200&auto=format&fit=crop',
+              img: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=1200',
             },
             {
               icon: Network,
-              title: 'დომოფონების მონტაჟი',
-              img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop',
+              img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200',
             },
             {
               icon: CheckCircle,
-              title: 'კომპიუტერული ქსელების პროექტირება და მოწყობა',
-              img: 'https://images.unsplash.com/photo-1526378722484-cc5c510f4b74?q=80&w=1200&auto=format&fit=crop',
+              img: 'https://images.unsplash.com/photo-1526378722484-cc5c510f4b74?q=80&w=1200',
             },
           ].map((item, i) => (
             <div
@@ -169,16 +160,12 @@ export default function AboutPage() {
                 backgroundPosition: 'center',
               }}
             >
-              {/* DARK OVERLAY */}
               <div className="absolute inset-0 bg-black/55" />
-
-              {/* CONTENT */}
               <div className="relative z-10 text-white">
                 <item.icon size={42} className="text-white" />
-
-                <h3 className="mt-6 text-[22px] font-bold leading-snug">{item.title}</h3>
-
-                {/* BRAND ACCENT LINES */}
+                <h3 className="mt-6 text-[22px] font-bold leading-snug">
+                  {t.aboutUs.directions.items[i].title}
+                </h3>
                 <div className="mt-5 flex gap-2">
                   <div className="w-8 h-[2px] bg-[#1976BA]" />
                   <div className="w-4 h-[2px] bg-[#F49427]" />
@@ -189,79 +176,48 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* WARRANTY SECTION */}
       <section className="bg-white py-10 px-6">
         <div className="max-w-7xl mx-auto">
-          <span className="text-[16px] text-[#1976BA] font-semibold">მომსახურება და გარანტია</span>
-
+          <span className="text-[16px] text-[#1976BA] font-semibold">
+            {t.aboutUs.support.badge}
+          </span>
           <h3 className="mt-6 text-[34px] md:text-[44px] font-bold leading-tight text-[#0F172A]">
-            სრული მხარდაჭერა ერთ სივრცეში
+            {t.aboutUs.support.title}
           </h3>
-
-          <div className="mt-8 space-y-4 text-[18px] leading-[1.9] text-slate-600">
-            <p>
-              კომპანია უზრუნველყოფს როგორც პროდუქციის მიწოდებას, ასევე სრულ ტექნიკურ მომსახურებას —
-              კონსულტაციიდან სისტემის ექსპლუატაციაში გაშვებამდე და შემდგომ მხარდაჭერამდე.
-            </p>
-
-            <p>
-              ყველა ძირითად პროდუქტზე ვრცელდება ოფიციალური გარანტია, ასევე გარანტიას ვაძლევთ
-              შესრულებულ სამუშაოს. ჩვენი გუნდი უზრუნველყოფს სწრაფ რეაგირებას და ტექნიკურ
-              მხარდაჭერას, რაც მომხმარებლისთვის დამატებითი სანდოობის საფუძველს ქმნის.
-            </p>
+          <div className="mt-8 space-y-4 text-[18px] leading-[1.9] text-slate-600 font-firaGo400">
+            <p>{t.aboutUs.support.text1}</p>
+            <p>{t.aboutUs.support.text2}</p>
           </div>
         </div>
       </section>
 
+      {/* WHY US SECTION */}
       <section className="bg-[#F8FAFC] py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-12 gap-14 items-start">
             <div className="lg:col-span-4">
               <span className="text-[16px] text-[#1976BA] font-semibold">
-                რატომ აიტეჩნო ?
+                {t.aboutUs.whyUs.badge}
               </span>
-
               <h3 className="mt-6 text-[34px] md:text-[44px] font-bold leading-tight text-[#0F172A]">
-                უსაფრთხოება,
+                {t.aboutUs.whyUs.title.split(',')[0]},
                 <br />
-                რომელსაც შეგიძლიათ ენდოთ
+                {t.aboutUs.whyUs.title.split(',')[1]}
               </h3>
             </div>
 
             <div className="lg:col-span-8">
               <div className="divide-y divide-slate-200 border-t border-slate-200">
-                {[
-                  {
-                    title: 'სანდოობა და გამოცდილება',
-                    text: '8 წლიანი პრაქტიკა ქართულ ბაზარზე და მრავალი წარმატებით განხორციელებული პროექტი.',
-                  },
-                  {
-                    title: 'პროფესიონალური მიდგომა',
-                    text: 'თითოეული სისტემა იგეგმება ინდივიდუალურად, სტანდარტების სრული დაცვით.',
-                  },
-                  {
-                    title: 'ხარისხიანი პროდუქცია',
-                    text: 'ვმუშაობთ მხოლოდ სანდო საერთაშორისო ბრენდებთან.',
-                  },
-                  {
-                    title: 'გარანტია და პასუხისმგებლობა',
-                    text: 'ოფიციალური გარანტია პროდუქციაზე და შესრულებულ სამუშაოზე.',
-                  },
-                  {
-                    title: 'მომსახურებაზე ორიენტაცია',
-                    text: 'ჩვენი ამოცანაა არა მხოლოდ სისტემის მონტაჟი, არამედ მისი სტაბილური და უწყვეტი მუშაობის უზრუნველყოფა.',
-                  },
-                  {
-                    title: 'გრძელვადიანი პარტნიორობა',
-                    text: 'ვქმნით ურთიერთობას, რომელიც დაფუძნებულია ნდობაზე, გამჭვირვალობაზე და შედეგზე.',
-                  },
-                ].map((item, i) => (
+                {t.aboutUs.whyUs.items.map((item: any, i: number) => (
                   <div key={i} className="grid md:grid-cols-12 gap-4 md:gap-8 py-7">
                     <div className="md:col-span-4">
                       <h4 className="text-[18px] font-semibold text-[#0F172A]">{item.title}</h4>
                     </div>
-
                     <div className="md:col-span-8">
-                      <p className="text-[17px] leading-[1.8] text-slate-600">{item.text}</p>
+                      <p className="text-[17px] leading-[1.8] text-slate-600 font-firaGo400">
+                        {item.text}
+                      </p>
                     </div>
                   </div>
                 ))}
