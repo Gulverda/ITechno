@@ -85,7 +85,7 @@ export default async function Page({ params, searchParams }: any) {
       <PopularProducts
         products={popularProducts.docs}
         lang={lang}
-        title={params.lang === 'ka' ? 'პოპულარული პროდუქტები' : 'Popular Products'}
+        title={resolvedParams.lang === 'ka' ? 'პოპულარული პროდუქტები' : 'Popular Products'}
       />
       <PromoBanner />
       <AboutGrid lang={lang} />

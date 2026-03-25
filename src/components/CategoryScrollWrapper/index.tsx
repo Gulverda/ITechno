@@ -19,7 +19,7 @@ export const CategoryScrollWrapper = ({ children }: { children: React.ReactNode 
     <div className="relative group">
       <button
         onClick={() => scroll('left')}
-        className="absolute left-[-20px] top-1/2 -translate-y-1/2 z-20 bg-white shadow-xl border border-gray-100 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-50 hidden md:block"
+        className="absolute left-[-15px] top-1/2 -translate-y-1/2 z-20 bg-white shadow-xl border border-gray-100 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-50 hidden md:block"
       >
         <ChevronLeft className="w-5 h-5 text-gray-600" />
       </button>
@@ -30,7 +30,7 @@ export const CategoryScrollWrapper = ({ children }: { children: React.ReactNode 
 
       <button
         onClick={() => scroll('right')}
-        className="absolute right-[-20px] top-1/2 -translate-y-1/2 z-20 bg-white shadow-xl border border-gray-100 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-50 hidden md:block"
+        className="absolute right-[-15px] top-1/2 -translate-y-1/2 z-20 bg-white shadow-xl border border-gray-100 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-50 hidden md:block"
       >
         <ChevronRight className="w-5 h-5 text-gray-600" />
       </button>

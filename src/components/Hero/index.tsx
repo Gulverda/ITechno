@@ -72,7 +72,7 @@ export const Hero = ({ lang = 'ka' }: HeroProps) => {
                   {t.buttons.allProducts}
                 </Link>
                 <Link
-                  href={`/${lang}/services`}
+                  href={`/${lang}/about-us`}
                   className="bg-white backdrop-blur-md px-6 text-[#1976BA] hover:bg-white/80 text-xs sm:text-sm h-[50px] flex items-center justify-center border border-white/30 rounded-lg font-bold transition-all active:scale-95"
                 >
                   {t.buttons.ourServices}
