@@ -17,30 +17,69 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: string | undefined }>
 }
 
+// --- SEO & DYNAMIC METADATA ---
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, category } = await params
   const categorySlug = category?.[0]
-  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
-  const canonicalPath = categorySlug ? `/${lang}/products/${categorySlug}` : `/${lang}/products`
+  const currentLang = (lang === 'en' ? 'en' : 'ka') as SupportedLang
+  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://itechno.ge'
 
-  if (!categorySlug) {
-    return {
-      title: lang === 'ka' ? 'მაღაზია | I-Techno' : 'Shop | I-Techno',
-      description: lang === 'ka' ? 'აღმოაჩინეთ უახლესი ტექნოლოგიები' : 'Discover technologies',
-      alternates: { canonical: `${baseUrl}${canonicalPath}` },
+  // Default values
+  let title = currentLang === 'ka' ? 'მაღაზია' : 'Shop'
+  let description =
+    currentLang === 'ka'
+      ? 'აღმოაჩინეთ უახლესი ტექნოლოგიები, უსაფრთხოების კამერები და ჭკვიანი სახლის სისტემები I-TECHNO-ზე.'
+      : 'Discover the latest technologies, security cameras, and smart home systems at I-TECHNO.'
+
+  if (categorySlug) {
+    try {
+      const payload = await getPayload({ config: await config })
+      const categoryRes = await payload.find({
+        collection: 'categories',
+        where: { slug: { equals: categorySlug } },
+        locale: currentLang,
+        limit: 1,
+      })
+
+      if (categoryRes.docs.length > 0) {
+        const cat = categoryRes.docs[0]
+        const catName = (cat as any).name || categorySlug
+        title = `${catName}`
+        description =
+          currentLang === 'ka'
+            ? `იყიდეთ ${catName} საუკეთესო ფასად. გარანტია და ადგილზე მიტანის სერვისი მთელ საქართველოში.`
+            : `Buy ${catName} at the best price. Warranty and delivery service throughout Georgia.`
+      }
+    } catch (e) {
+      console.error('Metadata fetch error', e)
     }
   }
 
-  const displayTitle = categorySlug
-    .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
+  const canonicalPath = categorySlug ? `/${lang}/products/${categorySlug}` : `/${lang}/products`
+
   return {
-    title: `${displayTitle} | I-Techno`,
-    alternates: { canonical: `${baseUrl}${canonicalPath}` },
+    title,
+    description,
+    alternates: {
+      canonical: `${baseUrl}${canonicalPath}`,
+      languages: {
+        'ka-GE': `/ka/products${categorySlug ? `/${categorySlug}` : ''}`,
+        'en-US': `/en/products${categorySlug ? `/${categorySlug}` : ''}`,
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url: `${baseUrl}${canonicalPath}`,
+      siteName: 'I-TECHNO',
+      locale: currentLang === 'ka' ? 'ka_GE' : 'en_US',
+      type: 'website',
+      images: [{ url: '/og-shop.jpg', width: 1200, height: 630 }],
+    },
   }
 }
 
+// --- MAIN PAGE COMPONENT ---
 export default async function Page({ params, searchParams }: PageProps) {
   const { lang, category: categoryArray } = await params
   const resolvedSearchParams = await searchParams
@@ -55,21 +94,21 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   const { q, page, ...filterParams } = resolvedSearchParams
 
-  // --- ცვლილება 1: კატეგორიებს ვიღებთ ლოკალის გარეშე (fallback ka), რომ სახელები specs-ს დაემთხვეს ---
-  const categoriesRes = await payload.find({
-    collection: 'categories',
-    limit: 500,
-    locale: currentLang, // აქ ყოველთვის 'ka' გვინდა შედარებისთვის
-    depth: 2,
-  })
-
-  // ცალკე წამოვიღოთ კატეგორიები მიმდინარე ენაზე საჩვენებლად
-  const categoriesDisplay = await payload.find({
-    collection: 'categories',
-    limit: 500,
-    locale: currentLang,
-    depth: 1,
-  })
+  // 1. Fetch Categories for Logic & Display
+  const [categoriesRes, categoriesDisplay] = await Promise.all([
+    payload.find({
+      collection: 'categories',
+      limit: 500,
+      locale: currentLang,
+      depth: 2,
+    }),
+    payload.find({
+      collection: 'categories',
+      limit: 500,
+      locale: currentLang,
+      depth: 1,
+    }),
+  ])
 
   const allCategories = categoriesRes.docs as any[]
   let activeCategoryId: string | number | null = null
@@ -83,9 +122,9 @@ export default async function Page({ params, searchParams }: PageProps) {
     }
   }
 
+  // 2. Build Filters
   const andFilters: Where[] = []
 
-  // კატეგორიის ფილტრი
   if (activeCategoryId) {
     const getAllChildIds = (parentId: string | number): (string | number)[] => {
       const children = allCategories.filter((c) => {
@@ -107,17 +146,15 @@ export default async function Page({ params, searchParams }: PageProps) {
     })
   }
 
-  // დინამიური ფილტრების ლოგიკა
   Object.entries(filterParams).forEach(([groupName, value]) => {
     if (value) {
       andFilters.push({
-        'filter_values.value_rel.value': {
-          equals: value,
-        },
+        'filter_values.value_rel.value': { equals: value },
       })
     }
   })
 
+  // 3. Fetch Products
   const productsRes = await payload.find({
     collection: 'products',
     where: andFilters.length > 0 ? { and: andFilters } : {},
@@ -128,40 +165,58 @@ export default async function Page({ params, searchParams }: PageProps) {
     sort: '-createdAt',
   })
 
-  // --- ცვლილება 2: Fetch Specs ქეშის გარეშე, რომ ენის ცვლილებაზე არ გაიჭედოს ---
+  // 4. Fetch Specs
   let specs: UniqueSpecs = {}
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
     const specsRes = await fetch(
       `${baseUrl}/api/products/unique-specs?lang=${currentLang}&v=${Math.random()}`,
-      {
-        cache: 'no-store',
-        headers: {
-          Pragma: 'no-cache',
-          'Cache-Control': 'no-cache',
-        },
-      },
+      { cache: 'no-store' },
     )
-    if (specsRes.ok) {
-      specs = (await specsRes.json()) as UniqueSpecs
-    }
+    if (specsRes.ok) specs = (await specsRes.json()) as UniqueSpecs
   } catch (e) {
     console.error('Specs fetch failed:', e)
   }
 
   return (
-    <Products
-      products={productsRes as any}
-      allCategories={categoriesDisplay.docs.map((c: any) => ({
-        ...c,
-        displayName: c.name || 'No Name',
-      }))}
-      lang={currentLang}
-      t={t}
-      specs={specs}
-      activeCategorySlug={categorySlug}
-      // აქ გადაეცემა ქართული სახელები, რომელიც specs-შია
-      categoryFilters={activeCategoryFilters.map((f) => f.name)}
-    />
+    <main className="min-h-screen">
+      <h1 className="sr-only">
+        {categorySlug
+          ? `${categorySlug} - I-TECHNO`
+          : currentLang === 'ka'
+            ? 'პროდუქტების კატალოგი'
+            : 'Products Catalog'}
+      </h1>
+
+      <Products
+        products={productsRes as any}
+        allCategories={categoriesDisplay.docs.map((c: any) => ({
+          ...c,
+          displayName: c.name || 'No Name',
+        }))}
+        lang={currentLang}
+        t={t}
+        specs={specs}
+        activeCategorySlug={categorySlug}
+        categoryFilters={activeCategoryFilters.map((f) => f.name)}
+      />
+
+      {/* Structured Data (JSON-LD) for better Google indexing */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            itemListElement: productsRes.docs.map((p: any, index: number) => ({
+              '@type': 'ListItem',
+              position: index + 1,
+              url: `${process.env.NEXT_PUBLIC_SERVER_URL}/${currentLang}/products/${p.slug}`,
+              name: p.title,
+            })),
+          }),
+        }}
+      />
+    </main>
   )
 }

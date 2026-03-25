@@ -17,12 +17,12 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: string | undefined }>
 }
 
+// --- 1. SENIOR SEO: DYNAMIC METADATA & ALTERNATES ---
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug, lang } = await params
   const currentLang: SupportedLang = (lang === 'en' ? 'en' : 'ka') as SupportedLang
-
   const payload = await getPayload({ config: await config })
-  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://itechno.ge'
 
   const { docs } = await payload.find({
     collection: 'products',
@@ -31,12 +31,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   })
 
   const product = docs[0] as unknown as Product
-  if (!product) return { title: 'Product Not Found | I-Techno' }
+  if (!product) return { title: `პროდუქტი ვერ მოიძებნა` }
 
-  const title = `${product.title} | I-Techno`
-  const description =
-    product.specifications ||
-    (typeof product.description === 'string' ? product.description.substring(0, 160) : '')
+  // Title სლოგანით
+  const title = `${product.title}`
+
+  const description = product.specifications
+    ? `${product.title}: ${product.specifications.substring(0, 160)}`
+    : `${product.title} - შეიძინეთ გარანტიით I-TECHNO-ში. დაგვიკავშირდით კონსულტაციისთვის.`
 
   const mainImage = product.mainImage as Media | undefined
   const fullImageUrl = mainImage?.url ? `${baseUrl}${mainImage.url}` : `${baseUrl}/og-image.jpg`
@@ -44,20 +46,38 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
-    alternates: { canonical: `${baseUrl}/${currentLang}/products/${slug}` },
+    alternates: {
+      canonical: `${baseUrl}/${currentLang}/products/${slug}`,
+      languages: {
+        'ka-GE': `${baseUrl}/ka/products/${slug}`,
+        'en-US': `${baseUrl}/en/products/${slug}`,
+      },
+    },
     openGraph: {
       title,
       description,
       url: `${baseUrl}/${currentLang}/products/${slug}`,
+      // შეცვლილია 'website'-ზე ერორის ასაცილებლად
       type: 'website',
       images: [{ url: fullImageUrl, width: 1200, height: 630, alt: product.title }],
     },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [fullImageUrl],
+    },
+    // Production-ისთვის ინდექსაციის ჩართვა
+    robots: {
+      index: process.env.NEXT_PUBLIC_INDEXABLE === 'true',
+      follow: process.env.NEXT_PUBLIC_INDEXABLE === 'true',
+    },
   }
 }
-
 export default async function ProductDetails({ params }: PageProps) {
   const { slug, lang } = await params
   const payload = await getPayload({ config: await config })
+  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://itechno.ge'
 
   const currentLang: SupportedLang = (lang === 'en' ? 'en' : 'ka') as SupportedLang
   const t: Dictionary = (dict as Record<SupportedLang, Dictionary>)[currentLang] || dict.ka
@@ -72,18 +92,15 @@ export default async function ProductDetails({ params }: PageProps) {
   const product = docs[0] as unknown as Product
   if (!product) return notFound()
 
-  // 1. სურათების დამუშავება (ერორის გასწორება)
+  // სურათების დამუშავება
   const galleryImages = (product.images || [])
-    .map((item) => {
-      const img = item.image as unknown as Media | null | undefined
-      return img?.url || null
-    })
+    .map((item) => (item.image as unknown as Media | null | undefined)?.url || null)
     .filter((url): url is string => !!url)
 
   const mainImage = product.mainImage as unknown as Media | undefined
   const category = product.category as unknown as Category | undefined
 
-  // 2. მსგავსი პროდუქტები
+  // მსგავსი პროდუქტები
   const relatedRes = await payload.find({
     collection: 'products',
     limit: 4,
@@ -102,10 +119,37 @@ export default async function ProductDetails({ params }: PageProps) {
   )
   const displayPrice = hasDiscount ? product.discountPrice! : product.price || 0
 
+  // --- 2. SENIOR SEO: JSON-LD STRUCTURED DATA ---
+  const productSchema = {
+    '@context': 'https://schema.org/',
+    '@type': 'Product',
+    name: product.title,
+    image: mainImage?.url ? `${baseUrl}${mainImage.url}` : '',
+    description: product.description || product.title,
+    brand: { '@type': 'Brand', name: 'I-Techno' },
+    offers: {
+      '@type': 'Offer',
+      url: `${baseUrl}/${currentLang}/products/${slug}`,
+      priceCurrency: 'GEL',
+      price: displayPrice,
+      availability:
+        product.stock === 'in-stock'
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
+      itemCondition: 'https://schema.org/NewCondition',
+    },
+  }
+
   return (
     <div className="bg-white min-h-screen text-slate-900 antialiased overflow-x-hidden">
+      {/* Schema Injection */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+
       <main className="max-w-7xl mx-auto px-6 py-10 lg:py-16">
-        {/* Breadcrumbs */}
+        {/* Breadcrumbs - Important for Crawler Navigation */}
         <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-10 flex-wrap">
           <Link
             href={`/${currentLang}/products`}
@@ -117,7 +161,7 @@ export default async function ProductDetails({ params }: PageProps) {
             <>
               <ChevronRight size={10} className="shrink-0" />
               <Link
-                href={`/${currentLang}/products?category=${category.id}`}
+                href={`/${currentLang}/products/${category.slug}`}
                 className="hover:text-[#1976BA] transition-colors"
               >
                 {category.name}
@@ -192,17 +236,19 @@ export default async function ProductDetails({ params }: PageProps) {
               </div>
             )}
 
+            {/* CTAs - Conversion Optimization */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 max-w-xl">
               <a
                 href="tel:+995555123456"
-                className="bg-[#1976BA] text-white py-4 rounded-xl flex justify-center items-center gap-2 font-bold hover:opacity-90 transition-opacity"
+                className="bg-[#1976BA] text-white py-4 rounded-xl flex justify-center items-center gap-2 font-bold hover:bg-[#1976BA]/90 transition-all shadow-lg shadow-[#1976BA]/20"
               >
                 <Phone size={14} /> {currentLang === 'ka' ? 'დაგვირეკეთ' : 'Call Us'}
               </a>
               <a
-                href="https://wa.me/995555123456"
+                href={`https://wa.me/995555123456?text=${encodeURIComponent(product.title)}`}
                 target="_blank"
-                className="flex items-center justify-center gap-3 border border-slate-200 py-4 rounded-xl text-xs font-bold uppercase tracking-widest"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-3 border border-slate-200 py-4 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-slate-50 transition-colors"
               >
                 <MessageCircle size={16} className="text-green-500" /> WhatsApp
               </a>
@@ -210,7 +256,7 @@ export default async function ProductDetails({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Similar Products */}
+        {/* Similar Products - Essential for Internal Linking SEO */}
         {relatedRes.docs.length > 0 && (
           <section className="border-t border-slate-50 pt-24">
             <div className="flex items-end justify-between mb-16">

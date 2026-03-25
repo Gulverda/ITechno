@@ -1,37 +1,15 @@
 import React from 'react'
 import './globals.css'
-import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 import { firaGo400, firaGo600, lgvAnastasia } from '../fonts'
 
-export const metadata = {
-  title: 'I-TECHNO | სმარტ სისტემები',
-  description: 'უახლესი ტექნოლოგიები და უსაფრთხოების სისტემები',
-  icons: {
-    icon: '/favicon.ico',
-  },
-  // სანამ დეველოპმენტში ხარ, ბოტებს ვუბლოკავთ წვდომას
-  robots: {
-    index: false,
-    follow: false,
-  },
-}
-
-export default async function RootLayout(props: { children: React.ReactNode }) {
-  const { children } = props
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="ka"
       className={`${firaGo400.variable} ${firaGo600.variable} ${lgvAnastasia.variable}`}
+      suppressHydrationWarning
     >
-      <body>
-        <div className="min-h-screen text-gray-900 flex flex-col">
-          <Header />
-          <main className="flex-grow px-4">{children}</main>
-          <Footer />
-        </div>
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   )
 }

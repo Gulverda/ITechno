@@ -1,94 +1,167 @@
+import { Metadata } from 'next'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { CategoryBar } from '@/components/CategoryBar'
 import { Hero } from '@/components/Hero'
-import Link from 'next/link'
 import { PopularProducts } from '@/components/PopularProducts'
 import { BrandsSlider } from '@/components/BrandSlider'
 import { PromoBanner } from '@/components/PromoBanner'
 import AboutGrid from '@/components/AboutGrid'
 
-export default async function Page({ params, searchParams }: any) {
+// --- 1. METADATA (უკვე გაქვს, დავამატე მხოლოდ მცირე ოპტიმიზაცია) ---
+export async function generateMetadata({ params }: any): Promise<Metadata> {
   const resolvedParams = await params
-  const resolvedSearchParams = await searchParams
-  const lang = (resolvedParams.lang === 'en' ? 'en' : 'ka') as 'ka' | 'en'
+  const lang = resolvedParams.lang === 'en' ? 'en' : 'ka'
+  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://itechno.ge'
+  const siteName = 'I-TECHNO'
 
-  const payload = await getPayload({ config: await config })
-  const popularProducts = await payload.find({
-    collection: 'products',
-    where: {
-      isPopular: { equals: true },
+  const data = {
+    ka: {
+      title: 'I-TECHNO - უსაფრთხოების სისტემები და ტექნოლოგიები',
+      description:
+        'უმაღლესი ხარისხის სამეთვალყურეო კამერები, სიგნალიზაცია და ჭკვიანი სახლის სისტემები საქართველოში.',
     },
-    limit: 10,
-    locale: lang,
-  })
-
-  const brandsRes = await payload.find({
-    collection: 'brands',
-    limit: 20,
-  })
-
-  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
-  let specs = { resolutions: [], capacities: [], technologies: [], connectionTypes: [] }
-  try {
-    const specsRes = await fetch(`${baseUrl}/api/products/unique-specs`, {
-      next: { revalidate: 3600 },
-    })
-    if (specsRes.ok) specs = await specsRes.json()
-  } catch (e) {}
-
-  const categoriesRes = await payload.find({
-    collection: 'categories',
-    limit: 100,
-    locale: 'all' as any,
-  })
-  const allCategories = (categoriesRes.docs as any).map((cat: any) => ({
-    ...cat,
-    displayName: cat.name[lang] || cat.name.en || cat.name.ka,
-  }))
-
-  const createFilterUrl = (key: string, value: string | null) => {
-    const p = new URLSearchParams()
-    const keys = ['category', 'q', 'connectionType', 'technology', 'resolution', 'capacity']
-    keys.forEach((k) => {
-      const val = k === key ? value : resolvedSearchParams[k]
-      if (val) p.set(k, val)
-    })
-    return `/${lang}${p.toString() ? `?${p.toString()}` : ''}`
+    en: {
+      title: 'I-TECHNO - Security Systems & Technologies',
+      description: 'High-quality surveillance cameras, alarms, and smart home systems in Georgia.',
+    },
   }
 
-  const renderCategoryTree = (parentId: any, level = 0): any => {
-    const children = allCategories.filter((c: any) => (c.parent?.id || c.parent) === parentId)
-    if (children.length === 0) return null
-    return (
-      <div className={level > 0 ? 'ml-4 border-l pl-3' : 'flex flex-col gap-1'}>
-        {children.map((cat: any) => (
-          <div key={cat.id}>
-            <Link
-              href={createFilterUrl('category', String(cat.id))}
-              className={`block p-2 text-sm ${resolvedSearchParams.category === String(cat.id) ? 'text-[#1976BA] font-bold' : ''}`}
-            >
-              {cat.displayName}
-            </Link>
-            {renderCategoryTree(cat.id, level + 1)}
-          </div>
-        ))}
-      </div>
-    )
+  const currentData = data[lang as keyof typeof data]
+
+  return {
+    title: {
+      default: currentData.title,
+      template: `%s | ${siteName}`,
+    },
+    description: currentData.description,
+    metadataBase: new URL(baseUrl),
+    alternates: {
+      canonical: `/${lang}`,
+      languages: {
+        'ka-GE': '/ka',
+        'en-US': '/en',
+      },
+    },
+    openGraph: {
+      title: currentData.title,
+      description: currentData.description,
+      url: `/${lang}`,
+      siteName: siteName,
+      locale: lang === 'ka' ? 'ka_GE' : 'en_US',
+      type: 'website',
+      images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
+    },
+  }
+}
+
+export default async function Page({ params }: any) {
+  const resolvedParams = await params
+  const lang = (resolvedParams.lang === 'en' ? 'en' : 'ka') as 'ka' | 'en'
+  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://itechno.ge'
+
+  const payload = await getPayload({ config: await config })
+
+  const [popularProducts, brandsRes] = await Promise.all([
+    payload.find({
+      collection: 'products',
+      where: { isPopular: { equals: true } },
+      limit: 10,
+      locale: lang,
+    }),
+    payload.find({
+      collection: 'brands',
+      limit: 20,
+    }),
+  ])
+
+  // --- 2. SEO: WEB-SITE & LOCAL BUSINESS SCHEMA ---
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': `${baseUrl}/${lang}/#website`,
+        url: `${baseUrl}/${lang}`,
+        name: 'I-TECHNO',
+        publisher: { '@id': `${baseUrl}/${lang}/#organization` },
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: `${baseUrl}/${lang}/search?q={search_term_string}`,
+          'query-input': 'required name=search_term_string',
+        },
+      },
+      {
+        '@type': 'LocalBusiness',
+        '@id': `${baseUrl}/${lang}/#organization`,
+        name: 'I-TECHNO',
+        image: `${baseUrl}/og-image.jpg`,
+        url: `${baseUrl}/${lang}`,
+        telephone: '+995555123456', // შეცვალე რეალურით
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Tbilisi, Georgia', // შეცვალე რეალურით
+          addressLocality: 'Tbilisi',
+          addressCountry: 'GE',
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: 41.7151,
+          longitude: 44.8271,
+        },
+        openingHoursSpecification: {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+          opens: '10:00',
+          closes: '19:00',
+        },
+      },
+    ],
   }
 
   return (
-    <div className="min-h-screen pb-20">
-      <CategoryBar lang={lang} />
-      <Hero lang={lang} />
-      <BrandsSlider brands={brandsRes.docs} />
-      <PopularProducts
-        products={popularProducts.docs}
-        lang={lang}
-        title={resolvedParams.lang === 'ka' ? 'პოპულარული პროდუქტები' : 'Popular Products'}
+    <div className="min-h-screen pb-20 antialiased font-firaGo">
+      {/* Schema Injection */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <PromoBanner />
-      <AboutGrid lang={lang} />
+
+      {/* 3. SEO: HIDDEN H1 (კრიტიკულია, თუ ჰერო კომპონენტში არ გაქვს H1) */}
+      <h1 className="sr-only">
+        {lang === 'ka'
+          ? 'I-TECHNO - უსაფრთხოების სისტემების და ვიდეო კამერების ონლაინ მაღაზია'
+          : 'I-TECHNO - Online Store for Security Systems and Cameras'}
+      </h1>
+
+      <CategoryBar lang={lang} />
+
+      <main>
+        {/* Hero სექცია */}
+        <section aria-label="Main Introduction">
+          <Hero lang={lang} />
+        </section>
+
+        {/* ბრენდების სექცია */}
+        <section className="mt-8" aria-label="Our Partners">
+          <BrandsSlider brands={brandsRes.docs} />
+        </section>
+
+        {/* პოპულარული პროდუქტები */}
+        <section className="py-12" aria-labelledby="popular-heading">
+          <PopularProducts
+            products={popularProducts.docs}
+            lang={lang}
+            title={lang === 'ka' ? 'პოპულარული პროდუქტები' : 'Popular Products'}
+          />
+        </section>
+
+        <PromoBanner />
+
+        <section className="py-16" aria-labelledby="about-grid-heading">
+          <AboutGrid lang={lang} />
+        </section>
+      </main>
     </div>
   )
 }

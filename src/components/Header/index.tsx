@@ -9,14 +9,22 @@ import { LangSwitcher } from '../LangSwitcher'
 import Logo from '@/assets/logo.svg'
 import dict from '@/lib/translations.json'
 
-export const Header = () => {
+// --- დავამატეთ ინტერფეისი ერორის გასაქრობად ---
+interface HeaderProps {
+  lang: string
+}
+
+export const Header = ({ lang }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
-  const segments = pathname.split('/')
-  const currentLang = (['ka', 'en'].includes(segments[1]) ? segments[1] : 'ka') as 'ka' | 'en'
-  const t = dict[currentLang]
+
+  // ვიყენებთ გადაცემულ lang-ს, თუ არადა default-ად 'ka'
+  const currentLang = (lang === 'en' ? 'en' : 'ka') as 'ka' | 'en'
+  const t = (dict as any)[currentLang]
 
   const getLocalizedHref = (path: string) => {
+    // თუ path უკვე იწყება ენით, არ გვინდა დუბლირება
+    if (path.startsWith(`/${currentLang}`)) return path
     return path === '/' ? `/${currentLang}` : `/${currentLang}${path}`
   }
 
@@ -40,12 +48,13 @@ export const Header = () => {
           <nav className="hidden lg:flex items-center gap-8 text-[15px] font-medium text-slate-600">
             {navLinks.map((link) => {
               const localizedPath = getLocalizedHref(link.href)
+              // ზუსტი შედარება აქტიური ლინკისთვის
               const isActive = pathname === localizedPath
               return (
                 <Link
                   key={link.href}
                   href={localizedPath}
-                  className={`transition-colors font-semibold ${
+                  className={`transition-colors font-semibold py-2 ${
                     isActive ? 'text-[#1976BA] border-b-2 border-[#1976BA]' : 'hover:text-[#1976BA]'
                   }`}
                 >
@@ -69,16 +78,15 @@ export const Header = () => {
             <button
               className="lg:hidden p-2 text-slate-600 focus:outline-none"
               onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle Menu"
             >
-              {isOpen ? (
-                <X className="w-7 h-7 transition-transform" />
-              ) : (
-                <Menu className="w-7 h-7 transition-transform" />
-              )}
+              {isOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
             </button>
           </div>
         </div>
       </header>
+
+      {/* Mobile Menu */}
       <div
         className={`
           fixed left-0 right-0 bg-white border-b shadow-lg transition-all duration-500 ease-in-out lg:hidden z-40

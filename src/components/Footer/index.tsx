@@ -1,18 +1,16 @@
 'use client'
 
 import React from 'react'
-
 import Link from 'next/link'
-
 import Image from 'next/image'
-
 import { usePathname } from 'next/navigation'
-
 import { Phone, Mail, MapPin } from 'lucide-react'
-
 import WhiteLogo from '@/assets/white_logo.svg'
-
 import dict from '@/lib/translations.json'
+
+interface FooterProps {
+  lang: string
+}
 
 interface TranslationDict {
   footer: {
@@ -40,7 +38,7 @@ interface TranslationDict {
 
 const translations = dict as Record<string, TranslationDict>
 
-export const Footer = () => {
+export const Footer = ({ lang }: FooterProps) => {
   const pathname = usePathname()
   const segments = pathname.split('/')
   const currentLang = (['ka', 'en'].includes(segments[1]) ? segments[1] : 'ka') as 'ka' | 'en'

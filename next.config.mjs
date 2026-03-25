@@ -1,29 +1,47 @@
 import { withPayload } from '@payloadcms/next/withPayload'
 
-/** @type {import('next').NextConfig} */
+const isProduction = process.env.NEXT_PUBLIC_INDEXABLE === 'true'
+
 const nextConfig = {
-  // Your Next.js config here
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],
       '.js': ['.ts', '.tsx', '.js', '.jsx'],
       '.mjs': ['.mts', '.mjs'],
     }
-
     return webpackConfig
   },
+
+  async headers() {
+    return [
+      {
+        source: '/_next/static/:path*', // ✅ უფრო სპეციფიკური rule პირველი უნდა იყოს
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
+      },
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: isProduction ? 'index, follow, max-image-preview:large' : 'noindex, nofollow',
+          },
+          { key: 'X-Publisher', value: 'I-TECHNO' },
+        ],
+      },
+    ]
+  },
+
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'flagcdn.com' },
-      { hostname: 'www.ezviz.com' },
-      { hostname: 'ajax.systems' },
-      { hostname: 'hdsurveillance.com.au' },
-      { hostname: 'www.westerndigital.com' },
-      { hostname: 'www.westerndigital.com' },
-      { hostname: 'img.icons8.com' },
-      { hostname: 'images.unsplash.com' },
-      { hostname: 'i.pravatar.cc' },
-      { hostname: 'www.hikvision.com' },
+      { protocol: 'https', hostname: 'www.ezviz.com' },
+      { protocol: 'https', hostname: 'ajax.systems' },
+      { protocol: 'https', hostname: 'hdsurveillance.com.au' },
+      { protocol: 'https', hostname: 'www.westerndigital.com' },
+      { protocol: 'https', hostname: 'img.icons8.com' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'i.pravatar.cc' },
+      { protocol: 'https', hostname: 'www.hikvision.com' },
     ],
   },
 }
