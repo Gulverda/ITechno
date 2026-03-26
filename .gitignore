@@ -60,3 +60,4 @@ node_modules/
 # Payload uploads
 /public/media
 /media
+/scripts
