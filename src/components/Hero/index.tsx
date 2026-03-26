@@ -56,8 +56,8 @@ export const Hero = ({ lang = 'ka' }: HeroProps) => {
               priority={index === 0}
             />
 
-            <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-14 max-w-4xl">
-              <h1 className="text-3xl md:text-5xl font-semibold text-white mb-6 leading-[1.1] uppercase tracking-tighter drop-shadow-lg">
+            <div className="absolute inset-0 flex flex-col mt-10 sm:mt-0 sm:justify-center px-4 sm:px-8 md:px-14 max-w-4xl">
+              <h1 className="text-[22px] sm:text-3xl md:text-5xl font-semibold text-white mb-4 sm:mb-6 leading-[1.1] uppercase tracking-tighter drop-shadow-lg">
                 {slide.title}
               </h1>
               <p className="text-gray-200 text-sm md:text-base mb-4 leading-relaxed max-w-2xl font-medium opacity-90">
@@ -67,13 +67,13 @@ export const Hero = ({ lang = 'ka' }: HeroProps) => {
               <div className="flex flex-wrap gap-4">
                 <Link
                   href={slide.link}
-                  className="bg-[#1976BA] hover:bg-blue-700 px-6 text-white text-xs sm:text-sm h-[50px] flex items-center justify-center rounded-lg font-bold transition-all shadow-xl hover:shadow-[#1976BA]/20 active:scale-95"
+                  className="bg-[#1976BA] hover:bg-blue-700 px-6 text-white text-xs sm:text-sm h-[40px] sm:h-[50px] flex items-center justify-center rounded-lg font-bold transition-all shadow-xl hover:shadow-[#1976BA]/20 active:scale-95"
                 >
                   {t.buttons.allProducts}
                 </Link>
                 <Link
                   href={`/${lang}/about-us`}
-                  className="bg-white backdrop-blur-md px-6 text-[#1976BA] hover:bg-white/80 text-xs sm:text-sm h-[50px] flex items-center justify-center border border-white/30 rounded-lg font-bold transition-all active:scale-95"
+                  className="bg-white backdrop-blur-md px-6 text-[#1976BA] hover:bg-white/80 text-xs sm:text-sm h-[40px] sm:h-[50px] flex items-center justify-center border border-white/30 rounded-lg font-bold transition-all active:scale-95"
                 >
                   {t.buttons.ourServices}
                 </Link>

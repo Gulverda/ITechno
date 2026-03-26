@@ -33,7 +33,7 @@
     "hero": {
       "slide1": {
         "title": "ვიდეოსამეთვალყურეო სისტემები",
-        "description": "თანამედროვე ვიდეოსამეთვალყურეო სისტემები საცხოვრებელი, კომერციული და სამრეწველო ობიექტებისთვის. მაღალი ხარისხის კამერები და პროფესიონალური ინსტალაცია უზრუნველყოფს 24/7 კონტროლსა და უსაფრთხოებას."
+        "description": "თანამედროვე ვიდეოსამეთვალყურეო სისტემები საცხოვრებელი, კომერციული და სამრეწველო ობიექტებისთვის."
       },
       "slide2": {
         "title": "ჭკვიანი სახლის გადაწყვეტილებები",
@@ -186,7 +186,7 @@
     "hero": {
       "slide1": {
         "title": "Video Surveillance Systems",
-        "description": "Modern video surveillance systems for residential, commercial, and industrial facilities. High-quality cameras and professional installation provide 24/7 control and security."
+        "description": "Modern video surveillance systems for residential, commercial, and industrial facilities."
       },
       "slide2": {
         "title": "Smart Home Solutions",
