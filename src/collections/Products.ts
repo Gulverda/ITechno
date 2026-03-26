@@ -1,4 +1,20 @@
-import { CollectionConfig } from 'payload'
+import { CollectionConfig, Where } from 'payload'
+import { FilterOptionsProps } from 'payload'
+import { Product } from '@/payload-types'
+
+interface FilterGroupObj {
+  id: string | number
+  name?: string
+}
+
+interface FilterValueItem {
+  filter_group?: FilterGroupObj | string | number | null
+  value_rel?: { value?: string } | string | number | null
+}
+
+interface FilterValuesProduct extends Omit<Product, 'filter_values'> {
+  filter_values?: FilterValueItem[]
+}
 
 export const Products: CollectionConfig = {
   slug: 'products',
@@ -26,22 +42,21 @@ export const Products: CollectionConfig = {
           depth: 2,
           limit: 1000,
           pagination: false,
-          // აქ "as any" იმიტომ გვინდა, რომ TS-მა არ იჩხუბოს მკაცრ ტიპებზე
-          locale: lang as any,
+          locale: lang as 'ka' | 'en',
         })
 
         const dynamicFilters: Record<string, string[]> = {}
 
-        result.docs.forEach((prod: any) => {
-          prod.filter_values?.forEach((item: any) => {
+        result.docs.forEach((prod) => {
+          const p = prod as FilterValuesProduct
+          p.filter_values?.forEach((item) => {
             const groupObj = item.filter_group
-
-            // მთავარი ცვლილება აქ არის:
-            // როცა locale: lang გვაქვს, groupObj.name უკვე არის სტრინგი სწორ ენაზე
-            // არ გამოიყენო groupObj.name?.ka !!!
-            const groupName = typeof groupObj === 'object' ? groupObj.name : null
-
-            const valText = typeof item.value_rel === 'object' ? item.value_rel.value : null
+            const groupName =
+              typeof groupObj === 'object' && groupObj !== null ? groupObj.name : null
+            const valText =
+              typeof item.value_rel === 'object' && item.value_rel !== null
+                ? item.value_rel.value
+                : null
 
             if (groupName && valText) {
               if (!dynamicFilters[groupName]) dynamicFilters[groupName] = []
@@ -52,7 +67,6 @@ export const Products: CollectionConfig = {
           })
         })
 
-        // სორტირება
         Object.keys(dynamicFilters).forEach((key) => {
           dynamicFilters[key].sort()
         })
@@ -115,7 +129,6 @@ export const Products: CollectionConfig = {
       type: 'textarea',
       localized: true,
     },
-    // --- აქ იწყება დინამიური ფილტრების ნაწილი ---
     {
       name: 'filter_values',
       type: 'array',
@@ -137,27 +150,16 @@ export const Products: CollectionConfig = {
           relationTo: 'filter-options',
           required: true,
           label: 'აირჩიეთ მნიშვნელობა',
-          // ფუნქციას პირდაპირ ვეუბნებით, რომ დააბრუნებს Where-ს
-          filterOptions: ({ siblingData }: any): any => {
-            const currentGroup = siblingData?.filter_group
+          filterOptions: ({ siblingData }: FilterOptionsProps): Where => {
+            const currentGroup = (siblingData as { filter_group?: string | { id: string } })
+              ?.filter_group
 
             if (currentGroup) {
               const groupId = typeof currentGroup === 'object' ? currentGroup.id : currentGroup
-
-              return {
-                // ვიყენებთ დინამიურ Key-ს, რომ TS-მა არ იჩხუბოს ინდექსებზე
-                group: {
-                  equals: groupId,
-                },
-              }
+              return { group: { equals: groupId } }
             }
 
-            // თუ ჯგუფი არაა, ვაბრუნებთ ფილტრს, რომელიც არაფერს იპოვის (false-ის ნაცვლად)
-            return {
-              id: {
-                exists: false,
-              },
-            }
+            return { id: { exists: false } }
           },
         },
       ],

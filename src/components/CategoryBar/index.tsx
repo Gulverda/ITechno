@@ -32,7 +32,7 @@ const categoryImages: Record<string, string | StaticImageData> = {
   cables: 'https://img.icons8.com/color/512/ethernet-off.png',
 }
 
-const categoryIcons: Record<string, any> = {
+const categoryIcons: Record<string, StaticImageData> = {
   'ezviz-smart-home': SmartHomeIcon,
   ajax: AjaxIcon,
   'video-surveillance': VideoSurIcon,
@@ -61,7 +61,7 @@ export const CategoryBar = async ({ lang = 'ka' }: { lang?: string }) => {
     where: { slug: { in: targetSlugs } },
     depth: 0,
     limit: 12,
-    locale: lang as any,
+    locale: lang as 'ka' | 'en',
   })
 
   const categories = targetSlugs

@@ -99,7 +99,7 @@ export default async function LangLayout({ children, params }: LangLayoutProps) 
   return (
     <div lang={lang} className="min-h-screen flex flex-col">
       <Header lang={lang} />
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow px-4">{children}</main>
       <Footer lang={lang} />
     </div>
   )

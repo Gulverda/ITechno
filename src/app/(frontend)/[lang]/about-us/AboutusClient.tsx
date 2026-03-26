@@ -4,7 +4,20 @@ import React from 'react'
 import Image from 'next/image'
 import { Shield, Network, Cpu, Flame, DoorOpen, CheckCircle } from 'lucide-react'
 
-export default function AboutClient({ lang, t }: { lang: string; t: any }) {
+type WhyUsItem = { title: string; text: string }
+
+type Translations = {
+  aboutUs: {
+    hero: { titleBlue: string; titleBlack: string; story: string }
+    priority: { title: string; sub: string; analysis: string }
+    brands: { title: string }
+    directions: { title: string; items: { title: string }[] }
+    support: { badge: string; title: string; text1: string; text2: string }
+    whyUs: { badge: string; title: string; items: WhyUsItem[] }
+  }
+}
+
+export default function AboutClient({ lang: _lang, t }: { lang: string; t: Translations }) {
   return (
     <div className="bg-white text-[#0F172A] antialiased">
       {/* HERO SECTION */}
@@ -101,7 +114,7 @@ export default function AboutClient({ lang, t }: { lang: string; t: any }) {
                 className="bg-white border border-slate-200 rounded-[24px] p-8 h-[140px] flex items-center justify-center hover:shadow-lg transition-all group"
               >
                 <div className="relative w-full h-full flex items-center justify-center grayscale group-hover:grayscale-0 transition-all">
-                  <img
+                  <Image
                     src={brand.logo}
                     alt={`${brand.name} official partner`}
                     className="max-h-full max-w-full object-contain"
@@ -189,7 +202,7 @@ export default function AboutClient({ lang, t }: { lang: string; t: any }) {
 
             <div className="lg:col-span-8">
               <dl className="divide-y divide-slate-200 border-t border-slate-200">
-                {t.aboutUs.whyUs.items.map((item: any, i: number) => (
+                {t.aboutUs.whyUs.items.map((item: WhyUsItem, i: number) => (
                   <div key={i} className="grid md:grid-cols-12 gap-4 md:gap-8 py-7">
                     <dt className="md:col-span-4 text-[18px] font-bold text-[#0F172A]">
                       {item.title}

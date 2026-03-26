@@ -11,8 +11,7 @@ import HiWatch from '@/assets/HiWatch_logo.svg'
 
 import 'swiper/css'
 
-// დავამატოთ { brands }: any, რომ TypeScript-მა აღარ იჩხუბოს
-export const BrandsSlider = ({ brands }: any) => {
+export const BrandsSlider = () => {
   // შენი ლოკალური ლოგოები (რადგან assets-დან გინდა)
   const localBrands = [
     { id: '1', src: Hikvision.src || Hikvision, name: 'Hikvision' },

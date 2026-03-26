@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AboutPage({ params }: Props) {
   const { lang } = await params
-  const t = (dict as any)[lang] || dict.ka
+  const t = (dict as Record<string, typeof dict.ka>)[lang] || dict.ka
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://itechno.ge'
 
   // --- 2. SENIOR SEO: ORGANIZATION SCHEMA ---

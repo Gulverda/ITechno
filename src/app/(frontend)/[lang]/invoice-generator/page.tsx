@@ -162,7 +162,7 @@ export default function InvoiceGenerator() {
       didDrawCell: function (data) {
         // ქვედა ხაზის დახატვა თითო row-სთვის (clean look)
         if (data.row.section === 'body' && data.column.index === 0) {
-          const { x, y, width } = data.cell
+          const { x, y } = data.cell
           doc.setDrawColor(220)
           doc.line(
             x,
@@ -272,7 +272,7 @@ export default function InvoiceGenerator() {
                 onClick={() => addItem(p)}
               >
                 <span className="font-semibold text-gray-700">
-                  {typeof p.title === 'object' ? (p.title as any).ka : p.title}
+                  {typeof p.title === 'object' ? (p.title as Record<string, string>).ka : p.title}
                 </span>
                 <span className="text-[#1976BA] font-bold">{p.price} GEL</span>
               </div>

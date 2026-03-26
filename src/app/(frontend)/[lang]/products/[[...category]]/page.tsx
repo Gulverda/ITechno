@@ -4,6 +4,8 @@ import { Products } from '@/components/Products'
 import dict from '@/lib/translations.json'
 import { Where } from 'payload'
 import { Metadata } from 'next'
+import { PaginatedDocs } from 'payload'
+import { Category, Product } from '@/payload-types'
 
 type Dictionary = typeof dict.ka
 type SupportedLang = 'ka' | 'en'
@@ -24,7 +26,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const currentLang = (lang === 'en' ? 'en' : 'ka') as SupportedLang
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://itechno.ge'
 
-  // Default values
   let title = currentLang === 'ka' ? 'მაღაზია' : 'Shop'
   let description =
     currentLang === 'ka'
@@ -42,8 +43,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       })
 
       if (categoryRes.docs.length > 0) {
-        const cat = categoryRes.docs[0]
-        const catName = (cat as any).name || categorySlug
+        const cat = categoryRes.docs[0] as Category
+        const catName = cat.name || categorySlug
         title = `${catName}`
         description =
           currentLang === 'ka'
@@ -92,9 +93,8 @@ export default async function Page({ params, searchParams }: PageProps) {
   const currentPage = resolvedSearchParams.page ? Number(resolvedSearchParams.page) : 1
   const validatedPage = !isNaN(currentPage) && currentPage > 0 ? currentPage : 1
 
-  const { q, page, ...filterParams } = resolvedSearchParams
+  const { q, ...filterParams } = resolvedSearchParams
 
-  // 1. Fetch Categories for Logic & Display
   const [categoriesRes, categoriesDisplay] = await Promise.all([
     payload.find({
       collection: 'categories',
@@ -110,25 +110,27 @@ export default async function Page({ params, searchParams }: PageProps) {
     }),
   ])
 
-  const allCategories = categoriesRes.docs as any[]
+  const allCategories = categoriesRes.docs as Category[]
   let activeCategoryId: string | number | null = null
-  let activeCategoryFilters: any[] = []
+  let activeCategoryFilters: { name: string }[] = []
 
   if (categorySlug) {
     const foundCat = allCategories.find((c) => c.slug === categorySlug)
     if (foundCat) {
       activeCategoryId = foundCat.id
-      activeCategoryFilters = foundCat.assignedFilters || []
+      activeCategoryFilters = (foundCat.assignedFilters as { name: string }[]) || []
     }
   }
 
-  // 2. Build Filters
   const andFilters: Where[] = []
 
   if (activeCategoryId) {
     const getAllChildIds = (parentId: string | number): (string | number)[] => {
       const children = allCategories.filter((c) => {
-        const pId = typeof c.parent === 'object' ? (c.parent as any)?.id : c.parent
+        const pId =
+          typeof c.parent === 'object' && c.parent !== null && 'id' in c.parent
+            ? (c.parent as { id: string | number }).id
+            : c.parent
         return String(pId) === String(parentId)
       })
       return children.reduce<(string | number)[]>(
@@ -146,7 +148,7 @@ export default async function Page({ params, searchParams }: PageProps) {
     })
   }
 
-  Object.entries(filterParams).forEach(([groupName, value]) => {
+  Object.entries(filterParams).forEach(([_groupName, value]) => {
     if (value) {
       andFilters.push({
         'filter_values.value_rel.value': { equals: value },
@@ -154,7 +156,6 @@ export default async function Page({ params, searchParams }: PageProps) {
     }
   })
 
-  // 3. Fetch Products
   const productsRes = await payload.find({
     collection: 'products',
     where: andFilters.length > 0 ? { and: andFilters } : {},
@@ -165,7 +166,6 @@ export default async function Page({ params, searchParams }: PageProps) {
     sort: '-createdAt',
   })
 
-  // 4. Fetch Specs
   let specs: UniqueSpecs = {}
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
@@ -189,10 +189,10 @@ export default async function Page({ params, searchParams }: PageProps) {
       </h1>
 
       <Products
-        products={productsRes as any}
-        allCategories={categoriesDisplay.docs.map((c: any) => ({
-          ...c,
-          displayName: c.name || 'No Name',
+        products={productsRes as PaginatedDocs<Product>}
+        allCategories={categoriesDisplay.docs.map((c) => ({
+          ...(c as Category),
+          displayName: (c as Category).name || 'No Name',
         }))}
         lang={currentLang}
         t={t}
@@ -201,14 +201,13 @@ export default async function Page({ params, searchParams }: PageProps) {
         categoryFilters={activeCategoryFilters.map((f) => f.name)}
       />
 
-      {/* Structured Data (JSON-LD) for better Google indexing */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'ItemList',
-            itemListElement: productsRes.docs.map((p: any, index: number) => ({
+            itemListElement: productsRes.docs.map((p: Product, index: number) => ({
               '@type': 'ListItem',
               position: index + 1,
               url: `${process.env.NEXT_PUBLIC_SERVER_URL}/${currentLang}/products/${p.slug}`,

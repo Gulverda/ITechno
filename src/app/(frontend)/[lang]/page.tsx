@@ -8,8 +8,10 @@ import { BrandsSlider } from '@/components/BrandSlider'
 import { PromoBanner } from '@/components/PromoBanner'
 import AboutGrid from '@/components/AboutGrid'
 
+type PageParams = { params: Promise<{ lang: string }> }
+
 // --- 1. METADATA (უკვე გაქვს, დავამატე მხოლოდ მცირე ოპტიმიზაცია) ---
-export async function generateMetadata({ params }: any): Promise<Metadata> {
+export async function generateMetadata({ params }: PageParams): Promise<Metadata> {
   const resolvedParams = await params
   const lang = resolvedParams.lang === 'en' ? 'en' : 'ka'
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://itechno.ge'
@@ -55,14 +57,14 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
   }
 }
 
-export default async function Page({ params }: any) {
+export default async function Page({ params }: PageParams) {
   const resolvedParams = await params
   const lang = (resolvedParams.lang === 'en' ? 'en' : 'ka') as 'ka' | 'en'
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://itechno.ge'
 
   const payload = await getPayload({ config: await config })
 
-  const [popularProducts, brandsRes] = await Promise.all([
+  const [popularProducts] = await Promise.all([
     payload.find({
       collection: 'products',
       where: { isPopular: { equals: true } },
@@ -144,7 +146,7 @@ export default async function Page({ params }: any) {
 
         {/* ბრენდების სექცია */}
         <section className="mt-8" aria-label="Our Partners">
-          <BrandsSlider brands={brandsRes.docs} />
+          <BrandsSlider />
         </section>
 
         {/* პოპულარული პროდუქტები */}

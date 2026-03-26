@@ -9,6 +9,9 @@ import { Search } from '@/components/Search'
 import { ChevronRight } from 'lucide-react'
 import { Category, Product } from '@/payload-types'
 import { PaginatedDocs } from 'payload'
+import dict from '@/lib/translations.json'
+
+type Dictionary = typeof dict.ka
 
 interface CategoryWithDisplay extends Category {
   displayName?: string
@@ -18,7 +21,7 @@ interface ProductsProps {
   products: PaginatedDocs<Product>
   allCategories: CategoryWithDisplay[]
   lang: 'ka' | 'en'
-  t: Record<string, any>
+  t: Dictionary
   // 1. შევცვალეთ ტიპი დინამიურზე
   specs: Record<string, string[]>
   activeCategorySlug: string | null

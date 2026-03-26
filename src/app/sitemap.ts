@@ -4,6 +4,8 @@ import config from '@/payload.config'
 
 export const revalidate = 86400
 
+type SlugDoc = { slug: string; updatedAt?: string }
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const payload = await getPayload({ config: await config })
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://itechno.ge'
@@ -40,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     select: { slug: true, updatedAt: true },
   })
 
-  const categoryEntries = categoriesRes.docs.flatMap((cat: any) =>
+  const categoryEntries = (categoriesRes.docs as SlugDoc[]).flatMap((cat) =>
     langs.map((lang) => ({
       url: `${baseUrl}/${lang}/products/${cat.slug}`,
       lastModified: cat.updatedAt ? new Date(cat.updatedAt) : new Date(),
@@ -57,8 +59,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   )
 
   // პროდუქტები — paginated fetch, ყველა გვერდი
-  const fetchAllProducts = async () => {
-    const all: any[] = []
+  const fetchAllProducts = async (): Promise<SlugDoc[]> => {
+    const all: SlugDoc[] = []
     let page = 1
     let hasNextPage = true
 
@@ -70,7 +72,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         depth: 0,
         select: { slug: true, updatedAt: true },
       })
-      all.push(...res.docs)
+      all.push(...(res.docs as SlugDoc[]))
       hasNextPage = res.hasNextPage
       page++
     }
@@ -80,7 +82,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const allProducts = await fetchAllProducts()
 
-  const productEntries = allProducts.flatMap((prod: any) =>
+  const productEntries = allProducts.flatMap((prod) =>
     langs.map((lang) => ({
       url: `${baseUrl}/${lang}/products/${prod.slug}`,
       lastModified: prod.updatedAt ? new Date(prod.updatedAt) : new Date(),

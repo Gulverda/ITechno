@@ -20,7 +20,7 @@ export const Header = ({ lang }: HeaderProps) => {
 
   // ვიყენებთ გადაცემულ lang-ს, თუ არადა default-ად 'ka'
   const currentLang = (lang === 'en' ? 'en' : 'ka') as 'ka' | 'en'
-  const t = (dict as any)[currentLang]
+  const t = (dict as Record<string, typeof dict.ka>)[currentLang]
 
   const getLocalizedHref = (path: string) => {
     // თუ path უკვე იწყება ენით, არ გვინდა დუბლირება
