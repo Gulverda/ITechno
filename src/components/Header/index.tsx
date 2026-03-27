@@ -30,6 +30,7 @@ export const Header = ({ lang }: HeaderProps) => {
 
   const navLinks = [
     { name: t.nav.home, href: '/' },
+    { name: t.nav.services, href: '/services' },
     { name: t.nav.products, href: '/products' },
     { name: t.nav.about, href: '/about-us' },
     { name: t.nav.contact, href: '/contact' },

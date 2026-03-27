@@ -4,7 +4,6 @@ import React from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import dict from '@/lib/translations.json'
 
 // Lottie-ს კომპონენტის დინამიური იმპორტი, რათა თავიდან ავიცილოთ SSR პრობლემები
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false })
@@ -15,10 +14,9 @@ import cameraAnimation from '@/assets/animations/camera_404.json'
 export default function NotFound() {
   const params = useParams()
   const lang = (params.lang === 'en' ? 'en' : 'ka') as 'ka' | 'en'
-  const t = dict[lang]
 
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
+    <div className="min-h-[90dvh] flex flex-col items-center justify-center text-center px-4">
       <div className="w-full max-w-sm">
         <Lottie
           animationData={cameraAnimation}
