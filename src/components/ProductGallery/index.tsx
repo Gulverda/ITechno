@@ -134,7 +134,7 @@ export default function ProductGallery({ mainImage, images, title }: ProductGall
               onClick={() => openLightbox(activeImage)}
             />
           ) : (
-            <div className="flex items-center justify-center h-full bg-gray-50 text-gray-300 italic">
+            <div className="flex items-center justify-center h-full bg-gray-50 text-gray-300">
               სურათი არ არის
             </div>
           )}

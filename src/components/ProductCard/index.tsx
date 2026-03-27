@@ -64,7 +64,7 @@ export const ProductCard = ({ product, lang }: ProductCardProps) => {
               className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div className="text-gray-300 text-[10px] italic">სურათი არ არის</div>
+            <div className="text-gray-300 text-[10px]">სურათი არ არის</div>
           )}
         </div>
 

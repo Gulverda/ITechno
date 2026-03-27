@@ -202,7 +202,7 @@ export default async function ProductDetails({ params }: PageProps) {
 
             <div className="pt-8 pb-4">
               {isPriceZero ? (
-                <p className="text-2xl font-light text-slate-400 italic">
+                <p className="text-2xl font-light text-slate-400">
                   {currentLang === 'ka' ? 'ფასი შეთანხმებით' : 'Price on request'}
                 </p>
               ) : (
@@ -230,7 +230,7 @@ export default async function ProductDetails({ params }: PageProps) {
 
             {product.specifications && (
               <div className="border-l-2 border-slate-100 pl-8 py-2 mb-8 bg-slate-50/50 rounded-r-xl">
-                <p className="text-sm leading-relaxed text-slate-500 font-light max-w-md italic">
+                <p className="text-sm leading-relaxed text-slate-500 font-light max-w-md">
                   {product.specifications}
                 </p>
               </div>
