@@ -4,6 +4,10 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+
+import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
+import { s3Adapter } from '@payloadcms/plugin-cloud-storage/s3'
+
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Products } from './collections/Products'
@@ -45,5 +49,30 @@ export default buildConfig({
     },
   }),
   sharp,
-  plugins: [],
+
+  // მთავარი ნაწილი: Cloud Storage პლაგინი
+  plugins: [
+    cloudStoragePlugin({
+      collections: {
+        media: {
+          // დარწმუნდი, რომ Media კოლექციის slug არის 'media'
+          adapter: s3Adapter({
+            config: {
+              endpoint: process.env.S3_ENDPOINT,
+              region: 'auto',
+              credentials: {
+                accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+                secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+              },
+            },
+            bucket: process.env.S3_BUCKET || '',
+          }),
+          // ეს ფუნქცია აუცილებელია, რომ სურათები საიტზე გამოჩნდეს
+          generateFileURL: ({ filename }: { filename: string }) => {
+            return `${process.env.NEXT_PUBLIC_S3_PUBLIC_URL}/${filename}`
+          },
+        },
+      },
+    }),
+  ],
 })
