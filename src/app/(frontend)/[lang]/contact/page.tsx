@@ -18,8 +18,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const description =
     lang === 'ka'
-      ? 'დაგვიკავშირდით I-TECHNO-ს გუნდს. მისამართი: თბილისი, საქართველო. ტელეფონი: +995 555 12 34 56. მოგვწერეთ ნებისმიერ დროს.'
-      : 'Contact I-TECHNO team. Address: Tbilisi, Georgia. Phone: +995 555 12 34 56. Reach out to us for any inquiries.'
+      ? 'დაგვიკავშირდით I-TECHNO-ს გუნდს. მისამართი: თბილისი, საქართველო. ტელეფონი: +995 595 12 60 54. მოგვწერეთ ნებისმიერ დროს.'
+      : 'Contact I-TECHNO team. Address: Tbilisi, Georgia. Phone: +995 595 12 60 54. Reach out to us for any inquiries.'
 
   return {
     title,
@@ -58,7 +58,7 @@ export default async function ContactPage({ params }: Props) {
     image: `${baseUrl}/og-image.jpg`,
     '@id': `${baseUrl}/${lang}/contact`,
     url: baseUrl,
-    telephone: '+995555123456',
+    telephone: '+995595126054',
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'თქვენი მისამართი ქუჩა #',

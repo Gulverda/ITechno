@@ -62,7 +62,7 @@ const AboutGrid = ({ lang = 'ka' }: { lang: 'ka' | 'en' }) => {
             {t.contactUs}
           </h3>
           <div className="space-y-3 text-lg font-firaGo600 text-gray-800">
-            <p>+995 559 89 64 50</p>
+            <p>+995 595 12 60 54</p>
             <p className="hover:text-[#0081D7] cursor-pointer inline-block">Instagram</p>
             <p className="hover:text-[#0081D7] cursor-pointer inline-block ml-4 lg:ml-0 lg:block">
               Facebook

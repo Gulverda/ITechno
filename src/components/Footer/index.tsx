@@ -130,19 +130,24 @@ export const Footer = ({ lang }: FooterProps) => {
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 shrink-0 text-blue-200" />
 
-                <span className="opacity-90">+995 555 50 69 50</span>
+                <span className="opacity-90">+995 595 12 60 54</span>
               </li>
 
-              <li className="flex items-center gap-3">
+              {/* <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 shrink-0 text-blue-200" />
 
                 <span className="opacity-90">+995 532 69 48 42</span>
-              </li>
+              </li> */}
 
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 shrink-0 text-blue-200" />
 
                 <span className="opacity-90">info@itechno.ge</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Mail className="w-5 h-5 shrink-0 text-blue-200" />
+
+                <span className="opacity-90">sales@itechno.ge</span>
               </li>
             </ul>
           </div>

@@ -99,7 +99,7 @@ export default async function Page({ params }: PageParams) {
         name: 'I-TECHNO',
         image: `${baseUrl}/og-image.jpg`,
         url: `${baseUrl}/${lang}`,
-        telephone: '+995555123456', // შეცვალე რეალურით
+        telephone: '+995595126054',
         address: {
           '@type': 'PostalAddress',
           streetAddress: 'Tbilisi, Georgia', // შეცვალე რეალურით

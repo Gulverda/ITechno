@@ -239,7 +239,7 @@ export default async function ProductDetails({ params }: PageProps) {
             {/* CTAs - Conversion Optimization */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 max-w-xl">
               <a
-                href="tel:+995555123456"
+                href="tel:+995595126054"
                 className="bg-[#1976BA] text-white py-4 rounded-xl flex justify-center items-center gap-2 font-bold hover:bg-[#1976BA]/90 transition-all shadow-lg shadow-[#1976BA]/20"
               >
                 <Phone size={14} /> {currentLang === 'ka' ? 'დაგვირეკეთ' : 'Call Us'}

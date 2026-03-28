@@ -114,9 +114,11 @@ export default function AboutClient({ lang: _lang, t }: { lang: string; t: Trans
                 className="bg-white border border-slate-200 rounded-[24px] p-8 h-[140px] flex items-center justify-center hover:shadow-lg transition-all group"
               >
                 <div className="relative w-full h-full flex items-center justify-center grayscale group-hover:grayscale-0 transition-all">
+                  {/* Change your Image component in the Brands Section to this: */}
                   <Image
                     src={brand.logo}
                     alt={`${brand.name} official partner`}
+                    fill // Add this property
                     className="max-h-full max-w-full object-contain"
                   />
                 </div>

@@ -67,7 +67,7 @@ export const Header = ({ lang }: HeaderProps) => {
 
           <div className="flex items-center gap-4">
             <Link
-              href="tel:+995000000"
+              href="tel:+995595126054"
               className="hidden xl:flex items-center gap-2 border border-[#1976BA] text-[#1976BA] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#1976BA] hover:text-white transition-all"
             >
               <span>{t.header.contactBtn}</span>
@@ -113,7 +113,7 @@ export const Header = ({ lang }: HeaderProps) => {
           })}
 
           <Link
-            href="tel:+995000000"
+            href="tel:+995595126054"
             className="flex items-center justify-center gap-2 bg-[#1976BA] text-white px-5 py-3.5 rounded-xl font-semibold mt-2 shadow-md active:scale-95 transition-transform"
           >
             <span>{t.header.contactBtn}</span>
