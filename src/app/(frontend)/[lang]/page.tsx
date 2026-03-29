@@ -5,12 +5,28 @@ import { CategoryBar } from '@/components/CategoryBar'
 import { Hero } from '@/components/Hero'
 import { PopularProducts } from '@/components/PopularProducts'
 import { BrandsSlider } from '@/components/BrandSlider'
-import { PromoBanner } from '@/components/PromoBanner'
 import AboutGrid from '@/components/AboutGrid'
+import FeaturesCards from '@/components/FeaturesCardClient'
 
 type PageParams = { params: Promise<{ lang: string }> }
 
-// --- 1. METADATA (უკვე გაქვს, დავამატე მხოლოდ მცირე ოპტიმიზაცია) ---
+type FeaturesCardsData = {
+  items: Array<{ id?: string; title: string; description: string }>
+}
+
+type HeroSliderData = {
+  buttonAllProducts: string
+  buttonOurServices: string
+  slides: Array<{
+    id?: string
+    title: string
+    description: string
+    link1: string
+    link2: string
+    image: string | { url: string; alt?: string }
+  }>
+}
+
 export async function generateMetadata({ params }: PageParams): Promise<Metadata> {
   const resolvedParams = await params
   const lang = resolvedParams.lang === 'en' ? 'en' : 'ka'
@@ -32,24 +48,18 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
   const currentData = data[lang as keyof typeof data]
 
   return {
-    title: {
-      default: currentData.title,
-      template: `%s | ${siteName}`,
-    },
+    title: { default: currentData.title, template: `%s | ${siteName}` },
     description: currentData.description,
     metadataBase: new URL(baseUrl),
     alternates: {
       canonical: `/${lang}`,
-      languages: {
-        'ka-GE': '/ka',
-        'en-US': '/en',
-      },
+      languages: { 'ka-GE': '/ka', 'en-US': '/en' },
     },
     openGraph: {
       title: currentData.title,
       description: currentData.description,
       url: `/${lang}`,
-      siteName: siteName,
+      siteName,
       locale: lang === 'ka' ? 'ka_GE' : 'en_US',
       type: 'website',
       images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
@@ -64,20 +74,20 @@ export default async function Page({ params }: PageParams) {
 
   const payload = await getPayload({ config: await config })
 
-  const [popularProducts] = await Promise.all([
+  const [popularProducts, featuresRes, heroRes] = await Promise.all([
     payload.find({
       collection: 'products',
       where: { isPopular: { equals: true } },
       limit: 10,
       locale: lang,
     }),
-    payload.find({
-      collection: 'brands',
-      limit: 20,
-    }),
+    payload.find({ collection: 'features-cards' as any, locale: lang, limit: 1 }),
+    payload.find({ collection: 'hero-slider' as any, locale: lang, limit: 1 }),
   ])
 
-  // --- 2. SEO: WEB-SITE & LOCAL BUSINESS SCHEMA ---
+  const featuresData = featuresRes.docs[0] as unknown as FeaturesCardsData
+  const heroData = heroRes.docs[0] as unknown as HeroSliderData
+
   const structuredData = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -102,15 +112,11 @@ export default async function Page({ params }: PageParams) {
         telephone: '+995595126054',
         address: {
           '@type': 'PostalAddress',
-          streetAddress: 'Tbilisi, Georgia', // შეცვალე რეალურით
+          streetAddress: 'Tbilisi, Georgia',
           addressLocality: 'Tbilisi',
           addressCountry: 'GE',
         },
-        geo: {
-          '@type': 'GeoCoordinates',
-          latitude: 41.7151,
-          longitude: 44.8271,
-        },
+        geo: { '@type': 'GeoCoordinates', latitude: 41.7151, longitude: 44.8271 },
         openingHoursSpecification: {
           '@type': 'OpeningHoursSpecification',
           dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
@@ -123,13 +129,11 @@ export default async function Page({ params }: PageParams) {
 
   return (
     <div className="min-h-screen pb-20 antialiased font-firaGo">
-      {/* Schema Injection */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      {/* 3. SEO: HIDDEN H1 (კრიტიკულია, თუ ჰერო კომპონენტში არ გაქვს H1) */}
       <h1 className="sr-only">
         {lang === 'ka'
           ? 'I-TECHNO - უსაფრთხოების სისტემების და ვიდეო კამერების ონლაინ მაღაზია'
@@ -139,17 +143,18 @@ export default async function Page({ params }: PageParams) {
       <CategoryBar lang={lang} />
 
       <main>
-        {/* Hero სექცია */}
         <section aria-label="Main Introduction">
-          <Hero lang={lang} />
+          <Hero lang={lang} t={heroData} />
         </section>
 
-        {/* ბრენდების სექცია */}
         <section className="mt-8" aria-label="Our Partners">
           <BrandsSlider />
         </section>
 
-        {/* პოპულარული პროდუქტები */}
+        <section className="my-12" aria-label="Features Cards">
+          <FeaturesCards t={featuresData} />
+        </section>
+
         <section className="py-12" aria-labelledby="popular-heading">
           <PopularProducts
             products={popularProducts.docs}
@@ -157,8 +162,6 @@ export default async function Page({ params }: PageParams) {
             title={lang === 'ka' ? 'პოპულარული პროდუქტები' : 'Popular Products'}
           />
         </section>
-
-        <PromoBanner />
 
         <section className="py-16" aria-labelledby="about-grid-heading">
           <AboutGrid lang={lang} />
