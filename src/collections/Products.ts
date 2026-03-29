@@ -39,7 +39,7 @@ export const Products: CollectionConfig = {
 
         const result = await payload.find({
           collection: 'products',
-          depth: 2,
+          depth: 1,
           limit: 1000,
           pagination: false,
           locale: lang as 'ka' | 'en',
@@ -107,12 +107,26 @@ export const Products: CollectionConfig = {
           ({ value, data }) => {
             if (data?.title) {
               const titleToConvert =
-                typeof data.title === 'object' ? data.title.en || data.title.ka : data.title
+                typeof data.title === 'object'
+                  ? (data.title as Record<string, string>).en ||
+                    (data.title as Record<string, string>).ka ||
+                    ''
+                  : String(data.title)
 
-              return String(titleToConvert)
+              // თუ en title გვაქვს — slug მისგან
+              // თუ მხოლოდ ka — timestamp დავამატოთ უნიკალობისთვის
+              const base = titleToConvert
                 .toLowerCase()
+                .trim()
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/(^-|-$)+/g, '')
+
+              // თუ slug ცარიელია (მხოლოდ ქართული სიმბოლოები იყო)
+              if (!base) {
+                return `product-${Date.now()}`
+              }
+
+              return base
             }
             return value
           },
@@ -167,7 +181,6 @@ export const Products: CollectionConfig = {
     {
       name: 'price',
       type: 'number',
-      required: true,
       min: 0,
     },
     {
@@ -189,6 +202,8 @@ export const Products: CollectionConfig = {
       type: 'relationship',
       relationTo: 'categories',
       required: true,
+      index: true,
+      maxDepth: 1,
     },
     {
       name: 'brand',

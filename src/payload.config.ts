@@ -15,6 +15,7 @@ import { Categories } from './collections/Categories'
 import { Brands } from './collections/Brands'
 import { Filters } from './collections/FilterGroups'
 import { FilterOptions } from './collections/FilterOptions'
+import { AboutUs } from './collections/AboutUs'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -27,7 +28,7 @@ export default buildConfig({
     },
   },
 
-  collections: [Users, Media, Filters, FilterOptions, Products, Categories, Brands],
+  collections: [Users, Media, Filters, FilterOptions, Products, Categories, Brands, AboutUs],
 
   localization: {
     locales: [

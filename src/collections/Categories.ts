@@ -30,12 +30,15 @@ export const Categories: CollectionConfig = {
         beforeValidate: [
           ({ data, operation }) => {
             if (!data) return undefined
-            if (operation === 'create' || (operation === 'update' && !data.slug)) {
+
+            if (operation === 'create') {
               const nameToConvert = data?.name?.en || data?.name?.ka || data?.name
               if (nameToConvert) {
                 return slugify(nameToConvert, { lower: true, strict: true })
               }
             }
+
+            // update-ზე არსებული slug უცვლელად დარჩეს
             return data?.slug
           },
         ],
@@ -46,6 +49,7 @@ export const Categories: CollectionConfig = {
       type: 'relationship',
       relationTo: 'categories',
       hasMany: false,
+      maxDepth: 1,
       admin: {
         position: 'sidebar',
       },
@@ -60,6 +64,7 @@ export const Categories: CollectionConfig = {
       type: 'relationship',
       relationTo: 'filters',
       hasMany: true,
+      maxDepth: 0,
       label: 'მიბმული ფილტრები',
       admin: {
         description:

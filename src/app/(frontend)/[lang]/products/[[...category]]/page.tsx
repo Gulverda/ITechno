@@ -22,7 +22,7 @@ interface PageProps {
 // --- SEO & DYNAMIC METADATA ---
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, category } = await params
-  const categorySlug = category?.[0]
+  const categorySlug = category?.[category.length - 1]
   const currentLang = (lang === 'en' ? 'en' : 'ka') as SupportedLang
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://itechno.ge'
 
@@ -89,19 +89,26 @@ export default async function Page({ params, searchParams }: PageProps) {
   const currentLang: SupportedLang = (lang === 'en' ? 'en' : 'ka') as SupportedLang
   const t: Dictionary = (dict as Record<SupportedLang, Dictionary>)[currentLang] || dict.ka
 
-  const categorySlug = categoryArray && categoryArray.length > 0 ? categoryArray[0] : null
+  // ბოლო სეგმენტი = ყველაზე სპეციფიკური category
+  const categorySlug =
+    categoryArray && categoryArray.length > 0 ? categoryArray[categoryArray.length - 1] : null
+  // მშობელი slug — დუბლიკატების გასარჩევად
+  const parentSlug =
+    categoryArray && categoryArray.length > 1 ? categoryArray[categoryArray.length - 2] : null
+
   const currentPage = resolvedSearchParams.page ? Number(resolvedSearchParams.page) : 1
   const validatedPage = !isNaN(currentPage) && currentPage > 0 ? currentPage : 1
 
-  const { q, ...filterParams } = resolvedSearchParams
+  const { q, page: _page, ...filterParams } = resolvedSearchParams
 
   const [categoriesRes, categoriesDisplay] = await Promise.all([
+    // locale გარეშე — მხოლოდ id/parent relation-ისთვის, სტაბილური id-ები
     payload.find({
       collection: 'categories',
       limit: 500,
-      locale: currentLang,
       depth: 2,
     }),
+    // locale-ით — სახელების საჩვენებლად UI-ში
     payload.find({
       collection: 'categories',
       limit: 500,
@@ -115,7 +122,30 @@ export default async function Page({ params, searchParams }: PageProps) {
   let activeCategoryFilters: { name: string }[] = []
 
   if (categorySlug) {
-    const foundCat = allCategories.find((c) => c.slug === categorySlug)
+    // ყველა matching slug მოვძებნოთ
+    const matchingCats = allCategories.filter((c) => c.slug === categorySlug)
+
+    let foundCat: Category | undefined
+
+    if (matchingCats.length === 1) {
+      // უნიკალური slug — პირდაპირ ავიღოთ
+      foundCat = matchingCats[0]
+    } else if (matchingCats.length > 1 && parentSlug) {
+      // დუბლიკატი slug — parent-ით გავფილტროთ
+      const parentCat = allCategories.find((c) => c.slug === parentSlug)
+      foundCat = matchingCats.find((c) => {
+        const pId =
+          typeof c.parent === 'object' && c.parent !== null && 'id' in c.parent
+            ? (c.parent as { id: string | number }).id
+            : c.parent
+        return String(pId) === String(parentCat?.id)
+      })
+      // parent ვერ მოიძებნა — პირველი ავიღოთ fallback-ად
+      if (!foundCat) foundCat = matchingCats[0]
+    } else {
+      foundCat = matchingCats[0]
+    }
+
     if (foundCat) {
       activeCategoryId = foundCat.id
       activeCategoryFilters = (foundCat.assignedFilters as { name: string }[]) || []
@@ -138,6 +168,7 @@ export default async function Page({ params, searchParams }: PageProps) {
         [],
       )
     }
+
     const allRelatedIds = [activeCategoryId, ...getAllChildIds(activeCategoryId)]
     andFilters.push({ category: { in: allRelatedIds } })
   }

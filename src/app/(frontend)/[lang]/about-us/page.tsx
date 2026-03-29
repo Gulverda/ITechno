@@ -1,23 +1,76 @@
 import React from 'react'
 import { Metadata } from 'next'
-import dict from '@/lib/translations.json'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 import AboutusClient from './AboutusClient'
+import { notFound } from 'next/navigation'
 
 interface Props {
   params: Promise<{ lang: string }>
 }
 
-// --- 1. SENIOR SEO: DYNAMIC METADATA ---
+// AboutUs დოკუმენტის ტიპი (payload-types.ts გენერაციამდე ხელით ვწერთ)
+type AboutUsDoc = {
+  hero: {
+    titleBlue: string
+    titleBlack: string
+    story: string
+    image: string | { url: string; alt?: string }
+  }
+  priority: {
+    title: string
+    sub: string
+    analysis: string
+  }
+  directions: {
+    title: string
+    items: Array<{
+      title: string
+      image: string | { url: string; alt?: string }
+    }>
+  }
+  support: {
+    badge: string
+    title: string
+    text1: string
+    text2: string
+  }
+  whyUs: {
+    badge: string
+    title: string
+    items: Array<{
+      title: string
+      text: string
+    }>
+  }
+}
+
+// --- 1. SENIOR SEO: DYNAMIC METADATA FROM PAYLOAD ---
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params
+  const payload = await getPayload({ config: configPromise })
+  const currentLang = (lang === 'en' ? 'en' : 'ka') as 'en' | 'ka'
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://itechno.ge'
-  const currentLang = lang === 'en' ? 'en' : 'ka'
 
-  const title = currentLang === 'ka' ? 'ჩვენს შესახებ' : 'About Us'
+  const aboutData = await payload.find({
+    collection: 'about-us' as any,
+    locale: currentLang,
+    limit: 1,
+  })
+
+  const doc = aboutData.docs[0] as unknown as AboutUsDoc | undefined
+
+  const title = doc?.hero?.titleBlue
+    ? `${doc.hero.titleBlue} ${doc.hero.titleBlack}`
+    : currentLang === 'ka'
+      ? 'ჩვენს შესახებ | I-TECHNO'
+      : 'About Us | I-TECHNO'
+
   const description =
-    currentLang === 'ka'
-      ? 'გაიცანით I-TECHNO. ჩვენ გთავაზობთ უმაღლესი ხარისხის ვიდეომეთვალყურეობის, სამეთვალყურეო და უსაფრთხოების სისტემებს საქართველოში.'
-      : 'Meet I-TECHNO. We provide high-quality video surveillance, monitoring, and security systems in Georgia.'
+    doc?.hero?.story?.slice(0, 160) ||
+    (currentLang === 'ka'
+      ? 'გაიცანით I-TECHNO. ჩვენ გთავაზობთ უმაღლესი ხარისხის უსაფრთხოების სისტემებს საქართველოში.'
+      : 'Meet I-TECHNO. High-quality security systems in Georgia.')
 
   return {
     title,
@@ -42,8 +95,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AboutPage({ params }: Props) {
   const { lang } = await params
-  const t = (dict as Record<string, typeof dict.ka>)[lang] || dict.ka
+  const currentLang = (lang === 'en' ? 'en' : 'ka') as 'en' | 'ka'
+  const payload = await getPayload({ config: configPromise })
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://itechno.ge'
+
+  const aboutData = await payload.find({
+    collection: 'about-us' as any,
+    locale: currentLang,
+    limit: 1,
+  })
+
+  if (!aboutData.docs.length) {
+    return notFound()
+  }
+
+  const t = aboutData.docs[0] as unknown as AboutUsDoc
 
   // --- 2. SENIOR SEO: ORGANIZATION SCHEMA ---
   const organizationSchema = {
@@ -52,11 +118,8 @@ export default async function AboutPage({ params }: Props) {
     name: 'I-TECHNO',
     url: baseUrl,
     logo: `${baseUrl}/logo.png`,
-    description: t.aboutUs.hero.story,
-    sameAs: [
-      'https://facebook.com/itechno', // დაამატე შენი რეალური ლინკები
-      'https://instagram.com/itechno',
-    ],
+    description: t.hero?.story,
+    sameAs: ['https://facebook.com/itechno', 'https://instagram.com/itechno'],
   }
 
   return (
