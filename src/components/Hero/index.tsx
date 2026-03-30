@@ -75,7 +75,7 @@ export const Hero = ({ lang = 'ka', t }: HeroProps) => {
               <div className="flex flex-wrap gap-4">
                 <Link
                   href={slide.link1}
-                  className="bg-[#1976BA] hover:bg-blue-700 px-6 text-white text-xs sm:text-sm h-[40px] sm:h-[50px] flex items-center justify-center rounded-lg font-bold transition-all shadow-xl hover:shadow-[#1976BA]/20 active:scale-95"
+                  className="bg-[#1976BA] hover:bg-[#1976BA] transition-all px-6 text-white text-xs sm:text-sm h-[40px] sm:h-[50px] flex items-center justify-center rounded-lg font-bold shadow-xl hover:shadow-[#1976BA]/20 active:scale-95"
                 >
                   {t?.buttonAllProducts}
                 </Link>

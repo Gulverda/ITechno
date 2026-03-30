@@ -51,7 +51,7 @@ const AboutGrid = ({ lang = 'ka' }: { lang: 'ka' | 'en' }) => {
             fill
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          <button className="absolute bottom-6 left-6 bg-white text-black px-6 py-2 rounded-xl flex items-center gap-2 font-firaGo600 hover:bg-gray-100 transition-colors z-10">
+          <button className="absolute bottom-6 left-6 bg-white text-black px-6 py-2 rounded-xl flex items-center gap-2 font-firaGo400 hover:bg-gray-100 transition-colors z-10">
             {t.viewMore}
             <span className="text-sm">→</span>
           </button>

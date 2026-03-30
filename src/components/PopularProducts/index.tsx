@@ -19,7 +19,7 @@ export const PopularProducts = ({ products, lang, title }: PopularProductsProps)
   const currentLang = (lang === 'en' ? 'en' : 'ka') as 'ka' | 'en'
 
   return (
-    <section className="py-12 px-6 my-10">
+    <section className="px-6">
       <div className="max-w-[1440px] mx-auto">
         <div className="flex justify-between items-end mb-8 border-b border-gray-100 pb-4">
           <div className="space-y-1">

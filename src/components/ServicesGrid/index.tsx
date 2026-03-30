@@ -46,7 +46,7 @@ const ServicesGrid = ({ data, icons, getImageUrl }: ServicesGridProps) => {
                 fill
                 className="object-cover group-hover:scale-110 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-black/60 group-hover:bg-black/50 transition-colors" />
+              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
               <div className="relative z-10 text-white">
                 <Icon size={42} className="text-[#1976BA]" />
                 <h3 className="mt-6 text-[22px] font-bold leading-snug">{item.title}</h3>

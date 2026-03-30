@@ -56,7 +56,7 @@ export default function AboutClient({ t }: { lang: string; t: AboutUsData }) {
   return (
     <div className="bg-white text-[#0F172A] antialiased">
       {/* HERO SECTION */}
-      <section className="max-w-7xl mx-auto pt-12 sm:pb-24 px-6 grid lg:grid-cols-2 gap-20 items-center">
+      <section className="max-w-[1440px] mx-auto pt-12 sm:pb-24 px-6 grid lg:grid-cols-2 gap-20 items-center">
         <div>
           <h1 className="text-[48px] text-[#1976BA] md:text-[72px] font-bold leading-[1.05] uppercase tracking-tight">
             {data.hero.titleBlue}
@@ -81,15 +81,15 @@ export default function AboutClient({ t }: { lang: string; t: AboutUsData }) {
       </section>
 
       {/* PRIORITY SECTION */}
-      <section className="bg-white py-20 px-6 border-y border-slate-200">
-        <div className="grid lg:grid-cols-12 gap-y-16 lg:gap-x-0 max-w-7xl mx-auto">
+      <section className="bg-white  py-20 px-6 border-y border-slate-200">
+        <div className="grid lg:grid-cols-12 gap-y-16 lg:gap-x-0 max-w-[1440px] mx-auto">
           <div className="lg:col-span-7 pr-0 lg:pr-20">
             <h2 className="text-[36px] md:text-[54px] font-bold leading-[1.05] tracking-tight text-[#0F172A]">
               {data.priority.title}
             </h2>
           </div>
 
-          <div className="lg:col-span-5 flex flex-col justify-between pt-4">
+          <div className="lg:col-span-5 flex flex-col justify-between pt-4 ">
             <p className="text-[18px] md:text-[21px] leading-relaxed mb-4 text-slate-600 font-light">
               {data.priority.sub}
             </p>
@@ -109,9 +109,9 @@ export default function AboutClient({ t }: { lang: string; t: AboutUsData }) {
       <ServicesGrid data={data} icons={icons} getImageUrl={getImageUrl} />
 
       <section className="bg-white py-10 px-6">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-[1440px] mx-auto">
           <header>
-            <span className="text-[14px] md:text-[16px] text-[#1976BA] font-semibold uppercase tracking-widest">
+            <span className="text-[14px] md:text-[16px] text-[#1976BA] font-firaGo600">
               {data.support.badge}
             </span>
             <h2 className="mt-6 text-[34px] md:text-[44px] font-bold leading-tight text-[#0F172A]">
@@ -126,11 +126,11 @@ export default function AboutClient({ t }: { lang: string; t: AboutUsData }) {
       </section>
 
       {/* WHY US SECTION */}
-      <section className="bg-[#F8FAFC] py-20 px-6">
-        <div className="max-w-7xl mx-auto">
+      <section className="bg-[#F8FAFC] py-20">
+        <div className="max-w-[1440px] mx-auto">
           <div className="grid lg:grid-cols-12 gap-14 items-start">
             <div className="lg:col-span-4">
-              <span className="text-[16px] text-[#1976BA] font-semibold uppercase tracking-widest">
+              <span className="text-[16px] text-[#1976BA] font-firaGo600">
                 {data.whyUs.badge}
               </span>
               <h2 className="mt-6 text-[34px] md:text-[44px] font-bold leading-tight text-[#0F172A]">

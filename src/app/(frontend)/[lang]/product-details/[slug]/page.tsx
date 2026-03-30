@@ -183,17 +183,25 @@ export default async function ProductDetails({ params }: PageProps) {
 
           <div className="lg:col-span-7 flex flex-col">
             <div className="space-y-4">
-              <div className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-widest text-[#1976BA]">
-                <span
-                  className={`w-1.5 h-1.5 rounded-full ${product.stock === 'in-stock' ? 'bg-[#1976BA]' : 'bg-red-500'}`}
-                />
-                {product.stock === 'in-stock'
-                  ? currentLang === 'ka'
-                    ? 'მარაგშია'
-                    : 'In Stock'
-                  : currentLang === 'ka'
-                    ? 'არ არის მარაგში'
-                    : 'Out of Stock'}
+              <div className="flex flex-col gap-2">
+                <div
+                  className={`inline-flex items-center justify-center px-4 py-1 rounded-md text-[13px] font-bold text-white w-fit
+      ${product.stock === 'in-stock' ? 'bg-[#1976BA]' : 'bg-red-500'}`}
+                >
+                  {product.stock === 'in-stock'
+                    ? currentLang === 'ka'
+                      ? 'მარაგშია'
+                      : 'In Stock'
+                    : currentLang === 'ka'
+                      ? 'არ არის მარაგში'
+                      : 'Out of Stock'}
+                </div>
+
+                <h2 className="text-[12px] text-gray-600 font-medium font-firaGo400">
+                  {currentLang === 'ka'
+                    ? '* გთხოვთ, მარაგის გადასამოწმებლად დაგვიკავშირდეთ'
+                    : '* Please contact us to verify availability'}
+                </h2>
               </div>
               <h1 className="text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 leading-[1.15]">
                 {product.title}
@@ -219,8 +227,8 @@ export default async function ProductDetails({ params }: PageProps) {
               )}
             </div>
 
-            <div className="pt-6 pb-8 space-y-4 border-t border-slate-50">
-              <h3 className="text-[16px] font-semibold uppercase tracking-[0.3em] text-slate-300">
+            <div className="pt-6 pb-8 space-y-4 border-t border-slate-200">
+              <h3 className="text-[18px] font-semibold uppercase tracking-[0.3em] text-black">
                 {currentLang === 'ka' ? 'პროდუქტის აღწერა' : 'Description'}
               </h3>
               <div className="text-slate-600 text-[16px] leading-relaxed font-light whitespace-pre-line max-w-2xl">
