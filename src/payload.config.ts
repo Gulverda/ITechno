@@ -19,7 +19,6 @@ import { AboutUs } from './collections/AboutUs'
 import { Services } from './collections/Services'
 import { ContactInfo } from './collections/ContactInfo'
 import { ContactPage } from './collections/ContactPage'
-import { FeaturesCards } from './collections/FeaturesCards'
 import { HeroSlider } from './collections/HeroSlider'
 import { CategoryBar } from './collections/CategoryBarCollection'
 
@@ -48,7 +47,6 @@ export default buildConfig({
     Services,
     ContactInfo,
     ContactPage,
-    FeaturesCards,
   ],
 
   localization: {
