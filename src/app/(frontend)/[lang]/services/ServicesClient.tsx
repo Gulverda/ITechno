@@ -26,14 +26,19 @@ type ServicesDoc = {
 
 // ხატულები რიგის მიხედვით — თუ სერვისები დაემატა/შეიცვალა Admin-ში, ბოლოს CheckCircle იქნება
 const ICONS = [
+  // eslint-disable-next-line react/jsx-key
   <Camera className="w-6 h-6 text-slate-900" />,
+  // eslint-disable-next-line react/jsx-key
   <ShieldAlert className="w-6 h-6 text-slate-900" />,
+  // eslint-disable-next-line react/jsx-key
   <Key className="w-6 h-6 text-slate-900" />,
+  // eslint-disable-next-line react/jsx-key
   <Cpu className="w-6 h-6 text-slate-900" />,
+  // eslint-disable-next-line react/jsx-key
   <Network className="w-6 h-6 text-slate-900" />,
 ]
 
-export default function ServicesClient({ lang, t }: { lang: string; t: ServicesDoc }) {
+export default function ServicesClient({ t }: { lang: string; t: ServicesDoc }) {
   const [openId, setOpenId] = useState<number>(0)
 
   const toggleService = (idx: number) => {

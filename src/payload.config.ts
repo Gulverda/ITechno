@@ -21,6 +21,7 @@ import { ContactInfo } from './collections/ContactInfo'
 import { ContactPage } from './collections/ContactPage'
 import { FeaturesCards } from './collections/FeaturesCards'
 import { HeroSlider } from './collections/HeroSlider'
+import { CategoryBar } from './collections/CategoryBarCollection'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -41,6 +42,7 @@ export default buildConfig({
     Products,
     Categories,
     HeroSlider,
+    CategoryBar,
     Brands,
     AboutUs,
     Services,

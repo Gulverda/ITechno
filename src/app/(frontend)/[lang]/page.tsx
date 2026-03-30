@@ -6,12 +6,14 @@ import { Hero } from '@/components/Hero'
 import { PopularProducts } from '@/components/PopularProducts'
 import { BrandsSlider } from '@/components/BrandSlider'
 import AboutGrid from '@/components/AboutGrid'
-import FeaturesCards from '@/components/FeaturesCardClient'
+import ServicesGrid from '@/components/ServicesGrid'
+import { Shield, Network, Cpu, Flame, DoorOpen, CheckCircle } from 'lucide-react'
 
 type PageParams = { params: Promise<{ lang: string }> }
 
-type FeaturesCardsData = {
-  items: Array<{ id?: string; title: string; description: string }>
+type Media = {
+  url: string
+  alt?: string
 }
 
 type HeroSliderData = {
@@ -23,8 +25,19 @@ type HeroSliderData = {
     description: string
     link1: string
     link2: string
-    image: string | { url: string; alt?: string }
+    image: string | Media
   }>
+}
+
+// სერვისების მონაცემების ტიპი
+type ServicesData = {
+  directions: {
+    title: string
+    items: Array<{
+      title: string
+      image: string | Media
+    }>
+  }
 }
 
 export async function generateMetadata({ params }: PageParams): Promise<Metadata> {
@@ -55,15 +68,6 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
       canonical: `/${lang}`,
       languages: { 'ka-GE': '/ka', 'en-US': '/en' },
     },
-    openGraph: {
-      title: currentData.title,
-      description: currentData.description,
-      url: `/${lang}`,
-      siteName,
-      locale: lang === 'ka' ? 'ka_GE' : 'en_US',
-      type: 'website',
-      images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
-    },
   }
 }
 
@@ -73,20 +77,21 @@ export default async function Page({ params }: PageParams) {
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://itechno.ge'
 
   const payload = await getPayload({ config: await config })
-
-  const [popularProducts, featuresRes, heroRes] = await Promise.all([
+  const icons = [Shield, Cpu, Flame, DoorOpen, Network, CheckCircle]
+  const getImageUrl = (media: string | Media) => (typeof media === 'object' ? media.url : media)
+  const [popularProducts, heroRes, aboutRes] = await Promise.all([
     payload.find({
       collection: 'products',
       where: { isPopular: { equals: true } },
       limit: 10,
       locale: lang,
     }),
-    payload.find({ collection: 'features-cards' as any, locale: lang, limit: 1 }),
     payload.find({ collection: 'hero-slider' as any, locale: lang, limit: 1 }),
+    payload.find({ collection: 'about-us' as any, locale: lang, limit: 1 }),
   ])
 
-  const featuresData = featuresRes.docs[0] as unknown as FeaturesCardsData
-  const heroData = heroRes.docs[0] as unknown as HeroSliderData
+  const heroData = (heroRes.docs[0] || {}) as unknown as HeroSliderData
+  const servicesData = (aboutRes.docs[0] || {}) as unknown as ServicesData
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -151,9 +156,11 @@ export default async function Page({ params }: PageParams) {
           <BrandsSlider />
         </section>
 
-        <section className="my-12" aria-label="Features Cards">
-          <FeaturesCards t={featuresData} />
-        </section>
+        {servicesData?.directions && (
+          <section className="my-12" aria-label="Services and Directions">
+            <ServicesGrid data={servicesData} icons={icons} getImageUrl={getImageUrl} />
+          </section>
+        )}
 
         <section className="py-12" aria-labelledby="popular-heading">
           <PopularProducts

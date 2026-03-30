@@ -9,7 +9,6 @@ export const AboutUs: CollectionConfig = {
     read: () => true,
   },
   fields: [
-    // TOP-LEVEL TITLE (admin პანელისთვის)
     {
       name: 'title',
       type: 'text',
@@ -57,6 +56,13 @@ export const AboutUs: CollectionConfig = {
           fields: [
             { name: 'title', type: 'text', localized: true },
             { name: 'image', type: 'upload', relationTo: 'media', required: true },
+            {
+              name: 'link',
+              type: 'text',
+              admin: {
+                description: 'გადამისამართების URL (მაგ: /ka/services#cameras)',
+              },
+            },
           ],
         },
       ],

@@ -206,6 +206,16 @@ export const Products: CollectionConfig = {
       maxDepth: 1,
     },
     {
+      name: 'additionalCategories',
+      type: 'relationship',
+      relationTo: 'categories',
+      hasMany: true,
+      label: 'დამატებითი კატეგორიები',
+      admin: {
+        description: 'პროდუქტი ამ კატეგორიებშიც გამოჩნდება',
+      },
+    },
+    {
       name: 'brand',
       type: 'relationship',
       relationTo: 'brands',

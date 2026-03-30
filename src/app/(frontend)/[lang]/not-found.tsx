@@ -39,7 +39,7 @@ export default function NotFound() {
 
       <Link
         href={`/${lang}`}
-        className="px-8 py-3.5 bg-[#1976BA] text-white rounded-xl font-semibold text-lg hover:bg-[#1976BA]/90 transition-colors shadow-lg shadow-[#1976BA]/20 active:scale-95 transition-transform"
+        className="px-8 py-3.5 bg-[#1976BA] text-white rounded-xl font-semibold text-lg hover:bg-[#1976BA]/90 transition-colors shadow-lg shadow-[#1976BA]/20 active:scale-95"
       >
         {lang === 'ka' ? 'მთავარზე დაბრუნება' : 'Back to Home'}
       </Link>

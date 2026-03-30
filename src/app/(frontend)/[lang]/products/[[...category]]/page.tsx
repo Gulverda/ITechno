@@ -170,7 +170,9 @@ export default async function Page({ params, searchParams }: PageProps) {
     }
 
     const allRelatedIds = [activeCategoryId, ...getAllChildIds(activeCategoryId)]
-    andFilters.push({ category: { in: allRelatedIds } })
+    andFilters.push({
+      or: [{ category: { in: allRelatedIds } }, { additionalCategories: { in: allRelatedIds } }],
+    })
   }
 
   if (q) {
