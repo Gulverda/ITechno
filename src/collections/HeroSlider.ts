@@ -4,6 +4,7 @@ export const HeroSlider: CollectionConfig = {
   slug: 'hero-slider',
   admin: {
     useAsTitle: 'title',
+    group: 'Main Page',
   },
   access: {
     read: () => true,

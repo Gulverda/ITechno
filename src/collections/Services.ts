@@ -4,6 +4,7 @@ export const Services: CollectionConfig = {
   slug: 'services',
   admin: {
     useAsTitle: 'title',
+    group: 'Services Page',
   },
   access: {
     read: () => true,

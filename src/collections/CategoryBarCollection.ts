@@ -4,7 +4,7 @@ export const CategoryBar: CollectionConfig = {
   slug: 'category-bar',
   admin: {
     useAsTitle: 'title',
-    group: 'Shop Content',
+    group: 'Main Page',
   },
   access: {
     read: () => true,

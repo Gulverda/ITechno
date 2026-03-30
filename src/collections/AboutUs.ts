@@ -4,6 +4,7 @@ export const AboutUs: CollectionConfig = {
   slug: 'about-us',
   admin: {
     useAsTitle: 'title',
+    group: 'About Us Page',
   },
   access: {
     read: () => true,

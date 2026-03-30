@@ -4,6 +4,7 @@ export const ContactPage: CollectionConfig = {
   slug: 'contact-page',
   admin: {
     useAsTitle: 'title',
+    group: 'Contact Page',
   },
   access: {
     read: () => true,
