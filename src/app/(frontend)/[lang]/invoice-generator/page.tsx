@@ -13,6 +13,11 @@ interface SelectedProduct {
   quantity: number
 }
 
+interface ExtraFee {
+  label: string
+  amount: number
+}
+
 export default function InvoiceGenerator() {
   const [text, setText] = useState('')
   const [query] = useDebounce(text, 500)
@@ -24,7 +29,13 @@ export default function InvoiceGenerator() {
   const [invoiceNumber, setInvoiceNumber] = useState('')
   const [clientName, setClientName] = useState('')
   const [clientTaxId, setClientTaxId] = useState('')
-  const [clientAddress, setClientAddress] = useState('') // ახალი მისამართის ველი
+  const [clientAddress, setClientAddress] = useState('')
+
+  // დამატებითი ხარჯები
+  const [extraFees, setExtraFees] = useState<ExtraFee[]>([
+    { label: '', amount: 0 },
+    { label: '', amount: 0 },
+  ])
 
   useEffect(() => {
     if (query.length > 2) {
@@ -70,9 +81,14 @@ export default function InvoiceGenerator() {
     setProducts([])
   }
 
+  const updateExtraFee = (index: number, field: 'label' | 'amount', value: string | number) => {
+    setExtraFees((prev) => prev.map((fee, i) => (i === index ? { ...fee, [field]: value } : fee)))
+  }
+
   const subtotal = selectedItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  const extraFeesTotal = extraFees.reduce((acc, fee) => acc + (Number(fee.amount) || 0), 0)
   const discountAmount = subtotal * (discount / 100)
-  const total = subtotal - discountAmount
+  const total = subtotal - discountAmount + extraFeesTotal
 
   const generatePDF = () => {
     const doc = new jsPDF()
@@ -110,21 +126,29 @@ export default function InvoiceGenerator() {
     doc.setFontSize(10)
     doc.setTextColor(lightText[0], lightText[1], lightText[2])
     doc.text(`ს/კ: ${clientTaxId}`, 14, 73)
-    // მისამართის ჩვენება PDF-ში
     if (clientAddress) {
       doc.text(`მის: ${clientAddress}`, 14, 78)
     }
 
-    // ცხრილი დარჩა უცვლელი (ზუსტად ისე როგორც მოგეწონათ)
+    // ცხრილი — პროდუქტები + დამატებითი ხარჯები
+    const tableBody = selectedItems.map((item) => [
+      String(item.quantity),
+      item.title,
+      `${item.price.toFixed(2)} GEL`,
+      `${(item.price * item.quantity).toFixed(2)} GEL`,
+    ])
+
+    // დამატებითი ხარჯები ცხრილში
+    extraFees.forEach((fee) => {
+      if (fee.label && Number(fee.amount) > 0) {
+        tableBody.push(['—', fee.label, '—', `${Number(fee.amount).toFixed(2)} GEL`])
+      }
+    })
+
     autoTable(doc, {
       startY: 95,
       head: [['რაოდ.', 'აღწერა', 'საცალო ფასი', 'ჯამი']],
-      body: selectedItems.map((item) => [
-        String(item.quantity),
-        item.title,
-        `${item.price.toFixed(2)} GEL`,
-        `${(item.price * item.quantity).toFixed(2)} GEL`,
-      ]),
+      body: tableBody,
 
       theme: 'plain',
 
@@ -152,15 +176,7 @@ export default function InvoiceGenerator() {
 
       tableWidth: 'auto',
 
-      didParseCell: function (data) {
-        // აღწერის truncate (თუ ძალიან გრძელია)
-        if (data.column.index === 1) {
-          data.cell.styles.cellWidth = 'auto'
-        }
-      },
-
       didDrawCell: function (data) {
-        // ქვედა ხაზის დახატვა თითო row-სთვის (clean look)
         if (data.row.section === 'body' && data.column.index === 0) {
           const { x, y } = data.cell
           doc.setDrawColor(220)
@@ -173,6 +189,7 @@ export default function InvoiceGenerator() {
         }
       },
     })
+
     // @ts-expect-error - finalY
     let currentY = doc.lastAutoTable.finalY
     doc.setDrawColor(themeColor[0], themeColor[1], themeColor[2])
@@ -187,6 +204,16 @@ export default function InvoiceGenerator() {
     doc.text('ჯამი', totalsLabelX, currentY)
     doc.text(`${subtotal.toFixed(2)} GEL`, valueX, currentY, { align: 'right' })
 
+    // დამატებითი ხარჯები totals-ში
+    extraFees.forEach((fee) => {
+      if (fee.label && Number(fee.amount) > 0) {
+        currentY += 8
+        doc.setTextColor(textColor[0], textColor[1], textColor[2])
+        doc.text(`${fee.label}:`, totalsLabelX, currentY)
+        doc.text(`${Number(fee.amount).toFixed(2)} GEL`, valueX, currentY, { align: 'right' })
+      }
+    })
+
     if (discount > 0) {
       currentY += 8
       doc.setTextColor(220, 38, 38)
@@ -195,7 +222,6 @@ export default function InvoiceGenerator() {
       doc.setTextColor(textColor[0], textColor[1], textColor[2])
     }
 
-    // Total-ის ზედა ხაზი (ღია ნაცრისფერი)
     currentY += 4
     doc.setDrawColor(220, 220, 220)
     doc.setLineWidth(0.3)
@@ -253,7 +279,34 @@ export default function InvoiceGenerator() {
         />
       </div>
 
-      {/* დანარჩენი UI (ძებნა, ცხრილი, ღილაკები) იგივე რჩება */}
+      {/* დამატებითი ხარჯები */}
+      <div className="mb-6">
+        <label className="block text-sm text-gray-600 mb-3 font-bold">დამატებითი ხარჯები</label>
+        <div className="flex flex-col gap-3">
+          {extraFees.map((fee, index) => (
+            <div key={index} className="flex gap-3 items-center">
+              <input
+                placeholder={index === 0 ? 'მაგ. დამატებითი ხარჯი' : 'მაგ. ხელობის საფასური'}
+                value={fee.label}
+                onChange={(e) => updateExtraFee(index, 'label', e.target.value)}
+                className="flex-1 border p-2 rounded outline-none focus:ring-2 focus:ring-[#1976BA]"
+              />
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+                value={fee.amount === 0 ? '' : fee.amount}
+                onChange={(e) => updateExtraFee(index, 'amount', parseFloat(e.target.value) || 0)}
+                className="w-36 border p-2 rounded outline-none focus:ring-2 focus:ring-[#1976BA] text-right"
+              />
+              <span className="text-gray-500 text-sm font-medium w-8">GEL</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* პროდუქტის ძებნა */}
       <div className="relative mb-10">
         <label className="block text-sm text-gray-600 mb-2 font-bold">პროდუქტის ძებნა</label>
         <input
