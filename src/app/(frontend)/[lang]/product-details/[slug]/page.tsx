@@ -42,7 +42,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     : `${product.title} - შეიძინეთ გარანტიით I-TECHNO-ში. დაგვიკავშირდით კონსულტაციისთვის.`
 
   const mainImage = product.mainImage as Media | undefined
-  const fullImageUrl = mainImage?.url ? `${baseUrl}${mainImage.url}` : `${baseUrl}/og-image.jpg`
+  const imageUrl = mainImage?.url || ''
+  const fullImageUrl = imageUrl.startsWith('http')
+    ? imageUrl
+    : imageUrl
+      ? `${baseUrl}${imageUrl}`
+      : `${baseUrl}/og-image.png`
 
   return {
     title,
