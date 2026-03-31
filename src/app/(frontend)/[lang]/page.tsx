@@ -68,6 +68,20 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
       canonical: `/${lang}`,
       languages: { 'ka-GE': '/ka', 'en-US': '/en' },
     },
+    openGraph: {
+      title: currentData.title,
+      description: currentData.description,
+      url: `${baseUrl}/${lang}`,
+      type: 'website',
+      siteName,
+      images: [{ url: `${baseUrl}/og-image.png`, width: 1200, height: 630, alt: siteName }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: currentData.title,
+      description: currentData.description,
+      images: [`${baseUrl}/og-image.png`],
+    },
   }
 }
 
