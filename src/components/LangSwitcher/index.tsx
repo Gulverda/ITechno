@@ -38,6 +38,7 @@ export const LangSwitcher = () => {
           alt="flag"
           fill
           className="object-cover"
+          unoptimized
         />
       </div>
       <span className="text-xs font-bold text-slate-700 uppercase">

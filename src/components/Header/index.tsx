@@ -42,7 +42,14 @@ export const Header = ({ lang }: HeaderProps) => {
         <div className="container max-w-[1440px] mx-auto h-20 flex items-center justify-between gap-4">
           <Link href={`/${currentLang}`} className="flex-shrink-0 flex items-center gap-2">
             <div className="relative w-24 h-24 lg:w-32 lg:h-32">
-              <Image src={Logo} alt="I-TECHNO Logo" fill className="object-contain" priority />
+              <Image
+                src={Logo}
+                alt="I-TECHNO Logo"
+                fill
+                className="object-contain"
+                priority
+                unoptimized
+              />
             </div>
           </Link>
 

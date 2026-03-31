@@ -68,6 +68,7 @@ export const Footer = ({ lang }: FooterProps) => {
                 width={150}
                 height={50}
                 className="object-contain"
+                unoptimized
               />
             </Link>
 
@@ -108,7 +109,7 @@ export const Footer = ({ lang }: FooterProps) => {
 
               <li>
                 <Link
-                  href={getLocalizedHref('/about')}
+                  href={getLocalizedHref('/about-us')}
                   className="hover:underline opacity-80 hover:opacity-100"
                 >
                   {t.nav.about}
