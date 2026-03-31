@@ -28,6 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     collection: 'products',
     where: { slug: { equals: slug } },
     locale: currentLang,
+    depth: 1,
   })
 
   const product = docs[0] as unknown as Product
