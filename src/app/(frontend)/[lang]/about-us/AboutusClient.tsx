@@ -56,7 +56,7 @@ export default function AboutClient({ t }: { lang: string; t: AboutUsData }) {
   return (
     <div className="bg-white text-[#0F172A] antialiased">
       {/* HERO SECTION */}
-      <section className="max-w-[1440px] mx-auto pt-12 sm:pb-24 px-6 grid lg:grid-cols-2 gap-20 items-center">
+      <section className="max-w-[1440px] mx-auto pt-12 sm:pb-24 grid lg:grid-cols-2 gap-20 items-center">
         <div>
           <h1 className="text-[48px] text-[#1976BA] md:text-[72px] font-bold leading-[1.05] uppercase tracking-tight">
             {data.hero.titleBlue}
@@ -82,7 +82,7 @@ export default function AboutClient({ t }: { lang: string; t: AboutUsData }) {
       </section>
 
       {/* PRIORITY SECTION */}
-      <section className="bg-white  py-20 px-6 border-y border-slate-200">
+      <section className="bg-white py-10 mt-10 border-y border-slate-200">
         <div className="grid lg:grid-cols-12 gap-y-16 lg:gap-x-0 max-w-[1440px] mx-auto">
           <div className="lg:col-span-7 pr-0 lg:pr-20">
             <h2 className="text-[36px] md:text-[54px] font-bold leading-[1.05] tracking-tight text-[#0F172A]">
@@ -109,7 +109,7 @@ export default function AboutClient({ t }: { lang: string; t: AboutUsData }) {
 
       <ServicesGrid data={data} icons={icons} getImageUrl={getImageUrl} />
 
-      <section className="bg-white py-10 px-6">
+      <section className="bg-white py-10">
         <div className="max-w-[1440px] mx-auto">
           <header>
             <span className="text-[14px] md:text-[16px] text-[#1976BA] font-firaGo600">
@@ -127,33 +127,37 @@ export default function AboutClient({ t }: { lang: string; t: AboutUsData }) {
       </section>
 
       {/* WHY US SECTION */}
-      <section className="bg-[#F8FAFC] py-20">
-        <div className="max-w-[1440px] mx-auto">
-          <div className="grid lg:grid-cols-12 gap-14 items-start">
-            <div className="lg:col-span-4">
-              <span className="text-[16px] text-[#1976BA] font-firaGo600">{data.whyUs.badge}</span>
-              <h2 className="mt-6 text-[34px] md:text-[44px] font-bold leading-tight text-[#0F172A]">
-                {data.whyUs.title}
-              </h2>
-            </div>
+      <div className="bg-[#F8FAFC] w-100">
+        <section className="py-10 px-3">
+          <div className="max-w-[1440px] mx-auto">
+            <div className="grid lg:grid-cols-12 gap-14 items-start">
+              <div className="lg:col-span-4">
+                <span className="text-[16px] text-[#1976BA] font-firaGo600">
+                  {data.whyUs.badge}
+                </span>
+                <h2 className="mt-6 text-[34px] md:text-[44px] font-bold leading-tight text-[#0F172A]">
+                  {data.whyUs.title}
+                </h2>
+              </div>
 
-            <div className="lg:col-span-8">
-              <dl className="divide-y divide-slate-200 border-t border-slate-200">
-                {data.whyUs.items.map((item, i) => (
-                  <div key={i} className="grid md:grid-cols-12 gap-4 md:gap-8 py-7">
-                    <dt className="md:col-span-4 text-[18px] font-bold text-[#0F172A]">
-                      {item.title}
-                    </dt>
-                    <dd className="md:col-span-8 text-[17px] leading-[1.8] text-slate-600 font-firaGo400">
-                      {item.text}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+              <div className="lg:col-span-8">
+                <dl className="divide-y divide-slate-200 border-t border-slate-200">
+                  {data.whyUs.items.map((item, i) => (
+                    <div key={i} className="grid md:grid-cols-12 gap-4 md:gap-8 py-7">
+                      <dt className="md:col-span-4 text-[18px] font-bold text-[#0F172A]">
+                        {item.title}
+                      </dt>
+                      <dd className="md:col-span-8 text-[17px] leading-[1.8] text-slate-600 font-firaGo400">
+                        {item.text}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   )
 }

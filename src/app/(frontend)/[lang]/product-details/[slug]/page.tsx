@@ -34,7 +34,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const product = docs[0] as unknown as Product
   if (!product) return { title: `პროდუქტი ვერ მოიძებნა` }
 
-  // Title სლოგანით
   const title = `${product.title}`
 
   const description = product.specifications
@@ -63,7 +62,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title,
       description,
       url: `${baseUrl}/${currentLang}/products/${slug}`,
-      // შეცვლილია 'website'-ზე ერორის ასაცილებლად
       type: 'website',
       images: [{ url: fullImageUrl, width: 1200, height: 630, alt: product.title }],
     },
@@ -73,13 +71,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       images: [fullImageUrl],
     },
-    // Production-ისთვის ინდექსაციის ჩართვა
     robots: {
       index: process.env.NEXT_PUBLIC_INDEXABLE === 'true',
       follow: process.env.NEXT_PUBLIC_INDEXABLE === 'true',
     },
   }
 }
+
 export default async function ProductDetails({ params }: PageProps) {
   const { slug, lang } = await params
   const payload = await getPayload({ config: await config })
@@ -98,7 +96,6 @@ export default async function ProductDetails({ params }: PageProps) {
   const product = docs[0] as unknown as Product
   if (!product) return notFound()
 
-  // სურათების დამუშავება
   const galleryImages = (product.images || [])
     .map((item) => (item.image as unknown as Media | null | undefined)?.url || null)
     .filter((url): url is string => !!url)
@@ -106,7 +103,6 @@ export default async function ProductDetails({ params }: PageProps) {
   const mainImage = product.mainImage as unknown as Media | undefined
   const category = product.category as unknown as Category | undefined
 
-  // მსგავსი პროდუქტები
   const relatedRes = await payload.find({
     collection: 'products',
     limit: 4,
@@ -125,7 +121,6 @@ export default async function ProductDetails({ params }: PageProps) {
   )
   const displayPrice = hasDiscount ? product.discountPrice! : product.price || 0
 
-  // --- 2. SENIOR SEO: JSON-LD STRUCTURED DATA ---
   const productSchema = {
     '@context': 'https://schema.org/',
     '@type': 'Product',
@@ -148,14 +143,12 @@ export default async function ProductDetails({ params }: PageProps) {
 
   return (
     <div className="bg-white min-h-screen text-slate-900 antialiased overflow-x-hidden">
-      {/* Schema Injection */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
       />
 
       <main className="max-w-7xl mx-auto px-6 py-10 lg:py-16">
-        {/* Breadcrumbs - Important for Crawler Navigation */}
         <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-10 flex-wrap">
           <Link
             href={`/${currentLang}/products`}
@@ -209,7 +202,9 @@ export default async function ProductDetails({ params }: PageProps) {
                     : '* Please contact us to verify availability'}
                 </h2>
               </div>
-              <h1 className="text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 leading-[1.15]">
+
+              {/* შეცვლილია სათაურის ზომა მობილურისთვის და დამატებულია break-words */}
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 leading-[1.15] break-words">
                 {product.title}
               </h1>
             </div>
@@ -250,7 +245,6 @@ export default async function ProductDetails({ params }: PageProps) {
               </div>
             )}
 
-            {/* CTAs - Conversion Optimization */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 max-w-xl">
               <a
                 href="tel:+995595126054"
@@ -270,7 +264,6 @@ export default async function ProductDetails({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Similar Products - Essential for Internal Linking SEO */}
         {relatedRes.docs.length > 0 && (
           <section className="border-t border-slate-50 pt-24">
             <div className="flex items-end justify-between mb-16">
@@ -280,13 +273,6 @@ export default async function ProductDetails({ params }: PageProps) {
                 </h2>
                 <div className="h-1 w-12 bg-[#1976BA] rounded-full" />
               </div>
-              <Link
-                href={`/${currentLang}/products`}
-                className="group flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest border-b border-black pb-1 hover:text-[#1976BA] hover:border-[#1976BA] transition-all"
-              >
-                {currentLang === 'ka' ? 'ყველას ნახვა' : 'View All'}
-                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
